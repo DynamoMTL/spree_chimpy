@@ -4,15 +4,19 @@ Spree::User.class_eval do
   after_destroy :unsubscribe_from_mailchimp
 
 private
+  def subscription
+    SpreeHominid::Subscription.new(self)
+  end
+
   def subscribe_to_mailchimp
-    SpreeHominid::List.subscribe(self)
+    subscription.subscribe
   end
 
   def sync_with_mailchimp
-    SpreeHominid::List.sync(self)
+    subscription.sync
   end
 
   def unsubscribe_from_mailchimp
-    SpreeHominid::List.unsubscribe(self)
+    subscription.unsubscribe
   end
 end

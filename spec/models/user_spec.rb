@@ -2,22 +2,23 @@ require 'spec_helper'
 
 describe Spree::User do
   context "syncing with mail chimp" do
-    before do
-      SpreeHominid::List.should_receive(:subscribe)
-    end
+    let(:user)         { FactoryGirl.create(:user) }
+    let(:subscription) { mock(:subscription) }
 
-    it "submits after creating" do
-      FactoryGirl.create(:user)
+    before do
+      SpreeHominid::Subscription.should_receive(:new).with(user).and_return(subscription)
+      subscription.should_receive(:subscribe)
     end
 
     it "submits after saving" do
-      SpreeHominid::List.should_receive(:sync)
-      FactoryGirl.create(:user).save
+      subscription.should_receive(:sync)
+
+      user.save
     end
 
     it "submits after destroy" do
-      SpreeHominid::List.should_receive(:unsubscribe)
-      user = FactoryGirl.create(:user)
+      subscription.should_receive(:unsubscribe)
+
       user.destroy
     end
   end
