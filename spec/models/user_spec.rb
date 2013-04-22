@@ -6,8 +6,8 @@ describe Spree::User do
     let(:subscription) { mock(:subscription) }
 
     before do
-      SpreeHominid::Subscription.should_receive(:new).with(user).and_return(subscription)
       subscription.should_receive(:subscribe)
+      SpreeHominid::Subscription.should_receive(:new).with(user).and_return(subscription)
     end
 
     it "submits after saving" do

@@ -4,7 +4,7 @@ module SpreeHominid
 
     def initialize(user)
       @user = user
-      @api  = Hominid::API.new(Config.preferred_key, api_version: API_VERSION)
+      @api  = Hominid::API.new(SpreeHominid::Config.preferred_key, api_version: API_VERSION)
     end
 
     def subscribe
@@ -19,7 +19,7 @@ module SpreeHominid
     end
 
     def list
-      @list ||= @api.find_by_name(Config.preferred_list_name)
+      @list ||= @api.find_list_by_name(Config.preferred_list_name)
     end
   end
 end

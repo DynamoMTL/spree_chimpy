@@ -13,7 +13,7 @@ describe SpreeHominid::Subscription do
   end
 
   it "subscribes" do
-    hominid.should_receive(:find_by_name).with("Members").and_return('id' => 1234)
+    hominid.should_receive(:find_list_by_name).with("Members").and_return('id' => 1234)
     hominid.should_receive(:list_subscribe).with(1234, user.email)
 
     subscription.subscribe
@@ -23,7 +23,7 @@ describe SpreeHominid::Subscription do
   end
 
   it "unsubscribes" do
-    hominid.should_receive(:find_by_name).with("Members").and_return('id' => 1234)
+    hominid.should_receive(:find_list_by_name).with("Members").and_return('id' => 1234)
     hominid.should_receive(:list_unsubscribe).with(1234, user.email)
 
     subscription.unsubscribe
