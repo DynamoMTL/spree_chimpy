@@ -8,7 +8,8 @@ describe Spree::User do
     end
 
     it "submits after saving" do
-      SpreeHominid::List.should_receive(:subscribe).twice
+      SpreeHominid::List.should_receive(:subscribe)
+      SpreeHominid::List.should_receive(:sync)
       FactoryGirl.create(:user).save
     end
 
