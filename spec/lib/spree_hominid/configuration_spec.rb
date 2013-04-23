@@ -1,12 +1,20 @@
 require 'spec_helper'
 
 describe SpreeHominid::Configuration do
-  it "knows when its enabled" do
-    config(key: '1234').should be_enabled
+
+  context "enabled" do
+    before  { SpreeHominid::Interface.should_receive(:new).any_number_of_times.with('1234').and_return(:interface) }
+    subject { config(key: '1234') }
+
+    specify         { should be_enabled }
+    its(:interface) { should == :interface }
   end
 
-  it "knows when its disabled" do
-    config(key: nil).should_not be_enabled
+  context "disabled" do
+    subject { config(key: nil) }
+
+    specify         { should_not be_enabled }
+    its(:interface) { should be_nil }
   end
 
   def config(options = {})
