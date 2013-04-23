@@ -9,7 +9,6 @@ module SpreeHominid
     end
 
     def subscribe
-      binding.pry
       @interface.subscribe(Config.preferred_list_name, @user.email) if @interface && @user.subscribed
     end
 
