@@ -20,6 +20,11 @@ describe SpreeHominid::Interface do
     interface.unsubscribe('Members', "user@example.com")
   end
 
+  it "find list id" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    interface.find_list_id('Members')
+  end
+
   # add_merge_var
   # find_merge_var
 end
