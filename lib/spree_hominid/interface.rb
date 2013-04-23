@@ -26,7 +26,6 @@ module SpreeHominid
 
   private
     def log(message)
-      puts "MAILCHIMP: #{message}"
       Rails.logger.info "MAILCHIMP: #{message}"
     end
   end
