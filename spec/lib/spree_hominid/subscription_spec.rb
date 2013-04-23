@@ -6,7 +6,8 @@ describe SpreeHominid::Subscription do
     let(:interface)    { mock(:interface) }
 
     before do
-      SpreeHominid::Config.preferred_list_name = 'Members'
+      SpreeHominid::Config.preferred_list_name  = 'Members'
+      SpreeHominid::Config.preferred_merge_vars = {'EMAIL' => :email}
       SpreeHominid::Config.stub(interface: interface)
     end
 
@@ -14,8 +15,20 @@ describe SpreeHominid::Subscription do
       let(:user)         { FactoryGirl.build(:user, subscribed: true) }
       let(:subscription) { SpreeHominid::Subscription.new(user) }
 
+      before do
+        SpreeHominid::Config.preferred_merge_vars = {'EMAIL' => :email, 'SIZE' => :size, 'HEIGHT' => :height}
+
+        def user.size
+          '10'
+        end
+
+        def user.height
+          '20'
+        end
+      end
+
       it "subscribes" do
-        interface.should_receive(:subscribe).with('Members', user.email)
+        interface.should_receive(:subscribe).with('Members', user.email, {'SIZE' => '10', 'HEIGHT' => '20'})
 
         subscription.subscribe
       end
