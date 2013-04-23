@@ -17,9 +17,12 @@ module SpreeHominid
     end
 
     def needs_update?
+      @user.subscribed && attributes_changed?
+    end
+
+    def attributes_changed?
       Config.preferred_merge_vars.values.any? do |attr|
-        method = "#{attr}_changed?".to_sym
-        @user.send(method) if @user.methods.include?(method)
+        @user.send("#{attr}_changed?")
       end
     end
 
