@@ -1,6 +1,6 @@
 Spree::User.class_eval do
   after_create  :subscribe_to_mailchimp
-  after_update  :sync_with_mailchimp
+  around_update :sync_with_mailchimp
   after_destroy :unsubscribe_from_mailchimp
 
 private
@@ -13,6 +13,7 @@ private
   end
 
   def sync_with_mailchimp
+    yield
     subscription.sync
   end
 
