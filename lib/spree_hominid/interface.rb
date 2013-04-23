@@ -6,11 +6,11 @@ module SpreeHominid
       @api = Hominid::API.new(key, api_version: API_VERSION)
     end
 
-    def subscribe(list_name, email)
+    def subscribe(list_name, email, merge_vars = {})
       log "Subscribing #{email} to #{list_name}"
 
       list_id = find_list_id(list_name)
-      @api.list_subscribe(list_id, email, update_existing: true)
+      @api.list_subscribe(list_id, email, merge_vars, update_existing: true)
     end
 
     def unsubscribe(list_name, email)
