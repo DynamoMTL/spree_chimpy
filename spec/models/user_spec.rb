@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::User do
   context "syncing with mail chimp" do
-    let(:subscription) { mock(:subscription) }
+    let(:subscription) { mock(:subscription, needs_update?: true) }
 
     before do
       subscription.should_receive(:subscribe)

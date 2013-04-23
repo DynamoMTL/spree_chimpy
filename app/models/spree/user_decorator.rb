@@ -1,6 +1,8 @@
 Spree::User.class_eval do
+  attr_accessible :subscribed
+
   after_create  :subscribe_to_mailchimp
-  around_update :sync_with_mailchimp
+  around_update :sync_with_mailchimp, if: 'subscription.needs_update?'
   after_destroy :unsubscribe_from_mailchimp
 
 private
