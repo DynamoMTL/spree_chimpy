@@ -9,7 +9,7 @@ module SpreeHominid
     end
 
     def subscribe
-      @interface.subscribe(Config.preferred_list_name, @user.email, users_merge_vars) if @interface && @user.subscribed
+      @interface.subscribe(Config.preferred_list_name, @user.email, merge_vars) if @interface && @user.subscribed
     end
 
     def unsubscribe
@@ -30,21 +30,18 @@ module SpreeHominid
 
   private
     def attributes_changed?
-      merge_vars.values.any? do |attr|
+      Config.preferred_merge_vars.values.any? do |attr|
         @user.send("#{attr}_changed?")
       end
     end
 
-    def users_merge_vars
-      array = merge_vars.except('EMAIL').map do |tag, method|
+    def merge_vars
+      puts Config.preferred_merge_vars.inspect
+      array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
         [tag, @user.send(method)]
       end
 
       Hash[array]
-    end
-
-    def merge_vars
-      Config.preferred_merge_vars
     end
   end
 end
