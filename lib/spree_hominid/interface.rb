@@ -20,6 +20,13 @@ module SpreeHominid
       @api.list_unsubscribe(list_id, email)
     end
 
+    def merge_vars(list_name)
+      log "Finding merge vars for #{list_name}"
+
+      list_id = find_list_id(list_name)
+      @api.list_merge_vars(list_id).map {|record| record['tag'] }
+    end
+
     def find_list_id(name)
       @api.find_list_id_by_name(name)
     end

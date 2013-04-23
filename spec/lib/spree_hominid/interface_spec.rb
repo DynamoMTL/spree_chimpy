@@ -25,6 +25,12 @@ describe SpreeHominid::Interface do
     interface.find_list_id('Members')
   end
 
+  it "checks if merge var exists" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    api.should_receive(:list_merge_vars).with('a3d3').and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    interface.merge_vars('Members').should == %w(FOO BAR)
+  end
+
   # add_merge_var
   # find_merge_var
 end
