@@ -10,7 +10,7 @@ describe SpreeHominid::Interface do
 
   it "subscribes" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
-    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com')
+    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', update_existing: true)
     interface.subscribe('Members', "user@example.com")
   end
 
