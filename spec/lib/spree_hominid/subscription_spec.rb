@@ -1,22 +1,19 @@
 require 'spec_helper'
 
 describe SpreeHominid::Subscription do
-  let(:hominid)      { mock(:hominid) }
- 
+
   context "mail chimp enabled" do
+    let(:interface)    { mock(:interface) }
     let(:user)         { FactoryGirl.build(:user) }
     let(:subscription) { SpreeHominid::Subscription.new(user) }
 
     before do
-      SpreeHominid::Config.preferred_key       = 'secret'
       SpreeHominid::Config.preferred_list_name = 'Members'
-
-      Hominid::API.should_receive(:new).with('secret', api_version: '1.3').and_return(hominid)
+      SpreeHominid::Config.stub(interface: interface)
     end
 
     it "subscribes" do
-      hominid.should_receive(:find_list_by_name).with("Members").and_return('id' => 1234)
-      hominid.should_receive(:list_subscribe).with(1234, user.email)
+      interface.should_receive(:subscribe).with('Members', user.email)
 
       subscription.subscribe
     end
@@ -25,8 +22,7 @@ describe SpreeHominid::Subscription do
     end
 
     it "unsubscribes" do
-      hominid.should_receive(:find_list_by_name).with("Members").and_return('id' => 1234)
-      hominid.should_receive(:list_unsubscribe).with(1234, user.email)
+      interface.should_receive(:unsubscribe).with('Members', user.email)
 
       subscription.unsubscribe
     end
@@ -34,17 +30,14 @@ describe SpreeHominid::Subscription do
 
   context "mail chimp disabled" do
     before do
-      SpreeHominid::Config.preferred_key = nil
-      Hominid::API.should_not_receive(:new)
+      SpreeHominid::Config.stub(interface: nil)
 
       user = FactoryGirl.build(:user)
       @subscription = SpreeHominid::Subscription.new(user)
-
-      hominid.should_not_receive(:list_unsubscribe)
-      hominid.should_not_receive(:list_subscribe)
     end
 
     specify { @subscription.subscribe }
+    specify { @subscription.unsubscribe }
   end
 
 end
