@@ -1,45 +1,69 @@
-# Configure Rails Environment
-ENV['RAILS_ENV'] = 'test'
+require 'spork'
 
-require File.expand_path('../dummy/config/environment.rb',  __FILE__)
+Spork.prefork do
+  # Configure Rails Environment
+  ENV['RAILS_ENV'] = 'test'
 
-require 'rspec/rails'
+  require File.expand_path('../dummy/config/environment.rb',  __FILE__)
 
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
+  require 'rspec/rails'
+  require 'factory_girl'
+  FactoryGirl.find_definitions
 
-# Requires factories defined in spree_core
-require 'spree/core/testing_support/factories'
-require 'spree/core/testing_support/controller_requests'
-require 'spree/core/testing_support/authorization_helpers'
-require 'spree/core/url_helpers'
+end
 
-RSpec.configure do |config|
-  config.include FactoryGirl::Syntax::Methods
+Spork.each_run do
+  # Requires supporting ruby files with custom matchers and macros, etc,
+  # in spec/support/ and its subdirectories.
+  Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
-  # == URL Helpers
-  #
-  # Allows access to Spree's routes in specs:
-  #
-  # visit spree.admin_path
-  # current_path.should eql(spree.products_path)
-  config.include Spree::Core::UrlHelpers
+  # Requires factories defined in spree_core
+  require 'spree/core/testing_support/factories'
+  require 'spree/core/testing_support/controller_requests'
+  require 'spree/core/testing_support/authorization_helpers'
+  require 'spree/core/url_helpers'
 
-  # == Mock Framework
-  #
-  # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
-  config.mock_with :rspec
+  RSpec.configure do |config|
+    config.include FactoryGirl::Syntax::Methods
 
-  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+    # == URL Helpers
+    #
+    # Allows access to Spree's routes in specs:
+    #
+    # visit spree.admin_path
+    # current_path.should eql(spree.products_path)
+    config.include Spree::Core::UrlHelpers
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = true
+    # == Mock Framework
+    #
+    # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
+    #
+    # config.mock_with :mocha
+    # config.mock_with :flexmock
+    # config.mock_with :rr
+    config.mock_with :rspec
+
+    # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+    config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+    # If you're not using ActiveRecord, or you'd prefer not to run each of your
+    # examples within a transaction, remove the following line or assign false
+    # instead of true.
+    config.use_transactional_fixtures = true
+
+    DatabaseCleaner.strategy = :truncation
+
+    config.before(:each) do
+      DatabaseCleaner.start
+    end
+
+    config.after(:each) do
+      DatabaseCleaner.clean
+    end
+  end
+  require 'spree/core/testing_support/factories'
+
+  # Requires supporting ruby files with custom matchers and macros, etc,
+  # in spec/support/ and its subdirectories.
+  Dir[File.join(File.dirname(__FILE__), "support/**/*.rb")].each {|f| require f}
 end

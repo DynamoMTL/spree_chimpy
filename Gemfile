@@ -5,6 +5,7 @@ gem 'spree_auth_devise', :git => "git://github.com/spree/spree_auth_devise", bra
 
 gem 'guard'
 gem 'guard-rspec'
+gem 'guard-spork'
 gem 'rb-inotify', :require => false
 gem 'rb-fsevent', :require => false
 gem 'rb-fchange', :require => false
