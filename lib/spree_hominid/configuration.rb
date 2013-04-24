@@ -9,7 +9,7 @@ module SpreeHominid
     end
 
     def interface
-      Interface.new(preferred_key) if enabled?
+      Interface.new(preferred_key, preferred_list_name) if enabled?
     end
   end
 end
