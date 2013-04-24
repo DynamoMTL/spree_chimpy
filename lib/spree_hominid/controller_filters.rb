@@ -1,5 +1,5 @@
 module SpreeHominid
-  module ApplicationControllerFilters
+  module ControllerFilters
     extend ActiveSupport::Concern
 
     included { before_filter :find_campaign }
