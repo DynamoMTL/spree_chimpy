@@ -62,6 +62,10 @@ module SpreeHominid
                            items:      items)
     end
 
+    def remove_order(order)
+      @api.ecomm_order_del(Config.preferred_store_id, order.number)
+    end
+
   private
     def log(message)
       Rails.logger.info "MAILCHIMP: #{message}"

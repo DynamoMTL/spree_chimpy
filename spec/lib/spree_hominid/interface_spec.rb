@@ -32,13 +32,13 @@ describe SpreeHominid::Interface do
     interface.merge_vars.should == %w(FOO BAR)
   end
 
-  it "can add a merge var" do
+  it "adds a merge var" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
     api.should_receive(:list_merge_var_add).with('a3d3', 'SIZE', 'Your Size')
     interface.add_merge_var('SIZE', 'Your Size')
   end
 
-  it "can add an order" do
+  it "adds an order" do
     Spree::Config.preferred_site_name = "Super Store"
     SpreeHominid::Config.preferred_store_id = "super-store"
 
@@ -67,5 +67,13 @@ describe SpreeHominid::Interface do
     api.should_receive(:ecomm_order_add).with(expected).and_return(true)
 
     interface.add_order(order).should be_true
+  end
+
+  it "removes an order" do
+    SpreeHominid::Config.preferred_store_id = "super-store"
+    order = OpenStruct.new(number: 123)
+    api.should_receive(:ecomm_order_del).with('super-store',123).and_return(true)
+
+    interface.remove_order(order).should be_true
   end
 end
