@@ -15,5 +15,12 @@ module SpreeHominid
     def list_exists?
       interface.find_list_id(preferred_list_name)
     end
+
+    def sync_merge_vars
+      puts preferred_merge_vars.inspect
+      preferred_merge_vars.except('EMAIL').each do |tag, method|
+        interface.add_merge_var(tag.upcase, method.to_s.humanize.titleize)
+      end
+    end
   end
 end

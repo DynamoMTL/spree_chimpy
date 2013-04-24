@@ -20,7 +20,12 @@ module SpreeHominid
     initializer 'spree_hominid.check_list_name' do
       if Config.enabled?
         list_name = SpreeHominid::Config.preferred_list_name
-        Rails.logger.error("spree_hominid: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app") unless Config.list_exists?
+
+        if Config.list_exists?
+          Config.sync_merge_vars
+        else
+          Rails.logger.error("spree_hominid: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app")
+        end
       end
     end
 

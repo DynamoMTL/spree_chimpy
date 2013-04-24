@@ -36,7 +36,6 @@ module SpreeHominid
     end
 
     def merge_vars
-      puts Config.preferred_merge_vars.inspect
       array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
         [tag, @user.send(method)]
       end
