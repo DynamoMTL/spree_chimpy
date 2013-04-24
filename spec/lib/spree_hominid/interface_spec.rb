@@ -44,7 +44,7 @@ describe SpreeHominid::Interface do
 
     variant  = OpenStruct.new(id: 10, sku: 'WDG-22', name: 'Widget', cost_price: 10)
     line     = OpenStruct.new(variant: variant, quantity: 2)
-    order    = OpenStruct.new(id: 123, email: 'user@example.com', total: 100, completed_at: Date.new(2015, 1, 1), tax_total: 0.50, ship_total: 1.50, line_items: [line])
+    order    = OpenStruct.new(number: 123, email: 'user@example.com', total: 100, completed_at: Date.new(2015, 1, 1), tax_total: 0.50, ship_total: 1.50, line_items: [line])
     expected = {
       id:         123,
       email_id:   nil,

@@ -50,7 +50,7 @@ module SpreeHominid
          qty:          line.quantity}
       end
 
-      @api.ecomm_order_add(id:         order.id,
+      @api.ecomm_order_add(id:         order.number,
                            email_id:   email_id,
                            email:      order.email,
                            total:      order.total,
