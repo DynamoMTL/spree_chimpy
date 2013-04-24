@@ -17,8 +17,10 @@ module SpreeHominid
     end
 
     def sync_merge_vars
-      puts preferred_merge_vars.inspect
-      preferred_merge_vars.except('EMAIL').each do |tag, method|
+      existing   = interface.merge_vars + %w(EMAIL)
+      merge_vars = preferred_merge_vars.except(*existing)
+
+      merge_vars.each do |tag, method|
         interface.add_merge_var(tag.upcase, method.to_s.humanize.titleize)
       end
     end
