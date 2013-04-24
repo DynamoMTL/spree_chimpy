@@ -40,6 +40,8 @@ module SpreeHominid
     end
 
     def add_order(order, email_id=nil)
+      log "Adding order #{order.number}"
+
       items = order.line_items.map do |line|
         variant = line.variant
 
@@ -63,6 +65,8 @@ module SpreeHominid
     end
 
     def remove_order(order)
+      log "Removing order #{order.number}"
+
       @api.ecomm_order_del(Config.preferred_store_id, order.number)
     end
 
