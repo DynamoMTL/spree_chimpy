@@ -31,6 +31,11 @@ describe SpreeHominid::Interface do
     interface.merge_vars('Members').should == %w(FOO BAR)
   end
 
+  it "can add a merge var" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    api.should_receive(:list_merge_var_add).with('a3d3', 'SIZE', 'Your Size')
+    interface.add_merge_var('Members', 'SIZE', 'Your Size')
+  end
+
   # add_merge_var
-  # find_merge_var
 end

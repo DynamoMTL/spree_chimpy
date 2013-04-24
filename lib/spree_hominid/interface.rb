@@ -27,6 +27,13 @@ module SpreeHominid
       @api.list_merge_vars(list_id).map {|record| record['tag'] }
     end
 
+    def add_merge_var(list_name, tag, description)
+      log "Adding merge var #{tag} to #{list_name}"
+
+      list_id = find_list_id(list_name)
+      @api.list_merge_var_add(list_id, tag, description)
+    end
+
     def find_list_id(name)
       @api.find_list_id_by_name(name)
     end
