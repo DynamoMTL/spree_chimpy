@@ -40,6 +40,10 @@ describe SpreeHominid::Configuration do
     end
 
     it "doesnt sync if all exist" do
+      interface.should_receive(:merge_vars).and_return(%w(EMAIL FNAME LNAME))
+      interface.should_not_receive(:add_merge_var)
+
+      configuration.sync_merge_vars
     end
   end
 
