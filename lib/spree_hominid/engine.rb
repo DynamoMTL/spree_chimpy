@@ -28,7 +28,7 @@ module SpreeHominid
     end
 
     def self.activate
-      Spree::BaseController.send(:include, SpreeHominid::ControllerFilters)
+      Spree::StoreController.send(:include, SpreeHominid::ControllerFilters)
 
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
