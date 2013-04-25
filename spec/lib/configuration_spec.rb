@@ -6,14 +6,14 @@ describe Spree::Hominid::Configuration do
     before  { Spree::Hominid::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:interface) }
     subject { config(key: '1234', list_name: 'Members') }
 
-    specify              { should be_enabled }
+    specify              { should be_configured }
     its(:list_interface) { should == :interface }
   end
 
   context "disabled" do
     subject { config(key: nil) }
 
-    specify              { should_not be_enabled }
+    specify              { should_not be_configured }
     its(:list_interface) { should be_nil }
   end
 
