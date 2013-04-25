@@ -1,6 +1,6 @@
 module Spree::Hominid
   module Interface
-    class Order
+    class Orders
       API_VERSION = '1.3'
 
       def initialize(key)

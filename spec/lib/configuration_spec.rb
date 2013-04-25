@@ -3,18 +3,23 @@ require 'spec_helper'
 describe Spree::Hominid::Configuration do
 
   context "enabled" do
-    before  { Spree::Hominid::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:interface) }
+    before do
+      Spree::Hominid::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:list)
+      Spree::Hominid::Interface::Orders.should_receive(:new).any_number_of_times.with('1234').and_return(:orders)
+    end
     subject { config(key: '1234', list_name: 'Members') }
 
-    specify              { should be_configured }
-    its(:list_interface) { should == :interface }
+    specify      { should be_configured }
+    its(:list)   { should == :list }
+    its(:orders) { should == :orders }
   end
 
   context "disabled" do
     subject { config(key: nil) }
 
-    specify              { should_not be_configured }
-    its(:list_interface) { should be_nil }
+    specify      { should_not be_configured }
+    its(:list)   { should be_nil }
+    its(:orders) { should be_nil }
   end
 
   context "sync merge vars" do

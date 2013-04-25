@@ -3,7 +3,7 @@ module Spree::Hominid
     def initialize(user)
       @user       = user
       @changes    = user.changes.dup
-      @interface  = Config.list_interface
+      @interface  = Config.list
     end
 
     def subscribe
