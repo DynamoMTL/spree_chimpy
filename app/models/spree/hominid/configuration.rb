@@ -5,12 +5,12 @@ module Spree::Hominid
     preference :list_name,  :string, default: 'Members'
     preference :merge_vars, :hash,   default: {'EMAIL' => :email}
 
-    def enabled?
+    def configured?
       preferred_key.present?
     end
 
     def list_interface
-      Interface::List.new(preferred_key, preferred_list_name) if enabled?
+      Interface::List.new(preferred_key, preferred_list_name) if configured?
     end
 
     def list_exists?

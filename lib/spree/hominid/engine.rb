@@ -16,7 +16,7 @@ module Spree::Hominid
     end
 
     initializer 'spree_hominid.check_list_name' do
-      if Config.enabled?
+      if Config.configured?
         list_name = Spree::Hominid::Config.preferred_list_name
 
         if Config.list_exists?
