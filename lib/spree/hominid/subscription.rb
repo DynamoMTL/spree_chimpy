@@ -18,7 +18,9 @@ module Spree::Hominid
       @user.subscribed && attributes_changed?
     end
 
-    def sync
+    def sync(&block)
+      block.call
+
       if @changes[:subscribed] && !@user.subscribed
         unsubscribe
       else

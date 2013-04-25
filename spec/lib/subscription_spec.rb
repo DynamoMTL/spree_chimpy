@@ -52,9 +52,11 @@ describe Spree::Hominid::Subscription do
       end
 
       context "when update not needed" do
-        it "doesnt call sync" do
+        it "still calls sync, and does nothing" do
           subscription.stub(needs_update?: false)
-          subscription.should_not_receive(:sync)
+          subscription.should_receive(:sync)
+          subscription.should_not_receive(:subscribe)
+          subscription.should_not_receive(:unsubscribe)
           user.save
         end
       end
@@ -94,7 +96,7 @@ describe Spree::Hominid::Subscription do
 
     specify { @subscription.subscribe }
     specify { @subscription.unsubscribe }
-    specify { @subscription.sync }
+    specify { @subscription.sync {} }
   end
 
 end

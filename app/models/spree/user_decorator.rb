@@ -1,25 +1,18 @@
 Spree::User.class_eval do
+  extend Forwardable
+
   attr_accessible :subscribed
 
-  after_create  :subscribe_to_mailchimp
-  around_update :sync_with_mailchimp, if: 'subscription.needs_update?'
-  after_destroy :unsubscribe_from_mailchimp
+  after_create  :subscribe
+  around_update :sync_subscription
+  after_destroy :unsubscribe
+
+  def_delegators :subscription, :subscribe, :unsubscribe
 
 private
+  def_delegator :subscription, :sync, :sync_subscription
+
   def subscription
     Spree::Hominid::Subscription.new(self)
-  end
-
-  def subscribe_to_mailchimp
-    subscription.subscribe
-  end
-
-  def sync_with_mailchimp
-    yield
-    subscription.sync
-  end
-
-  def unsubscribe_from_mailchimp
-    subscription.unsubscribe
   end
 end
