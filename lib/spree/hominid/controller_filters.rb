@@ -1,4 +1,4 @@
-module SpreeHominid
+module Spree::Hominid
   module ControllerFilters
     extend ActiveSupport::Concern
 

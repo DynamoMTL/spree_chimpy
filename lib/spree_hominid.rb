@@ -1,10 +1,10 @@
 require 'spree_core'
-require 'spree_hominid/engine'
-require 'spree_hominid/subscription'
+require 'spree/hominid/engine'
+require 'spree/hominid/subscription'
 require 'hominid'
 
-module SpreeHominid
+module Spree::Hominid
   def self.config(&block)
-    yield(SpreeHominid::Config)
+    yield(Spree::Hominid::Config)
   end
 end

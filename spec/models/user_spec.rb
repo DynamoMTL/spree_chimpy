@@ -6,7 +6,7 @@ describe Spree::User do
 
     before do
       subscription.should_receive(:subscribe)
-      SpreeHominid::Subscription.should_receive(:new).at_least(1).and_return(subscription)
+      Spree::Hominid::Subscription.should_receive(:new).at_least(1).and_return(subscription)
       @user = FactoryGirl.create(:user)
     end
 

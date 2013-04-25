@@ -7,7 +7,7 @@ Spree::User.class_eval do
 
 private
   def subscription
-    SpreeHominid::Subscription.new(self)
+    Spree::Hominid::Subscription.new(self)
   end
 
   def subscribe_to_mailchimp

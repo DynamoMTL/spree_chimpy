@@ -1,4 +1,4 @@
-module SpreeHominid
+module Spree::Hominid
   module Generators
     class InstallGenerator < Rails::Generators::Base
 

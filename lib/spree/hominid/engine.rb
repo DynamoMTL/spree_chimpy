@@ -1,4 +1,4 @@
-module SpreeHominid
+module Spree::Hominid
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
@@ -12,12 +12,12 @@ module SpreeHominid
     end
 
     initializer "spree.hominid.environment", before: :load_config_initializers do |app|
-      SpreeHominid::Config = SpreeHominid::Configuration.new
+      Spree::Hominid::Config = Spree::Hominid::Configuration.new
     end
 
     initializer 'spree_hominid.check_list_name' do
       if Config.enabled?
-        list_name = SpreeHominid::Config.preferred_list_name
+        list_name = Spree::Hominid::Config.preferred_list_name
 
         if Config.list_exists?
           Config.sync_merge_vars
@@ -28,7 +28,7 @@ module SpreeHominid
     end
 
     def self.activate
-      Spree::StoreController.send(:include, SpreeHominid::ControllerFilters)
+      Spree::StoreController.send(:include, Spree::Hominid::ControllerFilters)
 
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)

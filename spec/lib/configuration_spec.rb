@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe SpreeHominid::Configuration do
+describe Spree::Hominid::Configuration do
 
   context "enabled" do
-    before  { SpreeHominid::Interface.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:interface) }
+    before  { Spree::Hominid::Interface.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:interface) }
     subject { config(key: '1234', list_name: 'Members') }
 
     specify         { should be_enabled }
@@ -22,7 +22,7 @@ describe SpreeHominid::Configuration do
     let(:configuration) { config(key: '1234',
                                  list_name: 'Members',
                                  merge_vars: {'EMAIL' => :email, 'FNAME' => :first_name, 'LNAME' => :last_name})}
-    before { SpreeHominid::Interface.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(interface) }
+    before { Spree::Hominid::Interface.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(interface) }
 
     it "adds var for each" do
       interface.should_receive(:merge_vars).and_return([])
@@ -48,7 +48,7 @@ describe SpreeHominid::Configuration do
   end
 
   def config(options = {})
-    config = SpreeHominid::Configuration.new
+    config = Spree::Hominid::Configuration.new
     config.preferred_key        = options[:key]
     config.preferred_list_name  = options[:list_name]
     config.preferred_merge_vars = options[:merge_vars]

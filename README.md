@@ -1,4 +1,4 @@
-SpreeHominid
+Spree::Hominid
 ============
 
 Introduction goes here.

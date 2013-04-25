@@ -1,4 +1,4 @@
-module SpreeHominid
+module Spree::Hominid
   class Interface
     API_VERSION = '1.3'
 
@@ -60,7 +60,7 @@ module SpreeHominid
                            shipping:   order.ship_total,
                            tax:        order.tax_total,
                            store_name: Spree::Config.preferred_site_name,
-                           store_id:   SpreeHominid::Config.preferred_store_id,
+                           store_id:   Spree::Hominid::Config.preferred_store_id,
                            items:      items)
     end
 

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe SpreeHominid::Interface do
-  let(:interface) { SpreeHominid::Interface.new('1234', 'Members') }
+describe Spree::Hominid::Interface do
+  let(:interface) { Spree::Hominid::Interface.new('1234', 'Members') }
   let(:api)       { mock(:api) }
 
   before do
-    SpreeHominid::Config.preferred_key = '1234'
+    Spree::Hominid::Config.preferred_key = '1234'
     Hominid::API.should_receive(:new).with('1234', api_version: '1.3').and_return(api)
   end
 
@@ -40,7 +40,7 @@ describe SpreeHominid::Interface do
 
   it "adds an order" do
     Spree::Config.preferred_site_name = "Super Store"
-    SpreeHominid::Config.preferred_store_id = "super-store"
+    Spree::Hominid::Config.preferred_store_id = "super-store"
 
     variant  = OpenStruct.new(id: 10, sku: 'WDG-22', name: 'Widget', cost_price: 10)
     line     = OpenStruct.new(variant: variant, quantity: 2)
@@ -70,7 +70,7 @@ describe SpreeHominid::Interface do
   end
 
   it "removes an order" do
-    SpreeHominid::Config.preferred_store_id = "super-store"
+    Spree::Hominid::Config.preferred_store_id = "super-store"
     order = OpenStruct.new(number: 123)
     api.should_receive(:ecomm_order_del).with('super-store',123).and_return(true)
 

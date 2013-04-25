@@ -1,4 +1,4 @@
-module SpreeHominid
+module Spree::Hominid
   class Subscription
     API_VERSION = '1.3'
 
