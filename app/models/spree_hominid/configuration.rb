@@ -1,5 +1,5 @@
 module SpreeHominid
-  class Configuration < Spree::Configuration
+  class Configuration < Spree::Preferences::Configuration
     preference :store_id,   :string, default: 'spree'
     preference :key,        :string
     preference :list_name,  :string, default: 'Members'

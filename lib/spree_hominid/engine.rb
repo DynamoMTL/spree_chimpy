@@ -1,7 +1,7 @@
 module SpreeHominid
   class Engine < Rails::Engine
     require 'spree/core'
-    isolate_namespace SpreeHominid
+    isolate_namespace Spree
     engine_name 'spree_hominid'
 
     config.autoload_paths += %W(#{config.root}/lib)
@@ -11,10 +11,8 @@ module SpreeHominid
       g.test_framework :rspec
     end
 
-    initializer 'spree_hominid.configuration', before: 'spree.environment' do
-      module ::SpreeHominid
-        Config = Configuration.new
-      end
+    initializer "spree.hominid.environment", before: :load_config_initializers do |app|
+      SpreeHominid::Config = SpreeHominid::Configuration.new
     end
 
     initializer 'spree_hominid.check_list_name' do
