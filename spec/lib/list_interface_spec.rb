@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Hominid::Interface do
-  let(:interface) { Spree::Hominid::Interface.new('1234', 'Members') }
+describe Spree::Hominid::Interface::List do
+  let(:interface) { Spree::Hominid::Interface::List.new('1234', 'Members') }
   let(:api)       { mock(:api) }
 
   before do

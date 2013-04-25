@@ -9,20 +9,20 @@ module Spree::Hominid
       preferred_key.present?
     end
 
-    def interface
-      Interface.new(preferred_key, preferred_list_name) if enabled?
+    def list_interface
+      Interface::List.new(preferred_key, preferred_list_name) if enabled?
     end
 
     def list_exists?
-      interface.find_list_id(preferred_list_name)
+      list_interface.find_list_id(preferred_list_name)
     end
 
     def sync_merge_vars
-      existing   = interface.merge_vars + %w(EMAIL)
+      existing   = list_interface.merge_vars + %w(EMAIL)
       merge_vars = preferred_merge_vars.except(*existing)
 
       merge_vars.each do |tag, method|
-        interface.add_merge_var(tag.upcase, method.to_s.humanize.titleize)
+        list_interface.add_merge_var(tag.upcase, method.to_s.humanize.titleize)
       end
     end
   end

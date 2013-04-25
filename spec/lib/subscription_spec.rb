@@ -8,7 +8,7 @@ describe Spree::Hominid::Subscription do
     before do
       Spree::Hominid::Config.preferred_list_name  = 'Members'
       Spree::Hominid::Config.preferred_merge_vars = {'EMAIL' => :email}
-      Spree::Hominid::Config.stub(interface: interface)
+      Spree::Hominid::Config.stub(list_interface: interface)
     end
 
     context "subscribing" do
@@ -86,7 +86,7 @@ describe Spree::Hominid::Subscription do
 
   context "mail chimp disabled" do
     before do
-      Spree::Hominid::Config.stub(interface: nil)
+      Spree::Hominid::Config.stub(list_interface: nil)
 
       user = FactoryGirl.build(:user, subscribed: true)
       @subscription = Spree::Hominid::Subscription.new(user)
