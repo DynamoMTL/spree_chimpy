@@ -11,7 +11,7 @@ describe Spree::User do
     end
 
     it "submits after saving" do
-      subscription.should_receive(:sync)
+      subscription.should_receive(:resubscribe)
 
       @user.save
     end

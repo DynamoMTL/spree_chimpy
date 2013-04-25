@@ -34,7 +34,7 @@ describe Spree::Hominid::Subscription do
       end
     end
 
-    context "sync" do
+    context "resubscribe" do
       let(:user)         { FactoryGirl.create(:user, subscribed: true) }
       let(:subscription) { mock(:subscription) }
 
@@ -44,17 +44,17 @@ describe Spree::Hominid::Subscription do
       end
 
       context "when update needed" do
-        it "calls sync" do
+        it "calls resubscribe" do
           subscription.stub(needs_update?: true)
-          subscription.should_receive(:sync)
+          subscription.should_receive(:resubscribe)
           user.save
         end
       end
 
       context "when update not needed" do
-        it "still calls sync, and does nothing" do
+        it "still calls resubscribe, and does nothing" do
           subscription.stub(needs_update?: false)
-          subscription.should_receive(:sync)
+          subscription.should_receive(:resubscribe)
           subscription.should_not_receive(:subscribe)
           subscription.should_not_receive(:unsubscribe)
           user.save
@@ -96,7 +96,7 @@ describe Spree::Hominid::Subscription do
 
     specify { @subscription.subscribe }
     specify { @subscription.unsubscribe }
-    specify { @subscription.sync {} }
+    specify { @subscription.resubscribe {} }
   end
 
 end

@@ -6,6 +6,10 @@ module Spree::Hominid
       @interface  = Config.list
     end
 
+    def needs_update?
+      @user.subscribed && attributes_changed?
+    end
+
     def subscribe
       @interface.subscribe(Config.preferred_list_name, @user.email, merge_vars) if @interface && @user.subscribed
     end
@@ -14,11 +18,7 @@ module Spree::Hominid
       @interface.unsubscribe(Config.preferred_list_name, @user.email) if @interface
     end
 
-    def needs_update?
-      @user.subscribed && attributes_changed?
-    end
-
-    def sync(&block)
+    def resubscribe(&block)
       block.call
 
       if @changes[:subscribed] && !@user.subscribed
