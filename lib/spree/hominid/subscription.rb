@@ -1,7 +1,5 @@
 module Spree::Hominid
   class Subscription
-    API_VERSION = '1.3'
-
     def initialize(user)
       @user       = user
       @changes    = user.changes.dup
