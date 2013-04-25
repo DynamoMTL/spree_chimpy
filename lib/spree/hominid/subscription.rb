@@ -11,11 +11,11 @@ module Spree::Hominid
     end
 
     def subscribe
-      @interface.subscribe(Config.preferred_list_name, @user.email, merge_vars) if @interface && @user.subscribed
+      @interface.subscribe(@user.email, merge_vars) if update_allowed?
     end
 
     def unsubscribe
-      @interface.unsubscribe(Config.preferred_list_name, @user.email) if @interface
+      @interface.unsubscribe(@user.email) if update_allowed?
     end
 
     def resubscribe(&block)
@@ -29,6 +29,10 @@ module Spree::Hominid
     end
 
   private
+    def update_allowed?
+      @interface && @user.subscribed
+    end
+
     def attributes_changed?
       Config.preferred_merge_vars.values.any? do |attr|
         @user.send("#{attr}_changed?")

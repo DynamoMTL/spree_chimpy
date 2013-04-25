@@ -28,7 +28,7 @@ describe Spree::Hominid::Subscription do
       end
 
       it "subscribes" do
-        interface.should_receive(:subscribe).with('Members', user.email, {'SIZE' => '10', 'HEIGHT' => '20'})
+        interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'})
 
         subscription.subscribe
       end
@@ -39,7 +39,7 @@ describe Spree::Hominid::Subscription do
       let(:subscription) { mock(:subscription) }
 
       before do
-        interface.should_receive(:subscribe).with('Members', user.email)
+        interface.should_receive(:subscribe).with(user.email)
         user.stub(subscription: subscription)
       end
 
@@ -63,12 +63,22 @@ describe Spree::Hominid::Subscription do
     end
 
     context "subscribing" do
-      let(:user)         { FactoryGirl.build(:user, subscribed: true) }
       let(:subscription) { Spree::Hominid::Subscription.new(user) }
 
-      it "unsubscribes" do
-        interface.should_receive(:unsubscribe).with('Members', user.email)
-        subscription.unsubscribe
+      context "subscribed user" do
+        let(:user) { FactoryGirl.build(:user, subscribed: true) }
+        it "unsubscribes" do
+          interface.should_receive(:unsubscribe).with(user.email)
+          subscription.unsubscribe
+        end
+      end
+
+      context "non-subscribed user" do
+        let(:user) { FactoryGirl.build(:user, subscribed: false) }
+        it "does nothing" do
+          interface.should_not_receive(:unsubscribe)
+          subscription.unsubscribe
+        end
       end
     end
 
