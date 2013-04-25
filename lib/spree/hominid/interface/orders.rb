@@ -33,12 +33,9 @@ module Spree::Hominid
       end
 
       def remove(number)
-        log "Removing order #{number}"
+        log "Attempting to remove order #{number}"
 
         @api.ecomm_order_del(Config.preferred_store_id, number)
-      end
-
-      def exists?(number)
       end
 
     private

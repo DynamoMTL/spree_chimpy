@@ -3,26 +3,20 @@ module Spree::Hominid
     def initialize(order)
       @order = order
 
-      sync
+      sync if Config.configured?
     end
 
     def sync
-      if Config.configured?
-        remove if exists?
-        add unless @order.canceled?
-      end
-    end
-
-    def exists?
-      Config.orders.exists?(@order.number)
+      remove
+      add
     end
 
     def remove
-      Config.orders.remove(@order.number)
+      Config.orders.remove(@order.number) rescue nil
     end
 
     def add
-      Config.orders.add(@order)
+      Config.orders.add(@order) unless @order.canceled?
     end
   end
 end

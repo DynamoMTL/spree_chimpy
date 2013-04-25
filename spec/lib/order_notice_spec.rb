@@ -14,7 +14,6 @@ describe Spree::Hominid::OrderNotice do
       let(:order) { FactoryGirl.create(:completed_order_with_totals, state: 'canceled')}
 
       it "removes order" do
-        interface.should_receive(:exists?).with(order.number).and_return(true)
         interface.should_receive(:remove).with(order.number)
 
         Spree::Hominid::Config.preferred_key = '1234'
@@ -27,7 +26,6 @@ describe Spree::Hominid::OrderNotice do
 
       context "order already exists in mail chimp" do
         it "removes order first" do
-          interface.should_receive(:exists?).with(order.number).and_return(true)
           interface.should_receive(:remove).with(order.number)
           interface.should_receive(:add).with(order)
 
@@ -38,9 +36,8 @@ describe Spree::Hominid::OrderNotice do
 
       context "order does not exist in mail chimp" do
         it "adds order" do
-          interface.should_receive(:exists?).with(order.number).and_return(false)
+          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
           interface.should_receive(:add).with(order)
-          interface.should_not_receive(:remove)
 
           Spree::Hominid::Config.preferred_key = '1234'
           Spree::Hominid::OrderNotice.new(order)
