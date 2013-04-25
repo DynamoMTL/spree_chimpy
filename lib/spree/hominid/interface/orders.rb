@@ -7,7 +7,7 @@ module Spree::Hominid
         @api       = Hominid::API.new(key, api_version: API_VERSION)
       end
 
-      def add_order(order, email_id=nil)
+      def add(order, email_id=nil)
         log "Adding order #{order.number}"
 
         items = order.line_items.map do |line|
@@ -32,10 +32,13 @@ module Spree::Hominid
                              items:      items)
       end
 
-      def remove_order(order)
-        log "Removing order #{order.number}"
+      def remove(number)
+        log "Removing order #{number}"
 
-        @api.ecomm_order_del(Config.preferred_store_id, order.number)
+        @api.ecomm_order_del(Config.preferred_store_id, number)
+      end
+
+      def exists?(number)
       end
 
     private

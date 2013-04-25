@@ -37,14 +37,13 @@ describe Spree::Hominid::Interface::Orders do
 
     api.should_receive(:ecomm_order_add).with(expected).and_return(true)
 
-    interface.add_order(order).should be_true
+    interface.add(order).should be_true
   end
 
   it "removes an order" do
     Spree::Hominid::Config.preferred_store_id = "super-store"
-    order = OpenStruct.new(number: 123)
     api.should_receive(:ecomm_order_del).with('super-store',123).and_return(true)
 
-    interface.remove_order(order).should be_true
+    interface.remove(123).should be_true
   end
 end
