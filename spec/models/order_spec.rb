@@ -18,12 +18,12 @@ describe Spree::Order do
 
     it "doesnt update when order is not completed" do
       Spree::Hominid::OrderNotice.should_not_receive(:new)
-      @not_completed_order.save
+      @not_completed_order.update!
     end
 
     it "updates when order is completed" do
       Spree::Hominid::OrderNotice.should_receive(:new).with(@completed_order)
-      @completed_order.save
+      @completed_order.update!
     end
   end
 end
