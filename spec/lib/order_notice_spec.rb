@@ -45,7 +45,25 @@ describe Spree::Hominid::OrderNotice do
       end
 
       context "order has a source" do
-        it "uses campaign api"
+        let(:order) { FactoryGirl.create(:completed_order_with_totals)}
+
+        before do
+          order.create_source
+          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
+          Spree::Hominid::Config.preferred_key = '1234'
+        end
+
+        it "uses campaign id" do
+          order.source.campaign_id = 123
+          interface.should_receive(:add).with(hash_including(campaign_id: 123))
+          Spree::Hominid::OrderNotice.new(order)
+        end
+
+        it "uses email id" do
+          order.source.email_id = 123
+          interface.should_receive(:add).with(hash_including(email_id: 123))
+          Spree::Hominid::OrderNotice.new(order)
+        end
       end
 
       def order_options(order)
