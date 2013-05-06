@@ -1,10 +1,10 @@
 Spree::Order.class_eval do
   has_one :source, class_name: 'Spree::Hominid::OrderSource'
 
-  after_save :notify_mail_chimp, if: :completed?
+  register_update_hook :notify_mail_chimp
 
 private
   def notify_mail_chimp
-    Spree::Hominid::OrderNotice.new(self)
+    Spree::Hominid::OrderNotice.new(self) if completed?
   end
 end
