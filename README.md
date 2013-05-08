@@ -83,6 +83,13 @@ Be sure to bundle your dependencies and then create a dummy test app for the spe
 
     $ bundle
     $ bundle exec rake test_app
+
+To run tests:
+
     $ bundle exec rspec spec
+
+To run tests with guard (preferred):
+
+    $ bundle exec guard
 
 Copyright (c) 2013 Joshua Nussbaum, released under the New BSD License
