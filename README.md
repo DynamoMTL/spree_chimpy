@@ -97,4 +97,4 @@ To run tests with guard (preferred):
 
     $ bundle exec guard
 
-Copyright (c) 2013 Joshua Nussbaum, released under the New BSD License
+Copyright (c) 2013 Dynamo, released under the New BSD License
