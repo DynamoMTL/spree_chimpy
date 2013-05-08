@@ -1,13 +1,23 @@
-Spree::Hominid
+Spree/MailChimp Integration
 ============
 
-Introduction goes here.
+Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](www.mailchimp.com)
 
+- list subscription and unscubribing
+- define and sync merge variables
+- order submitition
+- campaign tracking
+- delayed job integration
 
-Example
-=======
+Installing
+-----------
 
-Example goes here.
+TODO
+
+Configuring
+----------
+
+TODO
 
 Testing
 -------
