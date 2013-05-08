@@ -70,17 +70,11 @@ end
 For deployment on Heroku, you can configure the API username/password with environment variables:
 
 ```ruby
-# config/initializers/spree.rb
-Spree.config do |config|
-  config.shipstation_username = ENV['SHIPSTATION_USERNAME']
-  config.shipstation_password = ENV['SHIPSTATION_PASSWORD']
-
-
-  config.shipstation_weight_units = "Grams" # Grams, Ounces or Pounds
-  config.send_shipped_email = false
+# config/initializers/spree_hominid.rb
+Spree::Hominid.config do |config|
+  config.preferred_key = ENV['MAILCHIMP_API_KEY']
 end
 ```
-TODO
 
 Testing
 -------
