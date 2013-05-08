@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = ''
   s.required_ruby_version = '>= 1.8.7'
 
-  s.author    = 'Joshue Nussbaum'
+  s.author    = 'Joshua Nussbaum'
   s.email     = 'josh@godynamo.com'
   s.homepage  = 'http://www.godynamo.com'
 
