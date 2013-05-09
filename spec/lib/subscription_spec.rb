@@ -37,7 +37,7 @@ describe Spree::Chimpy::Subscription do
 
     context "subscribing subscribers" do
       let(:subscriber)   { Spree::Chimpy::Subscriber.new(email: "test@example.com") }
-      let(:subscription) { Spree::Hominid::Subscription.new(subscriber) }
+      let(:subscription) { Spree::Chimpy::Subscription.new(subscriber) }
 
       it "subscribes subscribers" do
         interface.should_receive(:subscribe).with(subscriber.email, {})

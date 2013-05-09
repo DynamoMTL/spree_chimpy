@@ -11,7 +11,10 @@ module Spree::Chimpy
     end
 
     def subscribe
-      @interface.subscribe(@model.email, merge_vars) if update_allowed?
+      if update_allowed?
+        @interface.subscribe(@model.email, merge_vars)
+        @interface.segment_emails([@model.email]) if @model.kind_of? Spree.user_class
+      end
     end
 
     def unsubscribe
