@@ -1,47 +1,55 @@
 module Spree::Hominid
   class Subscription
-    def initialize(user)
-      @user       = user
-      @changes    = user.changes.dup
+    def initialize(model)
+      @model      = model
+      @changes    = model.changes.dup
       @interface  = Config.list
     end
 
     def needs_update?
-      @user.subscribed && attributes_changed?
+      update_allowed? && (merge_vars_changed? || unsubscribing?)
     end
 
     def subscribe
-      @interface.subscribe(@user.email, merge_vars) if update_allowed?
+      @interface.subscribe(@model.email, merge_vars) if update_allowed?
     end
 
     def unsubscribe
-      @interface.unsubscribe(@user.email) if update_allowed?
+      @interface.unsubscribe(@model.email) if update_allowed?
     end
 
     def resubscribe(&block)
       block.call
 
-      if @changes[:subscribed] && !@user.subscribed
+      if unsubscribing?
         unsubscribe
-      else
+      elsif subscribing? || merge_vars_changed?
         subscribe
       end
     end
 
   private
-    def update_allowed?
-      @interface && @user.subscribed
+    def subscribing?
+      @model.new_record? && @model.subscribed
     end
 
-    def attributes_changed?
+    def unsubscribing?
+      @model.persisted? && !@model.subscribed && @model.subscribed_changed?
+    end
+
+    def update_allowed?
+      @interface && (@model.subscribed || unsubscribing?)
+    end
+
+    def merge_vars_changed?
       Config.preferred_merge_vars.values.any? do |attr|
-        @user.send("#{attr}_changed?")
+        @model.send("#{attr}_changed?")
       end
     end
 
     def merge_vars
       array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
-        [tag, @user.send(method)]
+        [tag, @model.send(method)]
       end
 
       Hash[array]

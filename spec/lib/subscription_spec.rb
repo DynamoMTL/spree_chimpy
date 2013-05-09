@@ -91,8 +91,8 @@ describe Spree::Hominid::Subscription do
         subscribed.email += '.com'
       end
 
-      specify { Spree::Hominid::Subscription.new(subscribed).should         be_needs_update}
-      specify { Spree::Hominid::Subscription.new(not_subscribed).should_not be_needs_update}
+      specify { Spree::Hominid::Subscription.new(subscribed).needs_update?.should     be_true }
+      specify { Spree::Hominid::Subscription.new(not_subscribed).needs_update?.should be_false }
     end
   end
 
