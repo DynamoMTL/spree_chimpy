@@ -3,6 +3,7 @@ module Spree::Hominid
     preference :store_id,   :string, default: 'spree'
     preference :key,        :string
     preference :list_name,  :string, default: 'Members'
+    preference :customer_static_segment_id,   :string
     preference :merge_vars, :hash,   default: {'EMAIL' => :email}
 
     def configured?
@@ -10,7 +11,7 @@ module Spree::Hominid
     end
 
     def list
-      Interface::List.new(preferred_key, preferred_list_name) if configured?
+      Interface::List.new(preferred_key, preferred_list_name, preferred_customer_static_segment_id) if configured?
     end
 
     def orders

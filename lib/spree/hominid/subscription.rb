@@ -11,7 +11,10 @@ module Spree::Hominid
     end
 
     def subscribe
-      @interface.subscribe(@user.email, merge_vars) if update_allowed?
+      if update_allowed?
+        @interface.subscribe(@user.email, merge_vars)
+        @interface.segment_emails([@user.email]) if @user.kind_of? Spree.user_class
+      end
     end
 
     def unsubscribe
