@@ -1,35 +1,36 @@
 class Spree::Hominid::Subscriber
+  include ActiveModel::Validations
+  include ActiveModel::Conversion
+  include ActiveModel::MassAssignmentSecurity
+  extend ActiveModel::Naming
+
+  attr_accessor :email
+
+  validates :email, presence: true
+
   def initialize(attributes = {})
+    Spree::Hominid::Config.preferred_merge_vars.values.each do |value|
+      self.class.send(:attr_accessor, value)
+    end
+    self.class.send(:attr_accessible, Spree::Hominid::Config.preferred_merge_vars.values)
     attributes.each do |name, value|
-      self.class.send(:define_method, "#{name}_changed?") do
-        false
-      end
-      self.class.send(:define_method, name) do
-        value
-      end
+      send("#{name}=", value)
     end
-    Spree::Hominid::Config.preferred_merge_vars.values.reject { |k| k == :email }.each do |var|
-      unless self.class.instance_methods.include? var
-        self.class.send(:define_method, var) do
-          ""
-        end
-        self.class.send(:define_method, "#{var}_changed?") do
-          false
-        end
-      end
-    end
-  end
-
-  def changes
-    { 'subscribed' => [false, true] }
-  end
-
-  def subscribed_changed?
-    true
   end
 
   def subscribed
     true
   end
 
+  def subscribed_changed?
+    true
+  end
+
+  def changes
+    { 'subscribed' => [false, true] }
+  end
+
+  def persisted?
+    false
+  end
 end

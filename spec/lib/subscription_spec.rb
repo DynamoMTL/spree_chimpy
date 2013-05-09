@@ -36,7 +36,7 @@ describe Spree::Hominid::Subscription do
       end
 
       it "subscribes subscribers" do
-        interface.should_receive(:subscribe).with(subscriber.email, {'SIZE' => '', 'HEIGHT' => ''})
+        interface.should_receive(:subscribe).with(subscriber.email, {'SIZE' => nil, 'HEIGHT' => nil})
         subscriber_subscription = Spree::Hominid::Subscription.new(subscriber)
         subscriber_subscription.subscribe
       end
