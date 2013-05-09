@@ -16,7 +16,7 @@ module Spree::Chimpy
     end
 
     initializer 'spree_chimpy.check_list_name' do
-      if Config.configured?
+      if !Rails.env.test? && Config.configured?
         list_name = Spree::Chimpy::Config.preferred_list_name
 
         if Config.list_exists?
