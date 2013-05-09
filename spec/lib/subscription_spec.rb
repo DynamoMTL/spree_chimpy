@@ -33,11 +33,11 @@ describe Spree::Hominid::Subscription do
       end
 
     end
-    
+
     context "subscribing subscribers" do
-      let(:subscriber)   { Spree::Hominid::Subscriber.new(email: "test@example.com") }
+      let(:subscriber)   { Spree::Chimpy::Subscriber.new(email: "test@example.com") }
       let(:subscription) { Spree::Hominid::Subscription.new(subscriber) }
-      
+
       it "subscribes subscribers" do
         interface.should_receive(:subscribe).with(subscriber.email, {})
         subscription.subscribe

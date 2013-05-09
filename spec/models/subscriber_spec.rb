@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::Hominid::Subscriber do
+describe Spree::Chimpy::Subscriber do
   context "without email" do
-    let(:subscriber) { Spree::Hominid::Subscriber.new }
+    let(:subscriber) { Spree::Chimpy::Subscriber.new }
     it "is invalid" do
       subscriber.should_not be_valid
     end
