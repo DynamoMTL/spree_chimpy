@@ -31,7 +31,7 @@ Then, run bundler
 MailChimp Setup
 ---------------
 
-If you dont already have an account, you can (create one here)[https://login.mailchimp.com/signup/], its free
+If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/), its free
 Make sure you create a list. The list name setting defaults to "Members", but you configure any name you want via the `#preferred_list_name` setting
 
 Spree Setup
