@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   class Subscription
     def initialize(model)
       @model      = model

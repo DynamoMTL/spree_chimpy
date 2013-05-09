@@ -10,7 +10,7 @@ if Spree.user_class
 
   private
     def subscription
-      Spree::Hominid::Subscription.new(self)
+      Spree::Chimpy::Subscription.new(self)
     end
   end
 end

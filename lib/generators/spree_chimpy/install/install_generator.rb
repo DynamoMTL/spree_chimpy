@@ -1,8 +1,8 @@
-module Spree::Hominid
+module Spree::Chimpy
   module Generators
     class InstallGenerator < Rails::Generators::Base
       def add_migrations
-        run 'bundle exec rake railties:install:migrations FROM=spree_hominid'
+        run 'bundle exec rake railties:install:migrations FROM=spree_chimpy'
       end
 
       def run_migrations
