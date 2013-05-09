@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   module Interface
     class Orders
       API_VERSION = '1.3'

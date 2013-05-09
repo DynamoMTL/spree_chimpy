@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   module Interface
     class List
       API_VERSION = '1.3'

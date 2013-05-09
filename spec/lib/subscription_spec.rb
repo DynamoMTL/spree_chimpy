@@ -1,22 +1,22 @@
 require 'spec_helper'
 
-describe Spree::Hominid::Subscription do
+describe Spree::Chimpy::Subscription do
 
   context "mail chimp enabled" do
     let(:interface)    { mock(:interface) }
 
     before do
-      Spree::Hominid::Config.preferred_list_name  = 'Members'
-      Spree::Hominid::Config.preferred_merge_vars = {'EMAIL' => :email}
-      Spree::Hominid::Config.stub(list: interface)
+      Spree::Chimpy::Config.preferred_list_name  = 'Members'
+      Spree::Chimpy::Config.preferred_merge_vars = {'EMAIL' => :email}
+      Spree::Chimpy::Config.stub(list: interface)
     end
 
     context "subscribing users" do
       let(:user)         { FactoryGirl.build(:user, subscribed: true) }
-      let(:subscription) { Spree::Hominid::Subscription.new(user) }
+      let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
       before do
-        Spree::Hominid::Config.preferred_merge_vars = {'EMAIL' => :email, 'SIZE' => :size, 'HEIGHT' => :height}
+        Spree::Chimpy::Config.preferred_merge_vars = {'EMAIL' => :email, 'SIZE' => :size, 'HEIGHT' => :height}
 
         def user.size
           '10'
@@ -78,7 +78,7 @@ describe Spree::Hominid::Subscription do
     end
 
     context "subscribing" do
-      let(:subscription) { Spree::Hominid::Subscription.new(user) }
+      let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
       context "subscribed user" do
         let(:user) { FactoryGirl.build(:user, subscribed: true) }
@@ -100,23 +100,23 @@ describe Spree::Hominid::Subscription do
     context "needs update?" do
       let(:subscribed)     { FactoryGirl.build(:user, subscribed: true) }
       let(:not_subscribed) { FactoryGirl.build(:user, subscribed: false) }
-      let(:subscription)   { Spree::Hominid::Subscription.new(user) }
+      let(:subscription)   { Spree::Chimpy::Subscription.new(user) }
 
       before do
         subscribed.email += '.com'
       end
 
-      specify { Spree::Hominid::Subscription.new(subscribed).should         be_needs_update}
-      specify { Spree::Hominid::Subscription.new(not_subscribed).should_not be_needs_update}
+      specify { Spree::Chimpy::Subscription.new(subscribed).needs_update?.should     be_true }
+      specify { Spree::Chimpy::Subscription.new(not_subscribed).needs_update?.should be_false }
     end
   end
 
   context "mail chimp disabled" do
     before do
-      Spree::Hominid::Config.stub(list: nil)
+      Spree::Chimpy::Config.stub(list: nil)
 
       user = FactoryGirl.build(:user, subscribed: true)
-      @subscription = Spree::Hominid::Subscription.new(user)
+      @subscription = Spree::Chimpy::Subscription.new(user)
     end
 
     specify { @subscription.subscribe }

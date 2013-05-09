@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   class OrderNotice
     def initialize(order)
       @order = order
@@ -44,7 +44,7 @@ module Spree::Hominid
         shipping:    @order.ship_total.to_f,
         tax:         @order.tax_total.to_f,
         store_name:  Spree::Config.preferred_site_name,
-        store_id:    Spree::Hominid::Config.preferred_store_id,
+        store_id:    Spree::Chimpy::Config.preferred_store_id,
         items:       items
       }
 

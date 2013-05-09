@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   class Configuration < Spree::Preferences::Configuration
     preference :store_id,   :string, default: 'spree'
     preference :key,        :string
