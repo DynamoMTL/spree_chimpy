@@ -1,4 +1,4 @@
-guard 'rspec', :cli => '--color --format Fuubar --drb', :all_on_start => false, :all_after_pass => false do
+guard 'rspec', :cli => '--color --format Fuubar', :all_on_start => false, :all_after_pass => false do
   watch('spec/spec_helper.rb')                        { "spec" }
   watch('config/routes.rb')                           { "spec/controllers" }
   watch('app/controllers/application_controller.rb')  { "spec/controllers" }
