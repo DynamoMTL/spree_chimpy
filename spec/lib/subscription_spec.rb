@@ -11,10 +11,8 @@ describe Spree::Hominid::Subscription do
       Spree::Hominid::Config.stub(list: interface)
     end
 
-    context "subscribing" do
+    context "subscribing users" do
       let(:user)         { FactoryGirl.build(:user, subscribed: true) }
-      let(:subscriber)   { Spree::Hominid::Subscriber.new(email: "test@example.com") }
-      let(:subscriber_with_mergevars) { Spree::Hominid::Subscriber.new(email: "test@example.com", size: '200', height: '30')}
       let(:subscription) { Spree::Hominid::Subscription.new(user) }
 
       before do
@@ -31,20 +29,18 @@ describe Spree::Hominid::Subscription do
 
       it "subscribes users" do
         interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'})
-
         subscription.subscribe
       end
 
+    end
+    
+    context "subscribing subscribers" do
+      let(:subscriber)   { Spree::Hominid::Subscriber.new(email: "test@example.com") }
+      let(:subscription) { Spree::Hominid::Subscription.new(subscriber) }
+      
       it "subscribes subscribers" do
-        interface.should_receive(:subscribe).with(subscriber.email, {'SIZE' => nil, 'HEIGHT' => nil})
-        subscriber_subscription = Spree::Hominid::Subscription.new(subscriber)
-        subscriber_subscription.subscribe
-      end
-
-      it "subscribes subscribes with merge vars" do
-        interface.should_receive(:subscribe).with(subscriber.email, {'SIZE' => '200', 'HEIGHT' => '30'})
-        subscriber_subscription = Spree::Hominid::Subscription.new(subscriber_with_mergevars)
-        subscriber_subscription.subscribe
+        interface.should_receive(:subscribe).with(subscriber.email, {})
+        subscription.subscribe
       end
     end
 
