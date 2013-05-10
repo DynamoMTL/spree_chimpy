@@ -1,5 +1,7 @@
 module Spree::Chimpy
   class OrderNotice
+    NOT_FOUND_FAULT = 330
+
     def initialize(order)
       @order = order
 
@@ -12,14 +14,15 @@ module Spree::Chimpy
     end
 
     def remove
-      Config.orders.remove(@order.number) rescue nil
+      begin
+        Config.orders.remove(@order.number)
+      rescue Hominid::APIError => e
+        raise(e) unless e.fault_code == NOT_FOUND_FAULT
+      end
     end
 
     def add
       Config.orders.add(hash) unless @order.canceled?
-    rescue Exception => e
-      Rails.logger.error(e)
-      false
     end
 
   private

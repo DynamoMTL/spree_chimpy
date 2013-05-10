@@ -5,6 +5,10 @@ describe Spree::Chimpy::OrderNotice do
     let(:notice)    { Spree::Chimpy::OrderNotice.new(order) }
     let(:interface) { mock(:interface) }
 
+    def api_error
+      Hominid::APIError.new(OpenStruct.new(faultCode: Spree::Chimpy::OrderNotice::NOT_FOUND_FAULT))
+    end
+
     before do
       Spree::Chimpy::Config.preferred_key = nil
       Spree::Chimpy::Config.stub(orders: interface)
@@ -36,7 +40,7 @@ describe Spree::Chimpy::OrderNotice do
 
       context "order does not exist in mail chimp" do
         it "adds order" do
-          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
+          interface.should_receive(:remove).with(order.number).and_raise(api_error)
           interface.should_receive(:add).with(order_options(order))
 
           Spree::Chimpy::Config.preferred_key = '1234'
@@ -49,7 +53,7 @@ describe Spree::Chimpy::OrderNotice do
 
         before do
           order.create_source
-          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
+          interface.should_receive(:remove).with(order.number).and_raise(api_error)
           Spree::Chimpy::Config.preferred_key = '1234'
         end
 
