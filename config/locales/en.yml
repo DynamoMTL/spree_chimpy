@@ -1,3 +1,11 @@
 en:
   newsletter_signup_label: Sign me up to the newsletter 
   admin_newsletter_signup_label: Subscribed to newsletter
+  spree:
+    chimpy:
+      subscribe_to_our_newsletter: "Subscribe to our newsletter"
+      stay_informed: "Stay informed"
+      enter_your_email: "Enter your email"
+      subscriber:
+        success: "Thank you for signing up"
+        failure: "There was a problem processing your sign-up"

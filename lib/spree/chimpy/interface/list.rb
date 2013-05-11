@@ -3,15 +3,20 @@ module Spree::Chimpy
     class List
       API_VERSION = '1.3'
 
-      def initialize(key, list_name)
+      def initialize(key, list_name, segment_id='')
         @api       = Hominid::API.new(key, api_version: API_VERSION)
         @list_name = list_name
+        @segment_id = segment_id
       end
 
       def subscribe(email, merge_vars = {})
         log "Subscribing #{email} to #{@list_name}"
 
         @api.list_subscribe(list_id, email, merge_vars, update_existing: true)
+      end
+
+      def segment_emails(emails)
+        @api.list_static_segment_members_add(list_id, segment_id, emails)
       end
 
       def unsubscribe(email)
