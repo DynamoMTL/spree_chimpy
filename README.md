@@ -41,7 +41,7 @@ Add an initializer that will define the configuration. Only the API key is a req
 
 ```ruby
 # config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
+Spree::Chimpy.config do |config|
   # your API key provided by MailChimp
   config.preferred_key = 'your-api-key'
 end
@@ -51,7 +51,7 @@ If you'd like you can add additional options:
 
 ```ruby
 # config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
+Spree::Chimpy.config do |config|
   # your API key as provided by MailChimp
   config.preferred_key = 'your-api-key'
 
@@ -76,7 +76,7 @@ For deployment on Heroku, you can configure the API username/password with envir
 
 ```ruby
 # config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
+Spree::Chimpy.config do |config|
   config.preferred_key = ENV['MAILCHIMP_API_KEY']
 end
 ```
