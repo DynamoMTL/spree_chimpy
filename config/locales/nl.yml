@@ -1,0 +1,9 @@
+nl:
+  spree:
+    chimpy:
+      subscribe_to_our_newsletter: "Schrijf je in voor onze nieuwsbrief"
+      stay_informed: "Blijf op de hoogte van onze aanbiedingen en ontvang exclusieve korting"
+      enter_your_email: "Voer hier je email adres in"
+      subscriber:
+        success: "Bedankt voor je inschrijving"
+        failure: "Er ging helaas iets mist bij het verwerken van je inschrijving"
