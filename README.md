@@ -7,7 +7,6 @@ Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [Mail
 - define and sync merge variables
 - order submitition
 - campaign tracking
-- delayed job integration
 
 Installing
 -----------
