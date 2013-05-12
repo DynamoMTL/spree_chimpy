@@ -1,13 +1,17 @@
 require 'spec_helper'
 
-describe Spree::Hominid::OrderNotice do
+describe Spree::Chimpy::OrderNotice do
   context "syncing order" do
-    let(:notice)    { Spree::Hominid::OrderNotice.new(order) }
+    let(:notice)    { Spree::Chimpy::OrderNotice.new(order) }
     let(:interface) { mock(:interface) }
 
+    def api_error
+      Hominid::APIError.new(OpenStruct.new(faultCode: Spree::Chimpy::OrderNotice::NOT_FOUND_FAULT))
+    end
+
     before do
-      Spree::Hominid::Config.preferred_key = nil
-      Spree::Hominid::Config.stub(orders: interface)
+      Spree::Chimpy::Config.preferred_key = nil
+      Spree::Chimpy::Config.stub(orders: interface)
     end
 
     context "canceled" do
@@ -16,8 +20,8 @@ describe Spree::Hominid::OrderNotice do
       it "removes order" do
         interface.should_receive(:remove).with(order.number)
 
-        Spree::Hominid::Config.preferred_key = '1234'
-        Spree::Hominid::OrderNotice.new(order)
+        Spree::Chimpy::Config.preferred_key = '1234'
+        Spree::Chimpy::OrderNotice.new(order)
       end
     end
 
@@ -29,18 +33,18 @@ describe Spree::Hominid::OrderNotice do
           interface.should_receive(:remove).with(order.number)
           interface.should_receive(:add).with(order_options(order))
 
-          Spree::Hominid::Config.preferred_key = '1234'
-          Spree::Hominid::OrderNotice.new(order)
+          Spree::Chimpy::Config.preferred_key = '1234'
+          Spree::Chimpy::OrderNotice.new(order)
         end
       end
 
       context "order does not exist in mail chimp" do
         it "adds order" do
-          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
+          interface.should_receive(:remove).with(order.number).and_raise(api_error)
           interface.should_receive(:add).with(order_options(order))
 
-          Spree::Hominid::Config.preferred_key = '1234'
-          Spree::Hominid::OrderNotice.new(order)
+          Spree::Chimpy::Config.preferred_key = '1234'
+          Spree::Chimpy::OrderNotice.new(order)
         end
       end
 
@@ -49,20 +53,20 @@ describe Spree::Hominid::OrderNotice do
 
         before do
           order.create_source
-          interface.should_receive(:remove).with(order.number).and_raise('oopsie. not found')
-          Spree::Hominid::Config.preferred_key = '1234'
+          interface.should_receive(:remove).with(order.number).and_raise(api_error)
+          Spree::Chimpy::Config.preferred_key = '1234'
         end
 
         it "uses campaign id" do
           order.source.campaign_id = 123
           interface.should_receive(:add).with(hash_including(campaign_id: 123))
-          Spree::Hominid::OrderNotice.new(order)
+          Spree::Chimpy::OrderNotice.new(order)
         end
 
         it "uses email id" do
           order.source.email_id = 123
           interface.should_receive(:add).with(hash_including(email_id: 123))
-          Spree::Hominid::OrderNotice.new(order)
+          Spree::Chimpy::OrderNotice.new(order)
         end
       end
 
@@ -75,7 +79,7 @@ describe Spree::Hominid::OrderNotice do
           shipping:   order.ship_total,
           tax:        order.tax_total,
           store_name: Spree::Config.preferred_site_name,
-          store_id:   Spree::Hominid::Config.preferred_store_id,
+          store_id:   Spree::Chimpy::Config.preferred_store_id,
           items:      order.line_items.map do |line|
             variant = line.variant
 

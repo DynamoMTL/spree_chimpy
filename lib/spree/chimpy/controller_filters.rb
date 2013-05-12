@@ -1,4 +1,4 @@
-module Spree::Hominid
+module Spree::Chimpy
   module ControllerFilters
     extend ActiveSupport::Concern
 

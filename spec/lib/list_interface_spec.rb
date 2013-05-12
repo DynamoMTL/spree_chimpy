@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Hominid::Interface::List do
-  let(:interface) { Spree::Hominid::Interface::List.new('1234', 'Members') }
+describe Spree::Chimpy::Interface::List do
+  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members') }
   let(:api)       { mock(:api) }
 
   before do
-    Spree::Hominid::Config.preferred_key = '1234'
+    Spree::Chimpy::Config.preferred_key = '1234'
     Hominid::API.should_receive(:new).with('1234', api_version: '1.3').and_return(api)
   end
 

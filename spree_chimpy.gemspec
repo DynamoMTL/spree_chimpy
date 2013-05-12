@@ -1,11 +1,11 @@
 # encoding: UTF-8
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
-  s.name        = 'spree_hominid'
+  s.name        = 'spree_chimpy'
   s.version     = '1.3.2'
   s.summary     = 'mailchimp/spree integration using the hominid gem'
   s.description = ''
-  s.required_ruby_version = '>= 1.8.7'
+  s.required_ruby_version = '>= 1.9.3'
 
   s.author    = 'Joshua Nussbaum'
   s.email     = 'josh@godynamo.com'
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 1.3.2'
+  s.add_dependency 'spree_core', '>= 1.3.2'
   s.add_dependency 'hominid'
 
   s.add_development_dependency 'capybara', '~> 1.1.2'
