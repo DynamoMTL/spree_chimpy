@@ -3,7 +3,7 @@
   <div>
     <h2><%= t "spree.chimpy.subscribe_to_our_newsletter" %></h2>
     <%= f.label :email, t("spree.chimpy.stay_informed") %>
-    <%= f.text_field :email, placeholder: t("spree.chimpy.enter_your_email") %>
+    <%= f.email_field :email, placeholder: t("spree.chimpy.enter_your_email") %>
     <%= f.submit %>
   </div>
 <% end %>
