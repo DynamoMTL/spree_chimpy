@@ -16,7 +16,7 @@ module Spree::Chimpy
       end
 
       def segment_emails(emails)
-        @api.list_static_segment_members_add(list_id, segment_id, emails)
+        @api.list_static_segment_members_add(list_id, @segment_id, emails)
       end
 
       def unsubscribe(email)
