@@ -3,8 +3,16 @@ Spree::Order.class_eval do
 
   register_update_hook :notify_mail_chimp
 
+  around_save :handle_cancelation
+
 private
   def notify_mail_chimp
     Spree::Chimpy::OrderNotice.new(self) if completed?
+  end
+
+  def handle_cancelation
+    canceled = state_changed? && canceled?
+    yield
+    notify_mail_chimp if canceled
   end
 end

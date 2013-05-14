@@ -25,5 +25,10 @@ describe Spree::Order do
       Spree::Chimpy::OrderNotice.should_receive(:new).with(@completed_order)
       @completed_order.update!
     end
+
+    it "sync when order is completed" do
+      Spree::Chimpy::OrderNotice.should_receive(:new).with(@completed_order).twice
+      @completed_order.cancel!
+    end
   end
 end
