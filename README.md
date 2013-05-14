@@ -20,7 +20,7 @@ gem "spree_chimpy"
 Alternatively you can use the git repo directly:
 
 ```ruby
-gem "spree_hominid", github: "DynamoMTL/spree_chimpy"
+gem "spree_chimpy", github: "DynamoMTL/spree_chimpy"
 ```
 
 Run bundler
