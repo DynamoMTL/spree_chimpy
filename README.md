@@ -7,7 +7,7 @@ Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [Mail
 - Order synchronoization: Fully supports MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes after the sale (i.e. order modification, cancelation, return).
 - Campaign Revenue Tracking: Notifies MailChimp when an order originates from a campaign email.
 - Custom User Data: Easily add your own custom merge vars. We'll only sync them when data changes
-- Migration: A handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. You should run this after installing spree_chimpy to an existing store.
+- Existing Stores: Provides a handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. Run this after installing spree_chimpy to an existing store.
 
 Installing
 -----------
