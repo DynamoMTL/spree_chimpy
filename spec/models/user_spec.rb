@@ -22,4 +22,16 @@ describe Spree::User do
       @user.destroy
     end
   end
+
+  context "defaults" do
+    it "subscribed by default" do
+      Spree::Chimpy::Config.preferred_default = true
+      Spree::User.new.should be_subscribed
+    end
+
+    it "doesnt subscribe by default" do
+      Spree::Chimpy::Config.preferred_default = false
+      Spree::User.new.should_not be_subscribed
+    end
+  end
 end
