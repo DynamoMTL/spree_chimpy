@@ -37,12 +37,12 @@ MailChimp Setup
 
 If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
 
-Make sure to create a list if you dont already have one. The list name setting defaults to "Members", but you may use any you like, just dont forget to update the `#preferred_list_name` setting
+Make sure to create a list if you dont already have one. Use any name you like, just dont forget to update the `#preferred_list_name` setting
 
 Spree Setup
 -----------
 
-Add an initializer that will define the configuration. Only the API key is a required
+Add an initializer that will define the configuration. Only the API key is required
 
 ```ruby
 # config/initializers/spree_chimpy.rb
@@ -52,7 +52,7 @@ Spree::Chimpy.config do |config|
 end
 ```
 
-If you'd like you can add additional options:
+If you'd like, you can add additional options:
 
 ```ruby
 # config/initializers/spree_chimpy.rb
