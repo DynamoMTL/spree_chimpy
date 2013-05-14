@@ -11,7 +11,7 @@ Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [Mail
 Installing
 -----------
 
-Add spree_hominid to your Gemfile:
+Add spree_chimpy to your Gemfile:
 
 ```ruby
 gem "spree_chimpy"
