@@ -6,39 +6,37 @@ module Spree::Chimpy
       @interface  = Config.list
     end
 
-    def needs_update?
-      update_allowed? && (merge_vars_changed? || unsubscribing?)
-    end
-
     def subscribe
-      @interface.subscribe(@model.email, merge_vars) if update_allowed?
+      @interface.subscribe(@model.email, merge_vars) if configured? && @model.subscribed
     end
 
     def unsubscribe
-      @interface.unsubscribe(@model.email) if update_allowed?
+      @interface.unsubscribe(@model.email) if configured? && @model.subscribed
     end
 
     def resubscribe(&block)
       block.call
 
+      return unless configured?
+
       if unsubscribing?
-        unsubscribe
+        @interface.unsubscribe(@model.email)
       elsif subscribing? || merge_vars_changed?
         subscribe
       end
     end
 
   private
+    def configured?
+      Config.configured?
+    end
+
     def subscribing?
-      @model.new_record? && @model.subscribed
+      merge_vars_changed? && @model.subscribed
     end
 
     def unsubscribing?
-      @model.persisted? && !@model.subscribed && @model.subscribed_changed?
-    end
-
-    def update_allowed?
-      @interface && (@model.subscribed || unsubscribing?)
+      !@new_record && !@model.subscribed && @model.subscribed_changed?
     end
 
     def merge_vars_changed?
@@ -49,7 +47,7 @@ module Spree::Chimpy
 
     def merge_vars
       array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
-        [tag, @model.send(method)]
+        [tag, @model.send(method).to_s]
       end
 
       Hash[array]
