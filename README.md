@@ -4,9 +4,10 @@ Spree/MailChimp Integration
 Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](http://www.mailchimp.com)
 
 - Subscriptions: Extends Spree so that users can subscribe/unsubscribe to a MailChimp list
-- Sales: Full support for MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history.
+- Sales: Full support for MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes.
 - Campaign Revenue Tracking: Notifies MailChimp when an order is made and the user originated from a campaign email.
 - Custom User Data: Easily add your own custom merge vars. We'll only sync them when data changes
+- Migration: A handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp
 
 Installing
 -----------
