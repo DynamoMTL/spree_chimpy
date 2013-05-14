@@ -3,7 +3,7 @@ module Spree::Chimpy
     preference :store_id,   :string, default: 'spree'
     preference :key,        :string
     preference :list_name,  :string, default: 'Members'
-    preference :customer_static_segment_id,   :string
+    preference :static_segment_name,   :string, default: "customers"
     preference :merge_vars, :hash,   default: {'EMAIL' => :email}
 
     def configured?
@@ -11,7 +11,7 @@ module Spree::Chimpy
     end
 
     def list
-      Interface::List.new(preferred_key, preferred_list_name, preferred_customer_static_segment_id) if configured?
+      Interface::List.new(preferred_key, preferred_list_name, preferred_static_segment_name) if configured?
     end
 
     def orders
@@ -20,6 +20,10 @@ module Spree::Chimpy
 
     def list_exists?
       list.find_list_id(preferred_list_name)
+    end
+    
+    def static_segment_exists?
+      list.find_or_create_static_segment(preferred_static_segment_name)
     end
 
     def sync_merge_vars
