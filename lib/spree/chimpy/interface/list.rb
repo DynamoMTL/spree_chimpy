@@ -12,7 +12,7 @@ module Spree::Chimpy
       def subscribe(email, merge_vars = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        @api.list_subscribe(list_id, email, merge_vars, update_existing: true)
+        @api.list_subscribe(list_id, email, merge_vars, update_existing = true)
       end
 
       def segment_emails(emails)
