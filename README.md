@@ -23,9 +23,13 @@ Alternatively you can use the git repo directly:
 gem "spree_hominid", github: "DynamoMTL/spree_chimpy"
 ```
 
-Then, run bundler
+Run bundler
 
     $ bundle
+
+Install migrations & initializer file
+
+	bundle exec rails g spree_chimpy:install
 
 MailChimp Setup
 ---------------
