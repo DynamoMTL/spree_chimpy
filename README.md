@@ -76,7 +76,7 @@ Spree::Chimpy.config do |config|
 end
 ```
 
-For deployment on Heroku, you can configure the API username/password with environment variables:
+For deployment on Heroku, you can configure the API key with environment variables:
 
 ```ruby
 # config/initializers/spree_chimpy.rb
