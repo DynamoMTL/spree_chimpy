@@ -1,11 +1,11 @@
 Spree/MailChimp Integration
 ============
 
-Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](www.mailchimp.com)
+Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](http://www.mailchimp.com)
 
-- list subscription and unscubribing
+- list subscription and unsubscribing
 - define and sync merge variables
-- order submitition
+- sync order information with MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/)
 - campaign tracking
 
 Installing
@@ -14,13 +14,13 @@ Installing
 Add spree_hominid to your Gemfile:
 
 ```ruby
-gem "spree_hominid"
+gem "spree_chimpy"
 ```
 
 Alternatively you can use the git repo directly:
 
 ```ruby
-gem "spree_hominid", github: "DynamoMTL/spree-hominid"
+gem "spree_hominid", github: "DynamoMTL/spree_chimpy"
 ```
 
 Then, run bundler
@@ -39,7 +39,7 @@ Spree Setup
 Add an initializer that will define the configuration. Only the API key is a required
 
 ```ruby
-# config/initializers/spree_hominid.rb
+# config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
   # your API key provided by MailChimp
   config.preferred_key = 'your-api-key'
@@ -49,7 +49,7 @@ end
 If you'd like you can add additional options:
 
 ```ruby
-# config/initializers/spree_hominid.rb
+# config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
   # your API key as provided by MailChimp
   config.preferred_key = 'your-api-key'
@@ -74,7 +74,7 @@ end
 For deployment on Heroku, you can configure the API username/password with environment variables:
 
 ```ruby
-# config/initializers/spree_hominid.rb
+# config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
   config.preferred_key = ENV['MAILCHIMP_API_KEY']
 end
