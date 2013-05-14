@@ -5,11 +5,11 @@ Spree::Order.class_eval do
 
   around_save :handle_cancelation
 
-private
   def notify_mail_chimp
     Spree::Chimpy::OrderNotice.new(self) if completed?
   end
 
+private
   def handle_cancelation
     canceled = state_changed? && canceled?
     yield
