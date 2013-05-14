@@ -26,11 +26,11 @@ gem "spree_chimpy", github: "DynamoMTL/spree_chimpy"
 
 Run bundler
 
-    $ bundle
+    bundle
 
 Install migrations & initializer file
 
-	bundle exec rails g spree_chimpy:install
+    bundle exec rails g spree_chimpy:install
 
 MailChimp Setup
 ---------------
@@ -42,7 +42,7 @@ Make sure to create a list if you dont already have one. Use any name you like, 
 Spree Setup
 -----------
 
-Add an initializer that will define the configuration. Only the API key is required
+Edit the initializer created by the `spree_chimpy:install` generator. Only the API key is required
 
 ```ruby
 # config/initializers/spree_chimpy.rb
