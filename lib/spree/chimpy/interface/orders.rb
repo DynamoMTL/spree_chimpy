@@ -4,7 +4,7 @@ module Spree::Chimpy
       API_VERSION = '1.3'
 
       def initialize(key)
-        @api       = Hominid::API.new(key, api_version: API_VERSION)
+        @api = Hominid::API.new(key, api_version: API_VERSION)
       end
 
       def add(order)
