@@ -11,7 +11,7 @@ module Spree::Chimpy
       g.test_framework :rspec
     end
 
-    initializer "spree.hominid.environment", before: :load_config_initializers do |app|
+    initializer "spree_chimpy.environment", before: :load_config_initializers do |app|
       Spree::Chimpy::Config = Spree::Chimpy::Configuration.new
     end
 
