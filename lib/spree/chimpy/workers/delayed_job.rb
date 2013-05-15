@@ -6,7 +6,7 @@ module Spree::Chimpy
       end
 
       def perform
-        Spree::Chimpy.process_event(@payload)
+        Spree::Chimpy.perform(@payload)
       end
     end
   end

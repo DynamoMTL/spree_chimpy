@@ -61,11 +61,11 @@ module Spree::Chimpy
     if defined?(Delayed::Job)
       Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
     else
-      process_event(payload)
+      perform(payload)
     end
   end
 
-  def process_event(payload)
+  def perform(payload)
     return unless configured?
 
     event  = payload[:event].to_sym
