@@ -27,6 +27,17 @@ module Spree::Chimpy
       end
     end
 
+    initializer 'spree_chimpy.check_segment_name' do
+      if !Rails.env.test? && Spree::Chimpy.configured?
+        segment_name = Spree::Chimpy::Config.preferred_segment_name
+
+        unless Spree::Chimpy.segment_exists?
+          Spree::Chimpy.create_segment
+          Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{segment_name}` was not found. Creating it now")
+        end
+      end
+    end
+
     initializer 'spree_chimpy.subscribe' do
       ActiveSupport::Notifications.subscribe /^spree\.chimpy\./ do |name, start, finish, id, payload|
         Spree::Chimpy.handle_event(name.split('.').last, payload)

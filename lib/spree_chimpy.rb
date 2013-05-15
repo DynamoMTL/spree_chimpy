@@ -27,7 +27,9 @@ module Spree::Chimpy
   end
 
   def list
-    Interface::List.new(Config.preferred_key, Config.preferred_list_name) if configured?
+    Interface::List.new(Config.preferred_key,
+                        Config.preferred_list_name,
+                        Config.preferred_segment_name) if configured?
   end
 
   def orders
@@ -35,7 +37,15 @@ module Spree::Chimpy
   end
 
   def list_exists?
-    list.find_list_id(Config.preferred_list_name)
+    list.list_id
+  end
+
+  def segment_exists?
+    list.segment_id
+  end
+
+  def create_segment
+    list.create_segment
   end
 
   def sync_merge_vars
@@ -79,7 +89,7 @@ module Spree::Chimpy
     when :order
       orders.sync(object)
     when :subscribe
-      list.subscribe(object.email, merge_vars(object))
+      list.subscribe(object.email, merge_vars(object), customer: object.is_a?(Spree.user_class))
     when :unsubscribe
       list.unsubscribe(object.email)
     end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members') }
+  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers') }
   let(:api)       { mock(:api) }
 
   before do
@@ -23,7 +23,7 @@ describe Spree::Chimpy::Interface::List do
 
   it "find list id" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
-    interface.find_list_id('Members')
+    interface.list_id
   end
 
   it "checks if merge var exists" do

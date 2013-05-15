@@ -11,7 +11,7 @@ describe Spree::Chimpy::Subscription do
       Spree::Chimpy.stub(list: interface)
     end
 
-    context "subscribing" do
+    context "subscribing users" do
       let(:user)         { FactoryGirl.build(:user, subscribed: true) }
       let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
@@ -27,9 +27,20 @@ describe Spree::Chimpy::Subscription do
         end
       end
 
-      it "subscribes" do
-        interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'})
+      it "subscribes users" do
+        interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
+        subscription.subscribe
+      end
 
+    end
+
+    context "subscribing subscribers" do
+      let(:subscriber)   { Spree::Chimpy::Subscriber.new(email: "test@example.com") }
+      let(:subscription) { Spree::Chimpy::Subscription.new(subscriber) }
+
+      it "subscribes subscribers" do
+        interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
+        interface.should_not_receive(:segment)
         subscription.subscribe
       end
     end
