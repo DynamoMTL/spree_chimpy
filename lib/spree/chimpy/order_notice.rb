@@ -9,8 +9,7 @@ module Spree::Chimpy
     end
 
     def sync
-      remove
-      add
+      Spree::Chimpy.fire_event(:order, order: @order)
     end
 
     def remove
