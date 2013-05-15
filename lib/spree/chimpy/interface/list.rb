@@ -1,10 +1,8 @@
 module Spree::Chimpy
   module Interface
     class List
-      API_VERSION = '1.3'
-
       def initialize(key, list_name)
-        @api       = Hominid::API.new(key, api_version: API_VERSION)
+        @api       = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
         @list_name = list_name
       end
 

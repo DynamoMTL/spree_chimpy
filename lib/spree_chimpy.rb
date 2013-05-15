@@ -4,6 +4,8 @@ require 'spree/chimpy/subscription'
 require 'hominid'
 
 module Spree::Chimpy
+  API_VERSION = '1.3'
+
   def self.config(&block)
     yield(Spree::Chimpy::Config)
   end
