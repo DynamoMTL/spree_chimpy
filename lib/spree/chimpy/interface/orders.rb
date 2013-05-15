@@ -26,7 +26,8 @@ module Spree::Chimpy
       end
 
       def sync(order)
-        remove(order) and add(order)
+        remove(order)
+        add(order)
       end
 
     private
