@@ -8,7 +8,7 @@ describe Spree::Chimpy::Subscription do
     before do
       Spree::Chimpy::Config.preferred_list_name  = 'Members'
       Spree::Chimpy::Config.preferred_merge_vars = {'EMAIL' => :email}
-      Spree::Chimpy::Config.stub(list: interface)
+      Spree::Chimpy.stub(list: interface)
     end
 
     context "subscribing" do
@@ -39,7 +39,7 @@ describe Spree::Chimpy::Subscription do
       let(:subscription) { mock(:subscription) }
 
       before do
-        interface.should_receive(:subscribe).with(user.email)
+        interface.should_receive(:subscribe).once.with(user.email)
         user.stub(subscription: subscription)
       end
 
@@ -53,7 +53,6 @@ describe Spree::Chimpy::Subscription do
       context "when update not needed" do
         it "still calls resubscribe, and does nothing" do
           subscription.should_receive(:resubscribe)
-          subscription.should_not_receive(:subscribe)
           subscription.should_not_receive(:unsubscribe)
           user.save
         end
