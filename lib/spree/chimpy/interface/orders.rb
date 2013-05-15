@@ -3,6 +3,8 @@ module Spree::Chimpy
     class Orders
       NOT_FOUND_FAULT = 330
 
+      delegate :log, to: Spree::Chimpy
+
       def initialize(key)
         @api = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
       end
@@ -23,11 +25,11 @@ module Spree::Chimpy
         end
       end
 
-    private
-      def log(message)
-        Rails.logger.info "MAILCHIMP: #{message}"
+      def sync(order)
+        remove(order) and add(order)
       end
 
+    private
       def hash(order)
         source = order.source
 

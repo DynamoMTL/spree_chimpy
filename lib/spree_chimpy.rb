@@ -13,4 +13,8 @@ module Spree::Chimpy
   def self.fire_event(event, payload={})
     ActiveSupport::Notifications.instrument("spree.chimpy.#{event}", payload)
   end
+
+  def self.log(message)
+    Rails.logger.info "spree_chimpy: #{message}"
+  end
 end

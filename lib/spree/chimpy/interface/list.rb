@@ -1,6 +1,8 @@
 module Spree::Chimpy
   module Interface
     class List
+      delegate :log, to: Spree::Chimpy
+
       def initialize(key, list_name)
         @api       = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
         @list_name = list_name
@@ -36,11 +38,6 @@ module Spree::Chimpy
 
       def list_id
         @list_id ||= find_list_id(@list_name)
-      end
-
-    private
-      def log(message)
-        Rails.logger.info "MAILCHIMP: #{message}"
       end
     end
   end
