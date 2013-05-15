@@ -1,16 +1,18 @@
 module Spree::Chimpy
   class Subscription
+    delegate :configured?, :enqueue, to: Spree::Chimpy
+
     def initialize(model)
       @model      = model
       @interface  = Spree::Chimpy.list
     end
 
     def subscribe
-      enqueue(:subscribe)
+      defer(:subscribe)
     end
 
     def unsubscribe
-      enqueue(:unsubscribe)
+      defer(:unsubscribe)
     end
 
     def resubscribe(&block)
@@ -26,12 +28,8 @@ module Spree::Chimpy
     end
 
   private
-    def enqueue(event)
-      Spree::Chimpy.enqueue(event, @model) if allowed?
-    end
-
-    def configured?
-      Spree::Chimpy.configured?
+    def defer(event)
+      enqueue(event, @model) if allowed?
     end
 
     def allowed?
