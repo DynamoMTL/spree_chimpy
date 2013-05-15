@@ -5,6 +5,7 @@ module Spree::Chimpy
 
       def initialize(key, list_name, segment_name)
         @api          = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
+        @new_api      = ::Mailchimp::API.new(key)
         @list_name    = list_name
         @segment_name = segment_name
       end
@@ -13,6 +14,7 @@ module Spree::Chimpy
         log "Subscribing #{email} to #{@list_name}"
 
         @api.list_subscribe(list_id, email, merge_vars, 'html', true, true)
+        # @new_api.list_subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true)
 
         segment(email) if options[:customer]
       end

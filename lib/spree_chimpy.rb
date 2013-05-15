@@ -3,6 +3,7 @@ require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
 require 'spree/chimpy/workers/delayed_job'
 require 'hominid'
+require 'mailchimp'
 
 module Spree::Chimpy
   extend self
