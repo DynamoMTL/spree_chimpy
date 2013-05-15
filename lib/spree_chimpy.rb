@@ -66,6 +66,8 @@ module Spree::Chimpy
   end
 
   def process_event(payload)
+    return unless configured?
+
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
