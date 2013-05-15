@@ -4,7 +4,7 @@ describe Spree::Chimpy::Configuration do
 
   context "enabled" do
     before do
-      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(:list)
+      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members', 'customers').and_return(:list)
       Spree::Chimpy::Interface::Orders.should_receive(:new).any_number_of_times.with('1234').and_return(:orders)
     end
     subject { config(key: '1234', list_name: 'Members') }
@@ -27,7 +27,7 @@ describe Spree::Chimpy::Configuration do
     let(:configuration) { config(key: '1234',
                                  list_name: 'Members',
                                  merge_vars: {'EMAIL' => :email, 'FNAME' => :first_name, 'LNAME' => :last_name})}
-    before { Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members').and_return(interface) }
+    before { Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('1234', 'Members', 'customers').and_return(interface) }
 
     it "adds var for each" do
       interface.should_receive(:merge_vars).and_return([])
