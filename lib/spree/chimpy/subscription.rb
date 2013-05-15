@@ -6,11 +6,11 @@ module Spree::Chimpy
     end
 
     def subscribe
-      Spree::Chimpy.enqueue(:subscribe, @model) if allowed?
+      enqueue(:subscribe)
     end
 
     def unsubscribe
-      Spree::Chimpy.enqueue(:unsubscribe, @model) if allowed?
+      enqueue(:unsubscribe)
     end
 
     def resubscribe(&block)
@@ -26,6 +26,10 @@ module Spree::Chimpy
     end
 
   private
+    def enqueue(event)
+      Spree::Chimpy.enqueue(event, @model) if allowed?
+    end
+
     def configured?
       Spree::Chimpy.configured?
     end
