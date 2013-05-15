@@ -11,7 +11,7 @@ describe Spree::Chimpy::Interface::List do
 
   it "subscribes" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
-    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, true)
+    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, 'html', true, true)
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
