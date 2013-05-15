@@ -17,17 +17,17 @@ describe Spree::Order do
     end
 
     it "doesnt update when order is not completed" do
-      Spree::Chimpy::OrderNotice.should_not_receive(:new)
+      Spree::Chimpy.should_not_receive(:enqueue)
       @not_completed_order.update!
     end
 
     it "updates when order is completed" do
-      Spree::Chimpy::OrderNotice.should_receive(:new).with(@completed_order)
+      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order)
       @completed_order.update!
     end
 
     it "sync when order is completed" do
-      Spree::Chimpy::OrderNotice.should_receive(:new).with(@completed_order).twice
+      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order).twice
       @completed_order.cancel!
     end
   end
