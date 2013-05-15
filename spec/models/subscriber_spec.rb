@@ -2,13 +2,20 @@ require 'spec_helper'
 
 describe Spree::Chimpy::Subscriber do
   context "without email" do
-    let(:subscriber) { Spree::Chimpy::Subscriber.new }
     it "is invalid" do
-      subscriber.should_not be_valid
+      create.should_not be_valid
     end
+
     it "is not valid without an email" do
-      subscriber.valid?
-      subscriber.errors.messages[:email].should include("can't be blank")
+      create(email: nil).should have(1).errors_on(:email)
+    end
+
+    it "can be valid" do
+      create(email: 'test@example.com').should be_valid
+    end
+
+    def create(options={})
+      Spree::Chimpy::Subscriber.create(options)
     end
   end
 end
