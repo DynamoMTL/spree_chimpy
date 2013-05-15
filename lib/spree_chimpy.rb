@@ -1,6 +1,7 @@
 require 'spree_core'
 require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
+require 'spree/chimpy/workers/delayed_job'
 require 'hominid'
 
 module Spree::Chimpy
@@ -55,11 +56,17 @@ module Spree::Chimpy
   end
 
   def handle_event(event, payload = {})
-    process_event(event, payload)
+    payload[:event] = event
+
+    if defined?(Delayed::Job)
+      Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
+    else
+      process_event(payload)
+    end
   end
 
-  def process_event(event, payload)
-    event  = event.to_sym
+  def process_event(payload)
+    event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
     if !object
