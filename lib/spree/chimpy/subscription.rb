@@ -47,13 +47,5 @@ module Spree::Chimpy
         @model.send("#{attr}_changed?")
       end
     end
-
-    def merge_vars
-      array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
-        [tag, @model.send(method).to_s]
-      end
-
-      Hash[array]
-    end
   end
 end

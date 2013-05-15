@@ -46,4 +46,33 @@ module Spree::Chimpy
     end
   end
 
+  def merge_vars(model)
+    array = Config.preferred_merge_vars.except('EMAIL').map do |tag, method|
+      [tag, model.send(method).to_s]
+    end
+
+    Hash[array]
+  end
+
+  def handle_event(event, payload = {})
+    process_event(event, payload)
+  end
+
+  def process_event(event, payload)
+    event  = event.to_sym
+    object = payload[:object] || payload[:class].constantize.find(payload[:id])
+
+    if !object
+      raise Error.new("Unable to locate a #{payload[:class]} with id #{payload[:id]}")
+    end
+
+    case event
+    when :order
+      orders.sync(object)
+    when :subscribe
+      list.subscribe(object.email, merge_vars(object))
+    when :unsubscribe
+      list.unsubscribe(object.email)
+    end
+  end
 end
