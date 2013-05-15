@@ -89,13 +89,13 @@ end
 
 ### Adding a subscriber form
 
-spree_chimpy comes with a default subscriber form which can be added by using the following deface override
+spree_chimpy comes with a default subscription form for users who are not logged in, just add the following deface override:
 
 ```ruby
 Deface::Override.new(:virtual_path => "spree/shared/_footer",
                      :name         => "spree_chimpy_subscriber_form",
                      :insert_bottom => "#footer-right",
-                     :partial      => "spree/chimpy/subscriber_form")
+                     :partial      => "spree/shared/subscriber_form")
 ```
 
 The selector and virtual path can be changed to taste.
