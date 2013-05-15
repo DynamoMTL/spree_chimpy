@@ -23,7 +23,11 @@ module Spree::Chimpy
     end
     
     def static_segment_exists?
-      list.find_or_create_static_segment(preferred_static_segment_name)
+      list.find_static_segment_id(preferred_static_segment_name)
+    end
+    
+    def create_static_segment
+      list.create_static_segment_by_name(preferred_static_segment_name)
     end
 
     def sync_merge_vars

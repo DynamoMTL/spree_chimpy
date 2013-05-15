@@ -45,22 +45,19 @@ module Spree::Chimpy
         @list_id ||= find_list_id(@list_name)
       end
       
-      def find_or_create_static_segment(segment_name)
-        static_segments = @api.list_static_segments(list_id)
+      def find_static_segment_id(segment_name)
+        @api.list_static_segments(list_id)
         static_segments.each do |segment|
           if segment['name'] == segment_name
             @segment_id = segment['id']
             break
           end
         end
-        if @segment_id.nil?
-          create_static_segment_by_name(segment_name) if @segment_id.nil?
-        end
         @segment_id
       end
       
       def create_static_segment_by_name(segment_name)
-        @api.list_static_segments_add(list_id, segment_name)
+        @segment_id = @api.list_static_segments_add(list_id, segment_name)
       end
       
       def static_segment_id(segment_name)

@@ -26,6 +26,17 @@ module Spree::Chimpy
         end
       end
     end
+    
+    initializer 'spree_chimpy.check_segment_name' do
+      if !Rails.env.test? && Config.configured?
+        segment_name = Spree::Chimpy::Config.preferred_static_segment_name
+
+        unless Config.static_segment_exists?
+          Config.create_static_segment
+          Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{segment_name}` was not found. Creating it now")
+        end
+      end
+    end
 
     def self.activate
       Spree::StoreController.send(:include, Spree::Chimpy::ControllerFilters)
