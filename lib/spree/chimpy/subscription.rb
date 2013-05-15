@@ -6,11 +6,11 @@ module Spree::Chimpy
     end
 
     def subscribe
-      Spree::Chimpy.fire_event(:subscribe, @model) if allowed?
+      Spree::Chimpy.enqueue(:subscribe, @model) if allowed?
     end
 
     def unsubscribe
-      Spree::Chimpy.fire_event(:unsubscribe, @model) if allowed?
+      Spree::Chimpy.enqueue(:unsubscribe, @model) if allowed?
     end
 
     def resubscribe(&block)
