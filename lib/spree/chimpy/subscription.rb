@@ -7,11 +7,11 @@ module Spree::Chimpy
     end
 
     def subscribe
-      fire_event('subscribe', email: @model.email, merge_vars: merge_vars) if allowed?
+      Spree::Chimpy.fire_event(:subscribe, email: @model.email, merge_vars: merge_vars) if allowed?
     end
 
     def unsubscribe
-      fire_event('unsubscribe', email: @model.email) if allowed?
+      Spree::Chimpy.fire_event(:unsubscribe, email: @model.email) if allowed?
     end
 
     def resubscribe(&block)
@@ -27,10 +27,6 @@ module Spree::Chimpy
     end
 
   private
-    def fire_event(event, payload = {})
-      ActiveSupport::Notifications.instrument("spree.chimpy.#{event}", payload)
-    end
-
     def configured?
       Config.configured?
     end

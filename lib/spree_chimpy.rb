@@ -7,4 +7,8 @@ module Spree::Chimpy
   def self.config(&block)
     yield(Spree::Chimpy::Config)
   end
+
+  def self.fire_event(event, payload={})
+    ActiveSupport::Notifications.instrument("spree.chimpy.#{event}", payload)
+  end
 end
