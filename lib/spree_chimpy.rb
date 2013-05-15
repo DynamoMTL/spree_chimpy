@@ -12,7 +12,8 @@ module Spree::Chimpy
     yield(Spree::Chimpy::Config)
   end
 
-  def fire_event(event, payload={})
+  def fire_event(event, object)
+    payload = {class: object.class.name, id: object.id, object: object}
     ActiveSupport::Notifications.instrument("spree.chimpy.#{event}", payload)
   end
 

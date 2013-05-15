@@ -6,7 +6,7 @@ Spree::Order.class_eval do
   around_save :handle_cancelation
 
   def notify_mail_chimp
-    Spree::Chimpy.fire_event(:order, order: @order) if completed? && Spree::Chimpy.configured?
+    Spree::Chimpy.fire_event(:order, self) if completed? && Spree::Chimpy.configured?
   end
 
 private

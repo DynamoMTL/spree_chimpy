@@ -2,16 +2,15 @@ module Spree::Chimpy
   class Subscription
     def initialize(model)
       @model      = model
-      @changes    = model.changes.dup
-      @interface  = Config.list
+      @interface  = Spree::Chimpy.list
     end
 
     def subscribe
-      Spree::Chimpy.fire_event(:subscribe, model: @model) if allowed?
+      Spree::Chimpy.fire_event(:subscribe, @model) if allowed?
     end
 
     def unsubscribe
-      Spree::Chimpy.fire_event(:unsubscribe, model: @model) if allowed?
+      Spree::Chimpy.fire_event(:unsubscribe, @model) if allowed?
     end
 
     def resubscribe(&block)
