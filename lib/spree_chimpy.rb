@@ -68,8 +68,8 @@ module Spree::Chimpy
   def handle_event(event, payload = {})
     payload[:event] = event
 
-    if defined?(Delayed::Job)
-      Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
+    if defined?(::Delayed::Job)
+      ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
     else
       perform(payload)
     end
