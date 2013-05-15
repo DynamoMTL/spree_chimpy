@@ -87,7 +87,7 @@ Spree::Chimpy.config do |config|
 end
 ```
 
-### Adding a subscriber form
+### Adding a Guest subscription form
 
 spree_chimpy comes with a default subscription form for users who are not logged in, just add the following deface override:
 
