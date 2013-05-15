@@ -28,7 +28,7 @@ module Spree::Chimpy
 
   private
     def configured?
-      Config.configured?
+      Spree::Chimpy.configured?
     end
 
     def allowed?

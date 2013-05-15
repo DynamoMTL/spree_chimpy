@@ -16,11 +16,11 @@ module Spree::Chimpy
     end
 
     initializer 'spree_chimpy.check_list_name' do
-      if !Rails.env.test? && Config.configured?
+      if !Rails.env.test? && Spree::Chimpy.configured?
         list_name = Spree::Chimpy::Config.preferred_list_name
 
-        if Config.list_exists?
-          Config.sync_merge_vars
+        if Spree::Chimpy.list_exists?
+          Spree::Chimpy.sync_merge_vars
         else
           Rails.logger.error("spree_chimpy: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app")
         end
