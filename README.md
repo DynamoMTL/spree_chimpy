@@ -8,6 +8,7 @@ Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [Mail
 - Campaign Revenue Tracking: Notifies MailChimp when an order originates from a campaign email.
 - Custom User Data: Easily add your own custom merge vars. We'll only sync them when data changes
 - Existing Stores: Provides a handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. Run this after installing spree_chimpy to an existing store.
+- Deferred Processing: Communication between Spree and MailChimp is synchronous by default. If you have `delayed_job` in your bundle, the communication is queued up and deferred to one of your workers. (`sidekiq` support also planned)
 
 Installing
 -----------
