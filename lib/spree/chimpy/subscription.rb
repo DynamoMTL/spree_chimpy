@@ -19,7 +19,7 @@ module Spree::Chimpy
       return unless configured?
 
       if unsubscribing?
-        @interface.unsubscribe(@model.email)
+        unsubscribe
       elsif subscribing? || merge_vars_changed?
         subscribe
       end
