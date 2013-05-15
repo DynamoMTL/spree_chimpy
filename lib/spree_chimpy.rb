@@ -29,7 +29,7 @@ module Spree::Chimpy
   def list
     Interface::List.new(Config.preferred_key,
                         Config.preferred_list_name,
-                        Config.preferred_segment_name) if configured?
+                        Config.preferred_customer_segment_name) if configured?
   end
 
   def orders

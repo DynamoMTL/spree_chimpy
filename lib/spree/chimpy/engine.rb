@@ -29,7 +29,7 @@ module Spree::Chimpy
 
     initializer 'spree_chimpy.check_segment_name' do
       if !Rails.env.test? && Spree::Chimpy.configured?
-        segment_name = Spree::Chimpy::Config.preferred_segment_name
+        segment_name = Spree::Chimpy::Config.preferred_customer_segment_name
 
         unless Spree::Chimpy.segment_exists?
           Spree::Chimpy.create_segment
