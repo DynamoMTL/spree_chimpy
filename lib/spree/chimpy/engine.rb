@@ -29,7 +29,11 @@ module Spree::Chimpy
     end
 
     def self.activate
-      Spree::StoreController.send(:include, Spree::Chimpy::ControllerFilters)
+      if defined?(Spree::StoreController)
+        Spree::StoreController.send(:include, Spree::Chimpy::ControllerFilters)
+      else
+        Spree::BaseController.send(:include,  Spree::Chimpy::ControllerFilters)
+      end
 
       Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
