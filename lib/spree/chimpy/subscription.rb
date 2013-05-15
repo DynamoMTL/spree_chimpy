@@ -7,11 +7,11 @@ module Spree::Chimpy
     end
 
     def subscribe
-      Spree::Chimpy.fire_event(:subscribe, email: @model.email, merge_vars: merge_vars) if allowed?
+      Spree::Chimpy.fire_event(:subscribe, model: @model) if allowed?
     end
 
     def unsubscribe
-      Spree::Chimpy.fire_event(:unsubscribe, email: @model.email) if allowed?
+      Spree::Chimpy.fire_event(:unsubscribe, model: @model) if allowed?
     end
 
     def resubscribe(&block)
