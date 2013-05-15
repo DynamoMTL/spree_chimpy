@@ -5,7 +5,7 @@ if Spree.user_class
     after_create  :subscribe
     around_update :resubscribe
     after_destroy :unsubscribe
-    after_initialize :assign_subscription_default, if: :new_record?
+    after_initialize :assign_subscription_default
 
     delegate :subscribe, :resubscribe, :unsubscribe, to: :subscription
 
@@ -15,7 +15,7 @@ if Spree.user_class
     end
 
     def assign_subscription_default
-      self.subscribed = Spree::Chimpy::Config.preferred_default
+      self.subscribed ||= Spree::Chimpy::Config.preferred_default if new_record?
     end
   end
 end
