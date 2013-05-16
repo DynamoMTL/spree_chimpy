@@ -38,7 +38,7 @@ MailChimp Setup
 
 If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
 
-Make sure to create a list if you dont already have one. Use any name you like, just dont forget to update the `#preferred_list_name` setting
+Make sure to create a list if you dont already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting
 
 Spree Setup
 -----------
@@ -49,7 +49,7 @@ Edit the initializer created by the `spree_chimpy:install` generator. Only the A
 # config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
   # your API key provided by MailChimp
-  config.preferred_key = 'your-api-key'
+  config.key = 'your-api-key'
 end
 ```
 
@@ -59,19 +59,19 @@ If you'd like, you can add additional options:
 # config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
   # your API key as provided by MailChimp
-  config.preferred_key = 'your-api-key'
+  config.key = 'your-api-key'
 
   # name of your list, defaults to "Members"
-  config.preferred_list_name = 'peeps'
+  config.list_name = 'peeps'
 
   # id of your store. max 10 letters. defaults to "spree"
-  config.preferred_store_id = 'acme'
+  config.store_id = 'acme'
 
   # define a list of merge vars:
   # - key: a unique name that mail chimp uses. 10 letters max
   # - value: the name of any method on the user class.
   # default is {'EMAIL' => :email}
-  config.preferred_merge_vars = {
+  config.merge_vars = {
     'EMAIL' => :email,
     'HAIRCOLOR' => :hair_color
   }
@@ -83,7 +83,7 @@ For deployment on Heroku, you can configure the API key with environment variabl
 ```ruby
 # config/initializers/spree_chimpy.rb
 Spree::Chimpy.config do |config|
-  config.preferred_key = ENV['MAILCHIMP_API_KEY']
+  config.key = ENV['MAILCHIMP_API_KEY']
 end
 ```
 
