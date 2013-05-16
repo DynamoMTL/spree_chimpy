@@ -17,7 +17,7 @@ module Spree::Chimpy
 
     initializer 'spree_chimpy.check_list_name' do
       if !Rails.env.test? && Spree::Chimpy.configured?
-        list_name = Spree::Chimpy::Config.preferred_list_name
+        list_name = Spree::Chimpy::Config.list_name
 
         if Spree::Chimpy.list_exists?
           Spree::Chimpy.sync_merge_vars
@@ -29,7 +29,7 @@ module Spree::Chimpy
 
     initializer 'spree_chimpy.check_segment_name' do
       if !Rails.env.test? && Spree::Chimpy.configured?
-        segment_name = Spree::Chimpy::Config.preferred_customer_segment_name
+        segment_name = Spree::Chimpy::Config.customer_segment_name
 
         unless Spree::Chimpy.segment_exists?
           Spree::Chimpy.create_segment

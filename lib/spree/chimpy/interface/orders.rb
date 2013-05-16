@@ -19,7 +19,7 @@ module Spree::Chimpy
         log "Attempting to remove order #{order.number}"
 
         begin
-          @api.ecomm_order_del(Config.preferred_store_id, order.number)
+          @api.ecomm_order_del(Config.store_id, order.number)
         rescue Hominid::APIError => e
           raise(e) unless e.fault_code == NOT_FOUND_FAULT
         end
@@ -51,8 +51,8 @@ module Spree::Chimpy
           order_date:  order.completed_at,
           shipping:    order.ship_total.to_f,
           tax:         order.tax_total.to_f,
-          store_name:  Spree::Config.preferred_site_name,
-          store_id:    Spree::Chimpy::Config.preferred_store_id,
+          store_name:  Spree::Config.site_name,
+          store_id:    Spree::Chimpy::Config.store_id,
           items:       items
         }
 

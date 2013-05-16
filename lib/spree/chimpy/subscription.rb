@@ -45,7 +45,7 @@ module Spree::Chimpy
     end
 
     def merge_vars_changed?
-      Config.preferred_merge_vars.values.any? do |attr|
+      Config.merge_vars.values.any? do |attr|
         @model.send("#{attr}_changed?")
       end
     end
