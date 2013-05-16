@@ -4,7 +4,6 @@ module Spree::Chimpy
 
     def initialize(model)
       @model      = model
-      @interface  = Spree::Chimpy.list
     end
 
     def subscribe
