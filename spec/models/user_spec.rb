@@ -25,12 +25,12 @@ describe Spree::User do
 
   context "defaults" do
     it "subscribed by default" do
-      Spree::Chimpy::Config.preferred_default = true
+      Spree::Chimpy::Config.subscribed_by_default = true
       Spree::User.new.should be_subscribed
     end
 
     it "doesnt subscribe by default" do
-      Spree::Chimpy::Config.preferred_default = false
+      Spree::Chimpy::Config.subscribed_by_default = false
       Spree::User.new.should_not be_subscribed
     end
   end
