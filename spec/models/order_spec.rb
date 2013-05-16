@@ -8,12 +8,12 @@ describe Spree::Order do
 
   context "notifying mail chimp" do
     before do
-      Spree::Chimpy::Config.preferred_key = nil
+      Spree::Chimpy::Config.key = nil
 
       @completed_order     = FactoryGirl.build(:completed_order_with_totals)
       @not_completed_order = FactoryGirl.build(:order)
 
-      Spree::Chimpy::Config.preferred_key = '1234'
+      Spree::Chimpy::Config.key = '1234'
     end
 
     it "doesnt update when order is not completed" do

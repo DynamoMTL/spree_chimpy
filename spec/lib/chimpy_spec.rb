@@ -61,9 +61,9 @@ describe Spree::Chimpy do
 
   def config(options = {})
     config = Spree::Chimpy::Configuration.new
-    config.preferred_key        = options[:key]
-    config.preferred_list_name  = options[:list_name]
-    config.preferred_merge_vars = options[:merge_vars]
+    config.key        = options[:key]
+    config.list_name  = options[:list_name]
+    config.merge_vars = options[:merge_vars]
     config
   end
 end
