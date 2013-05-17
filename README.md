@@ -118,4 +118,10 @@ To run tests with guard (preferred):
 
     $ bundle exec guard
 
+Contributors
+------------
+- [@joshnuss](http://github.com/joshnuss)
+- [@bryanmtl](http://github.com/bryanmtl)
+- [@johanb](http://github.com/johanb)
+
 Copyright (c) 2013 Dynamo, released under the New BSD License
