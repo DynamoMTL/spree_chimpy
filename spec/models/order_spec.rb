@@ -8,22 +8,27 @@ describe Spree::Order do
 
   context "notifying mail chimp" do
     before do
-      Spree::Chimpy::Config.preferred_key = nil
+      Spree::Chimpy::Config.key = nil
 
       @completed_order     = FactoryGirl.build(:completed_order_with_totals)
       @not_completed_order = FactoryGirl.build(:order)
 
-      Spree::Chimpy::Config.preferred_key = '1234'
+      Spree::Chimpy::Config.key = '1234'
     end
 
     it "doesnt update when order is not completed" do
-      Spree::Chimpy::OrderNotice.should_not_receive(:new)
+      Spree::Chimpy.should_not_receive(:enqueue)
       @not_completed_order.update!
     end
 
     it "updates when order is completed" do
-      Spree::Chimpy::OrderNotice.should_receive(:new).with(@completed_order)
+      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order)
       @completed_order.update!
+    end
+
+    it "sync when order is completed" do
+      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order).twice
+      @completed_order.cancel!
     end
   end
 end

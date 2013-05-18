@@ -1,17 +1,23 @@
 namespace :spree_chimpy do
-  desc 'sync all orders with mail chimp'
-  task sync_orders: :environment do
-    scope = Spree::Order.complete
+  namespace :orders do
+    desc 'sync all orders with mail chimp'
+    task sync: :environment do
+      scope = Spree::Order.complete
 
-    puts "Exporting #{scope.count} orders"
+      puts "Exporting #{scope.count} orders"
 
-    scope.find_in_batches do |batch|
-      batch.each do |order|
-        order.notify_mail_chimp
+      scope.find_in_batches do |batch|
         print '.'
+        batch.each do |order|
+          begin
+            order.notify_mail_chimp
+          rescue => exception
+            puts exception
+          end
+        end
       end
-    end
 
-    puts nil, 'done'
+      puts nil, 'done'
+    end
   end
 end

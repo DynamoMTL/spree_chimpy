@@ -1,17 +1,20 @@
 module Spree::Chimpy
   module Interface
     class List
-      API_VERSION = '1.3'
+      delegate :log, to: Spree::Chimpy
 
-      def initialize(key, list_name)
-        @api       = Hominid::API.new(key, api_version: API_VERSION)
-        @list_name = list_name
+      def initialize(key, list_name, segment_name)
+        @api          = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
+        @list_name    = list_name
+        @segment_name = segment_name
       end
 
-      def subscribe(email, merge_vars = {})
+      def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        @api.list_subscribe(list_id, email, merge_vars, update_existing: true)
+        @api.list_subscribe(list_id, email, merge_vars, 'html', true, true)
+
+        segment(email) if options[:customer]
       end
 
       def unsubscribe(email)
@@ -32,17 +35,31 @@ module Spree::Chimpy
         @api.list_merge_var_add(list_id, tag, description)
       end
 
-      def find_list_id(name)
-        @api.find_list_id_by_name(name)
-      end
-
       def list_id
-        @list_id ||= find_list_id(@list_name)
+        @list_id ||= @api.find_list_id_by_name(@list_name)
       end
 
-    private
-      def log(message)
-        Rails.logger.info "MAILCHIMP: #{message}"
+      def segment(email)
+        log "Adding #{email} to segment #{@segment_name}"
+
+        @api.list_static_segment_members_add(list_id, segment_id, [email])
+      end
+
+      def create_segment
+        log "Creating segment #{@segment_name}"
+
+        @segment_id = @api.list_static_segment_add(list_id, @segment_name)
+      end
+
+      def find_segment_id
+        segments = @api.list_static_segments(list_id)
+        segment  = segments.detect {|segment| segment['name'] == @segment_name }
+
+        segment['id'] if segment
+      end
+
+      def segment_id
+        @segment_id ||= find_segment_id
       end
     end
   end

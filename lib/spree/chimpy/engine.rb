@@ -11,19 +11,36 @@ module Spree::Chimpy
       g.test_framework :rspec
     end
 
-    initializer "spree.hominid.environment", before: :load_config_initializers do |app|
+    initializer "spree_chimpy.environment", before: :load_config_initializers do |app|
       Spree::Chimpy::Config = Spree::Chimpy::Configuration.new
     end
 
     initializer 'spree_chimpy.check_list_name' do
-      if !Rails.env.test? && Config.configured?
-        list_name = Spree::Chimpy::Config.preferred_list_name
+      if !Rails.env.test? && Spree::Chimpy.configured?
+        list_name = Spree::Chimpy::Config.list_name
 
-        if Config.list_exists?
-          Config.sync_merge_vars
+        if Spree::Chimpy.list_exists?
+          Spree::Chimpy.sync_merge_vars
         else
           Rails.logger.error("spree_chimpy: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app")
         end
+      end
+    end
+
+    initializer 'spree_chimpy.check_segment_name' do
+      if !Rails.env.test? && Spree::Chimpy.configured?
+        segment_name = Spree::Chimpy::Config.customer_segment_name
+
+        unless Spree::Chimpy.segment_exists?
+          Spree::Chimpy.create_segment
+          Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{segment_name}` was not found. Creating it now")
+        end
+      end
+    end
+
+    initializer 'spree_chimpy.subscribe' do
+      ActiveSupport::Notifications.subscribe /^spree\.chimpy\./ do |name, start, finish, id, payload|
+        Spree::Chimpy.handle_event(name.split('.').last, payload)
       end
     end
 
