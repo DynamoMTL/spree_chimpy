@@ -71,7 +71,7 @@ module Spree::Chimpy
     if defined?(::Delayed::Job)
       ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
     elsif defined?(::Sidekiq)
-      Spree::Chimpy::Workers::Sidekiq.perform_async(payload)
+      Spree::Chimpy::Workers::Sidekiq.perform_async(payload.except(:object))
     else
       perform(payload)
     end
