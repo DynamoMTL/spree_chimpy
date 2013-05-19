@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe Spree::Hominid::Interface::List do
-  let(:interface) { Spree::Hominid::Interface::List.new('1234', 'Members') }
+describe Spree::Chimpy::Interface::List do
+  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers') }
   let(:api)       { mock(:api) }
 
   before do
-    Spree::Hominid::Config.preferred_key = '1234'
+    Spree::Chimpy::Config.key = '1234'
     Hominid::API.should_receive(:new).with('1234', api_version: '1.3').and_return(api)
   end
 
   it "subscribes" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
-    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, update_existing: true)
+    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, 'html', true, true)
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
@@ -23,7 +23,7 @@ describe Spree::Hominid::Interface::List do
 
   it "find list id" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
-    interface.find_list_id('Members')
+    interface.list_id
   end
 
   it "checks if merge var exists" do

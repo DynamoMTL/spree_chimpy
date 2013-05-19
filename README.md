@@ -1,85 +1,106 @@
 Spree/MailChimp Integration
 ============
 
-Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](www.mailchimp.com)
+Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](http://www.mailchimp.com)
 
-- list subscription and unscubribing
-- define and sync merge variables
-- order submitition
-- campaign tracking
-- delayed job integration
+- List synchronization: Automatically syncs Spree's user list with MailChimp. The user can subscribe/unsubscribe via the registration and account pages.
+- Order synchronoization: Fully supports MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes after the sale (i.e. order modification, cancelation, return).
+- Campaign Revenue Tracking: Notifies MailChimp when an order originates from a campaign email.
+- Custom User Data: Easily add your own custom merge vars. We'll only sync them when data changes
+- Existing Stores: Provides a handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. Run this after installing spree_chimpy to an existing store.
+- Deferred Processing: Communication between Spree and MailChimp is synchronous by default. If you have `delayed_job` in your bundle, the communication is queued up and deferred to one of your workers. (`sidekiq` support also planned)
 
 Installing
 -----------
 
-Add spree_hominid to your Gemfile:
+Add spree_chimpy to your Gemfile:
 
 ```ruby
-gem "spree_hominid"
+gem "spree_chimpy"
 ```
 
 Alternatively you can use the git repo directly:
 
 ```ruby
-gem "spree_hominid", github: "DynamoMTL/spree-hominid"
+gem "spree_chimpy", github: "DynamoMTL/spree_chimpy"
 ```
 
-Then, run bundler
+Run bundler
 
-    $ bundle
+    bundle
+
+Install migrations & initializer file
+
+    bundle exec rails g spree_chimpy:install
 
 MailChimp Setup
 ---------------
 
-If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/), its free
-Make sure you create a list. The list name setting defaults to "Members", but you configure any name you want via the `#preferred_list_name` setting
+If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
+
+Make sure to create a list if you dont already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting
 
 Spree Setup
 -----------
 
-Add an initializer that will define the configuration. Only the API key is a required
+Edit the initializer created by the `spree_chimpy:install` generator. Only the API key is required
 
 ```ruby
-# config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
+# config/initializers/spree_chimpy.rb
+Spree::Chimpy.config do |config|
   # your API key provided by MailChimp
-  config.preferred_key = 'your-api-key'
+  config.key = 'your-api-key'
 end
 ```
 
-If you'd like you can add additional options:
+If you'd like, you can add additional options:
 
 ```ruby
-# config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
+# config/initializers/spree_chimpy.rb
+Spree::Chimpy.config do |config|
   # your API key as provided by MailChimp
-  config.preferred_key = 'your-api-key'
+  config.key = 'your-api-key'
 
   # name of your list, defaults to "Members"
-  config.preferred_list_name = 'peeps'
+  config.list_name = 'peeps'
 
   # id of your store. max 10 letters. defaults to "spree"
-  config.preferred_store_id = 'acme'
+  config.store_id = 'acme'
 
   # define a list of merge vars:
   # - key: a unique name that mail chimp uses. 10 letters max
   # - value: the name of any method on the user class.
   # default is {'EMAIL' => :email}
-  config.preferred_merge_vars = {
+  config.merge_vars = {
     'EMAIL' => :email,
     'HAIRCOLOR' => :hair_color
   }
 end
 ```
 
-For deployment on Heroku, you can configure the API username/password with environment variables:
+For deployment on Heroku, you can configure the API key with environment variables:
 
 ```ruby
-# config/initializers/spree_hominid.rb
-Spree::Hominid.config do |config|
-  config.preferred_key = ENV['MAILCHIMP_API_KEY']
+# config/initializers/spree_chimpy.rb
+Spree::Chimpy.config do |config|
+  config.key = ENV['MAILCHIMP_API_KEY']
 end
 ```
+
+### Adding a Guest subscription form
+
+spree_chimpy comes with a default subscription form for users who are not logged in, just add the following deface override:
+
+```ruby
+Deface::Override.new(:virtual_path => "spree/shared/_footer",
+                     :name         => "spree_chimpy_subscription_form",
+                     :insert_bottom => "#footer-right",
+                     :partial      => "spree/shared/guest_subscription_form")
+```
+
+The selector and virtual path can be changed to taste.
+
+
 
 Testing
 -------

@@ -1,3 +1,13 @@
 en:
-  newsletter_signup_label: Sign me up to the newsletter 
-  admin_newsletter_signup_label: Subscribed to newsletter
+  spree:
+    chimpy:
+      subscribed_label: Sign me up to the newsletter
+      admin_subscribed_label: Subscribed to newsletter
+      subscribe_title: Subscribe to our newsletter
+      subscribed: Subscribed
+      email:
+        label: Email
+        placeholder: Enter your email address
+      subscriber:
+        success: Thanks! you've been successfully added
+        failure: There was a problem processing your sign-up

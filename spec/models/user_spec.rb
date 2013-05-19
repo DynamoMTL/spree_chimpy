@@ -6,7 +6,7 @@ describe Spree::User do
 
     before do
       subscription.should_receive(:subscribe)
-      Spree::Hominid::Subscription.should_receive(:new).at_least(1).and_return(subscription)
+      Spree::Chimpy::Subscription.should_receive(:new).at_least(1).and_return(subscription)
       @user = FactoryGirl.create(:user)
     end
 
@@ -20,6 +20,18 @@ describe Spree::User do
       subscription.should_receive(:unsubscribe)
 
       @user.destroy
+    end
+  end
+
+  context "defaults" do
+    it "subscribed by default" do
+      Spree::Chimpy::Config.subscribed_by_default = true
+      Spree::User.new.should be_subscribed
+    end
+
+    it "doesnt subscribe by default" do
+      Spree::Chimpy::Config.subscribed_by_default = false
+      Spree::User.new.should_not be_subscribed
     end
   end
 end
