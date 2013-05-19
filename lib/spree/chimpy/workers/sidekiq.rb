@@ -5,7 +5,7 @@ module Spree::Chimpy
       
       if defined?(::Sidekiq)
         include ::Sidekiq::Worker
-        sidekiq_options :queue => :mailchimp
+        sidekiq_options :queue => :mailchimp, :retry => 5
       end
 
     end
