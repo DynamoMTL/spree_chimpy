@@ -31,6 +31,7 @@ namespace :spree_chimpy do
         response["errors"].each do |error|
           puts "Error #{error["code"]} with email: #{error["email"]} \n msg: #{error["msg"]}"
         end
+        puts "segmented #{response["success"]} out of #{emails.size}"
         puts "done"
       end
     end
