@@ -21,6 +21,14 @@ describe Spree::Chimpy::Interface::List do
     interface.unsubscribe("user@example.com")
   end
   
+  it "segments users" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, 'html', true, true)
+    api.should_receive(:list_static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    api.should_receive(:list_static_segment_members_add).with('a3d3', '123', ["user@example.com"])
+    interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
+  end
+  
   it "segments" do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
     api.should_receive(:list_static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
