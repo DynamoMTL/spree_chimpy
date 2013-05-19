@@ -63,6 +63,9 @@ Spree::Chimpy.config do |config|
 
   # name of your list, defaults to "Members"
   config.list_name = 'peeps'
+  
+  # change the double-opt-in behavior
+  config.double_opt_in = false
 
   # id of your store. max 10 letters. defaults to "spree"
   config.store_id = 'acme'
