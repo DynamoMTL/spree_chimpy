@@ -20,4 +20,19 @@ namespace :spree_chimpy do
       puts nil, 'done'
     end
   end
+  
+  namespace :users do
+    desc 'segment all subscribed users'
+    task segment: :environment do
+      if Spree::Chimpy.segment_exists?
+        emails = Spree.user_class.where(subscribed: true).pluck(:email)
+        puts "Segmenting all subscribed users"
+        response = Spree::Chimpy.list.segment(emails)
+        response["errors"].each do |error|
+          puts "Error #{error["code"]} with email: #{error["email"]} \n msg: #{error["msg"]}"
+        end
+        puts "done"
+      end
+    end
+  end
 end
