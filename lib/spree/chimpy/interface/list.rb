@@ -3,7 +3,7 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(key, list_name, segment_name, double_opt_in=true)
+      def initialize(key, list_name, segment_name, double_opt_in)
         @api          = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
         @list_name    = list_name
         @segment_name = segment_name

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers') }
+  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers', true) }
   let(:api)       { mock(:api) }
 
   before do
