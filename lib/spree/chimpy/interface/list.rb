@@ -15,7 +15,7 @@ module Spree::Chimpy
 
         @api.list_subscribe(list_id, email, merge_vars, 'html', @double_opt_in, true)
 
-        segment(email) if options[:customer]
+        segment([email]) if options[:customer]
       end
 
       def unsubscribe(email)
@@ -40,10 +40,10 @@ module Spree::Chimpy
         @list_id ||= @api.find_list_id_by_name(@list_name)
       end
 
-      def segment(email)
-        log "Adding #{email} to segment #{@segment_name}"
+      def segment(emails = [])
+        log "Adding #{emails} to segment #{@segment_name}"
 
-        @api.list_static_segment_members_add(list_id, segment_id, [email])
+        @api.list_static_segment_members_add(list_id, segment_id, emails)
       end
 
       def create_segment
