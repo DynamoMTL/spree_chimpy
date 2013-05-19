@@ -1,15 +1,13 @@
 module Spree::Chimpy
   module Workers
     class Sidekiq
+      include ::Spree::Chimpy
+      
       if defined?(::Sidekiq)
         include ::Sidekiq::Worker
-        sidekiq_options :unique => true, :queue => :spee_chimpy
+        sidekiq_options :queue => :mailchimp
       end
 
-      def perform(payload)
-        Spee::Chimpy.perform(paylod)
-      end
-      
     end
   end
 end
