@@ -79,7 +79,8 @@ module Spree::Chimpy
 
   def perform(payload)
     return unless configured?
-
+    payload = payload.symbolize_keys
+    
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
