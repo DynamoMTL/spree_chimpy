@@ -15,26 +15,10 @@ module Spree::Chimpy
       Spree::Chimpy::Config = Spree::Chimpy::Configuration.new
     end
 
-    initializer 'spree_chimpy.check_list_name' do
+    initializer 'spree_chimpy.ensure' do
       if !Rails.env.test? && Spree::Chimpy.configured?
-        list_name = Spree::Chimpy::Config.list_name
-
-        if Spree::Chimpy.list_exists?
-          Spree::Chimpy.sync_merge_vars
-        else
-          Rails.logger.error("spree_chimpy: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app")
-        end
-      end
-    end
-
-    initializer 'spree_chimpy.check_segment_name' do
-      if !Rails.env.test? && Spree::Chimpy.configured?
-        segment_name = Spree::Chimpy::Config.customer_segment_name
-
-        unless Spree::Chimpy.segment_exists?
-          Spree::Chimpy.create_segment
-          Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{segment_name}` was not found. Creating it now")
-        end
+        Spree::Chimpy.ensure_list
+        Spree::Chimpy.ensure_segment
       end
     end
 
