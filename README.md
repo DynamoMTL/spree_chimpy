@@ -36,9 +36,9 @@ Install migrations & initializer file
 MailChimp Setup
 ---------------
 
-If you dont already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
+If you don't already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
 
-Make sure to create a list if you dont already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting
+Make sure to create a list if you don't already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting
 
 Spree Setup
 -----------
