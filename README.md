@@ -3,6 +3,9 @@ Spree/MailChimp Integration
 
 Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](http://www.mailchimp.com)
 
+[![Travis CI Status](https://travis-ci.org/DynamoMTL/spree_chimpy.png)](https://travis-ci.org/DynamoMTL/spree_chimpy)
+[![Code Climate](https://codeclimate.com/github/DynamoMTL/spree_chimpy.png)](https://codeclimate.com/github/DynamoMTL/spree_chimpy)
+
 - List synchronization: Automatically syncs Spree's user list with MailChimp. The user can subscribe/unsubscribe via the registration and account pages.
 - Order synchronoization: Fully supports MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes after the sale (i.e. order modification, cancelation, return).
 - Campaign Revenue Tracking: Notifies MailChimp when an order originates from a campaign email.
