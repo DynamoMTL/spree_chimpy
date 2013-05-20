@@ -81,10 +81,6 @@ module Spree::Chimpy
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
-    if !object
-      raise Error.new("Unable to locate a #{payload[:class]} with id #{payload[:id]}")
-    end
-
     case event
     when :order
       orders.sync(object)
