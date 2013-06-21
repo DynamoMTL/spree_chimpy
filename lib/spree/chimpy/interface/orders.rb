@@ -36,10 +36,9 @@ module Spree::Chimpy
 
         items = order.line_items.map do |line|
           variant = line.variant
-          product = Spree::Product.find(variant.product_id)
-          ptaxonomy = Spree::Taxonomy.find_by_name("Categories")
-          taxon_id = product.taxons.where(:parent_id => ptaxonomy.id).uniq.map(&:id).first
-          taxon_name = product.taxons.where(:id => taxon_id).uniq.map(&:name).first
+          ptaxon = Spree::Taxonomy.find_by_name("Categories")
+          taxon_id = variant.product.taxons.where(:parent_id => ptaxon.id).uniq.map(&:id).first
+          taxon_name = variant.product.taxons.where(:id => taxon_id).uniq.map(&:name).first
 
           {product_id:    variant.id,
            sku:           variant.sku,
