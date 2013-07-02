@@ -4,7 +4,7 @@ module Spree::Chimpy
       delegate :log, to: Spree::Chimpy
 
       def initialize(key, list_name, segment_name)
-        @api      = Mailchimp::API.new(key, throws_exceptions: true, timeout: 60)
+        @api      = Mailchimp::API.new(key, Spree::Chimpy::Config.api_options)
         @list_name    = list_name
         @segment_name = segment_name
         @list_name = list_name
