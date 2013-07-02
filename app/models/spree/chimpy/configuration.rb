@@ -6,5 +6,6 @@ module Spree::Chimpy
     preference :list_name,             :string,  default: 'Members'
     preference :customer_segment_name, :string,  default: 'Customers'
     preference :merge_vars,            :hash,    default: {'EMAIL' => :email}
+    preference :double_opt_in,         :boolean, default: false
   end
 end

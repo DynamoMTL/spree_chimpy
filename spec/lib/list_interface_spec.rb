@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers') }
+  let(:interface) { Spree::Chimpy::Interface::List.new('1234', 'Members', 'customers', true) }
   let(:api)       { mock(:api) }
 
   before do
@@ -19,6 +19,21 @@ describe Spree::Chimpy::Interface::List do
     api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
     api.should_receive(:list_unsubscribe).with('a3d3', 'user@example.com')
     interface.unsubscribe("user@example.com")
+  end
+  
+  it "segments users" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    api.should_receive(:list_subscribe).with('a3d3', 'user@example.com', {'SIZE' => '10'}, 'html', true, true)
+    api.should_receive(:list_static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    api.should_receive(:list_static_segment_members_add).with('a3d3', '123', ["user@example.com"])
+    interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
+  end
+  
+  it "segments" do
+    api.should_receive(:find_list_id_by_name).with('Members').and_return('a3d3')
+    api.should_receive(:list_static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    api.should_receive(:list_static_segment_members_add).with('a3d3', '123', ["test@test.nl", "test@test.com"])
+    interface.segment(["test@test.nl", "test@test.com"])
   end
 
   it "find list id" do

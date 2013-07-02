@@ -67,6 +67,9 @@ Spree::Chimpy.config do |config|
 
   # name of your list, defaults to "Members"
   config.list_name = 'peeps'
+  
+  # change the double-opt-in behavior
+  config.double_opt_in = false
 
   # id of your store. max 10 letters. defaults to "spree"
   config.store_id = 'acme'
@@ -91,6 +94,28 @@ Spree::Chimpy.config do |config|
 end
 ```
 
+### Segmenting
+
+By default spree_chimpy will try to segment customers. The segment name can be configured using the `segment_name` setting.
+Spree_chimpy will use an existing segment if it exists. If no segment can be found it will be created for you automatically.
+
+#### Note about double-opt-in & segmenting
+
+Mailchimp does not allow you to segment emails that have not confirmed their subscription. This means that if you use the
+double-opt-in setting users will not get segmented by default. To work around this there is a rake task to segment all currently subscribed users.
+
+`rake spree_chimpy:users:segment`
+
+The output of this command will look something like this:
+
+    Segmenting all subscribed users
+    Error 215 with email: user@example.com
+     msg: The email address "user@example" does not belong to this list
+    segmented 2 out of 3
+    done
+
+You can run this task recurring by setting up a cron using [whenever](https://github.com/javan/whenever) or by using [clockwork](https://github.com/tomykaira/clockwork). Alternatively when you host on Heroku you can use [Heroku Scheduler](https://addons.heroku.com/scheduler)
+
 ### Adding a Guest subscription form
 
 spree_chimpy comes with a default subscription form for users who are not logged in, just add the following deface override:
@@ -103,7 +128,6 @@ Deface::Override.new(:virtual_path => "spree/shared/_footer",
 ```
 
 The selector and virtual path can be changed to taste.
-
 
 
 Testing

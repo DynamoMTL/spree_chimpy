@@ -3,18 +3,19 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(key, list_name, segment_name)
+      def initialize(key, list_name, segment_name, double_opt_in)
         @api          = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
         @list_name    = list_name
         @segment_name = segment_name
+        @double_opt_in = double_opt_in
       end
 
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        @api.list_subscribe(list_id, email, merge_vars, 'html', true, true)
+        @api.list_subscribe(list_id, email, merge_vars, 'html', @double_opt_in, true)
 
-        segment(email) if options[:customer]
+        segment([email]) if options[:customer]
       end
 
       def unsubscribe(email)
@@ -39,10 +40,10 @@ module Spree::Chimpy
         @list_id ||= @api.find_list_id_by_name(@list_name)
       end
 
-      def segment(email)
-        log "Adding #{email} to segment #{@segment_name}"
+      def segment(emails = [])
+        log "Adding #{emails} to segment #{@segment_name}"
 
-        @api.list_static_segment_members_add(list_id, segment_id, [email])
+        @api.list_static_segment_members_add(list_id, segment_id, emails)
       end
 
       def create_segment
