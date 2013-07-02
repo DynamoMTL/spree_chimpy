@@ -126,5 +126,6 @@ Contributors
 - [@joshnuss](http://github.com/joshnuss)
 - [@bryanmtl](http://github.com/bryanmtl)
 - [@johanb](http://github.com/johanb)
+- [@iloveitaly](http://github.com/iloveitaly)
 
 Copyright (c) 2013 Dynamo, released under the New BSD License
