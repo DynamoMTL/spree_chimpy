@@ -2,12 +2,10 @@ require 'spree_core'
 require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
 require 'spree/chimpy/workers/delayed_job'
-require 'hominid'
+require 'mailchimp'
 
 module Spree::Chimpy
   extend self
-
-  API_VERSION = '1.3'
 
   def config(&block)
     yield(Spree::Chimpy::Config)
@@ -69,14 +67,14 @@ module Spree::Chimpy
     if list_exists?
       sync_merge_vars
     else
-      Rails.logger.error("spree_chimpy: hmm.. a list named `#{list_name}` was not found. please add it and reboot the app")
+      Rails.logger.error("spree_chimpy: hmm.. a list named `#{Config.list_name}` was not found. please add it and reboot the app")
     end
   end
 
   def ensure_segment
     unless segment_exists?
       create_segment
-      Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{customer_segment_name}` was not found. Creating it now")
+      Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{Config.customer_segment_name}` was not found. Creating it now")
     end
   end
 
