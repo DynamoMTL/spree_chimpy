@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::Orders do
-  let(:interface) { Spree::Chimpy::Interface::Orders.new('1234') }
+  let(:interface) { Spree::Chimpy::Interface::Orders.new }
   let(:api)       { mock(:api) }
   let(:order)     { FactoryGirl.build_stubbed(:order) }
 
   before do
     Spree::Chimpy::Config.key = '1234'
-    Mailchimp::API.should_receive(:new).with('1234',  {:throws_exceptions=>true, :timeout=>60}).and_return(api)
+    Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
   end
 
   it "adds an order" do
