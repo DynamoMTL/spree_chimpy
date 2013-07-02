@@ -3,8 +3,8 @@ module Spree::Chimpy
     class Orders
       delegate :log, to: Spree::Chimpy
 
-      def initialize(key)
-        @api = Mailchimp::API.new(key, Spree::Chimpy::Config.api_options)
+      def initialize
+        @api = Spree::Chimpy.api
       end
 
       def add(order)
@@ -16,7 +16,7 @@ module Spree::Chimpy
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        @api.ecomm_order_del(store_id: Config.store_id, order_id: order.number)
+        @api.ecomm_order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number)
       end
 
       def sync(order)
