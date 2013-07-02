@@ -2,6 +2,9 @@ Spree::Chimpy.config do |config|
   # your API key as provided by MailChimp
   # config.key = 'your-api-key'
 
+  # extra api options for the Mailchimp gem
+  # config.api_options = { throws_exceptions: false, timeout: 3600 }
+
   # name of your list, defaults to "Members"
   # config.list_name = 'peeps'
 

@@ -3,11 +3,11 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(key, list_name, segment_name)
-        @api      = Mailchimp::API.new(key, throws_exceptions: true, timeout: 60)
+      def initialize(list_name, segment_name)
+        @api          = Spree::Chimpy.api
         @list_name    = list_name
         @segment_name = segment_name
-        @list_name = list_name
+        @list_name    = list_name
       end
 
       def subscribe(email, merge_vars = {}, options = {})
