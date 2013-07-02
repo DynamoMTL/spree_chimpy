@@ -7,21 +7,21 @@ describe Spree::Chimpy::Interface::Orders do
 
   before do
     Spree::Chimpy::Config.key = '1234'
-    Hominid::API.should_receive(:new).with('1234', api_version: '1.3').and_return(api)
+    Mailchimp::API.should_receive(:new).with('1234',  {:throws_exceptions=>true, :timeout=>60}).and_return(api)
   end
 
   it "adds an order" do
     Spree::Config.site_name = "Super Store"
     Spree::Chimpy::Config.store_id = "super-store"
 
-    api.should_receive(:ecomm_order_add).with(hash_including(id: order.number)).and_return(true)
+    api.should_receive(:ecomm_order_add) { |h| h[:order][:id].should == order.number }.and_return(true)
 
     interface.add(order).should be_true
   end
 
   it "removes an order" do
     Spree::Chimpy::Config.store_id = "super-store"
-    api.should_receive(:ecomm_order_del).with('super-store', order.number).and_return(true)
+    api.should_receive(:ecomm_order_del).with({store_id: 'super-store', order_id: order.number}).and_return(true)
 
     interface.remove(order).should be_true
   end

@@ -1,28 +1,22 @@
 module Spree::Chimpy
   module Interface
     class Orders
-      NOT_FOUND_FAULT = 330
-
       delegate :log, to: Spree::Chimpy
 
       def initialize(key)
-        @api = Hominid::API.new(key, api_version: Spree::Chimpy::API_VERSION)
+        @api = Mailchimp::API.new(key, throws_exceptions: true, timeout: 60)
       end
 
       def add(order)
         log "Adding order #{order.number}"
 
-        @api.ecomm_order_add(hash(order))
+        @api.ecomm_order_add(order: hash(order))
       end
 
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        begin
-          @api.ecomm_order_del(Config.store_id, order.number)
-        rescue Hominid::APIError => e
-          raise(e) unless e.fault_code == NOT_FOUND_FAULT
-        end
+        @api.ecomm_order_del(store_id: Config.store_id, order_id: order.number)
       end
 
       def sync(order)
