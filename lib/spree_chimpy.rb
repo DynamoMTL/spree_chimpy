@@ -24,14 +24,17 @@ module Spree::Chimpy
     Config.key.present?
   end
 
+  def api
+    Mailchimp::API.new(Config.key, Config.api_options) if configured?
+  end
+
   def list
-    Interface::List.new(Config.key,
-                        Config.list_name,
+    Interface::List.new(Config.list_name,
                         Config.customer_segment_name) if configured?
   end
 
   def orders
-    Interface::Orders.new(Config.key) if configured?
+    Interface::Orders.new if configured?
   end
 
   def list_exists?
