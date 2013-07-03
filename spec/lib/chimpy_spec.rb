@@ -4,7 +4,7 @@ describe Spree::Chimpy do
 
   context "enabled" do
     before do
-      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('Members', 'Customers').and_return(:list)
+      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('Members', 'Customers', false).and_return(:list)
       Spree::Chimpy::Interface::Orders.should_receive(:new).any_number_of_times.and_return(:orders)
       config(key: '1234', list_name: 'Members')
     end
@@ -30,7 +30,7 @@ describe Spree::Chimpy do
     let(:interface)     { mock(:interface) }
 
     before do
-      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('Members', 'Customers').and_return(interface)
+      Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('Members', 'Customers', false).and_return(interface)
       config(key: '1234',
              list_name: 'Members',
              merge_vars: {'EMAIL' => :email, 'FNAME' => :first_name, 'LNAME' => :last_name})

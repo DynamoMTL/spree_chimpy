@@ -30,7 +30,8 @@ module Spree::Chimpy
 
   def list
     Interface::List.new(Config.list_name,
-                        Config.customer_segment_name) if configured?
+                        Config.customer_segment_name,
+                        Config.double_opt_in) if configured?
   end
 
   def orders

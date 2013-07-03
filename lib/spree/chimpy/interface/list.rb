@@ -3,19 +3,19 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(list_name, segment_name)
-        @api          = Spree::Chimpy.api
-        @list_name    = list_name
-        @segment_name = segment_name
-        @list_name    = list_name
+      def initialize(list_name, segment_name, double_opt_in)
+        @api           = Spree::Chimpy.api
+        @list_name     = list_name
+        @segment_name  = segment_name
+        @double_opt_in = double_opt_in
       end
 
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        @api.list_subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true, double_optin: true, email_type: 'html')
+        @api.list_subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true, double_optin: @double_opt_in, email_type: 'html')
 
-        segment(email) if options[:customer]
+        segment([email]) if options[:customer]
       end
 
       def unsubscribe(email)
@@ -44,10 +44,10 @@ module Spree::Chimpy
         @list_id ||= find_list_id(@list_name)
       end
 
-      def segment(email)
-        log "Adding #{email} to segment #{@segment_name}"
+      def segment(emails = [])
+        log "Adding #{emails} to segment #{@segment_name}"
 
-        @api.list_static_segment_members_add(id: list_id, seg_id: segment_id, batch: [email])
+        @api.list_static_segment_members_add(id: list_id, seg_id: segment_id, batch: emails)
       end
 
       def create_segment

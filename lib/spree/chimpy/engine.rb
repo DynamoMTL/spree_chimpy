@@ -22,6 +22,12 @@ module Spree::Chimpy
       end
     end
 
+    initializer 'spree_chimpy.double_opt_in' do
+      if Spree::Chimpy::Config.subscribed_by_default && !Spree::Chimpy::Config.double_opt_in
+        Rails.logger.warn("spree_chimpy: You have 'subscribed by default' enabled while 'double opt-in' is disabled. This is not recommended.")
+      end
+    end
+
     initializer 'spree_chimpy.subscribe' do
       ActiveSupport::Notifications.subscribe /^spree\.chimpy\./ do |name, start, finish, id, payload|
         Spree::Chimpy.handle_event(name.split('.').last, payload)
