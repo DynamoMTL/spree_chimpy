@@ -16,7 +16,7 @@ module Spree::Chimpy
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        @api.ecomm_order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number)
+        @api.ecomm_order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number, throws_exceptions: false)
       end
 
       def sync(order)
@@ -27,19 +27,19 @@ module Spree::Chimpy
     private
       def hash(order)
         source = order.source
+        root_taxon = Spree::Taxon.find_by_parent_id(nil)
 
         items = order.line_items.map do |line|
+          # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
-          ptaxon = Spree::Taxonomy.find_by_name("Categories")
-          taxon_id = variant.product.taxons.where(:parent_id => ptaxon.id).uniq.map(&:id).first
-          taxon_name = variant.product.taxons.where(:id => taxon_id).uniq.map(&:name).first
+          taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
 
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
-           category_id:   taxon_id,
-           category_name: taxon_name,
-           cost:          variant.cost_price.to_f,
+           category_id:   taxon.id,
+           category_name: taxon.name,
+           cost:          variant.price.to_f,
            qty:           line.quantity}
         end
 
