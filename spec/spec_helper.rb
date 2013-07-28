@@ -4,6 +4,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'factory_girl'
+require 'ffaker'
 
 # Requires factories defined in spree_core
 require 'spree/core/testing_support/factories'
@@ -18,7 +19,8 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 FactoryGirl.find_definitions
 
 RSpec.configure do |config|
-config.include FactoryGirl::Syntax::Methods
+  config.include FactoryGirl::Syntax::Methods
+
   # == URL Helpers
   #
   # Allows access to Spree's routes in specs:
