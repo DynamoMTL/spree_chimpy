@@ -32,13 +32,10 @@ module Spree::Chimpy
         items = order.line_items.map do |line|
           # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
-          taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
 
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
-           category_id:   taxon.id,
-           category_name: taxon.name,
            cost:          variant.price.to_f,
            qty:           line.quantity}
         end
