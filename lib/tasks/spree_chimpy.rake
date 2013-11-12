@@ -1,4 +1,11 @@
 namespace :spree_chimpy do
+  namespace :merge_vars do
+    desc 'sync merge vars with mail chimp'
+    tast :sync do
+      Spree::Chimpy.sync_merge_vars
+    end
+  end
+
   namespace :orders do
     desc 'sync all orders with mail chimp'
     task sync: :environment do

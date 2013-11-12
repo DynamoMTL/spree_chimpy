@@ -84,6 +84,9 @@ Spree::Chimpy.config do |config|
 end
 ```
 
+When adding custom merge vars, you'll need to notify MailChimp by running the rake task: `rake spree_chimpy:merge_vars:sync`
+
+
 For deployment on Heroku, you can configure the API key with environment variables:
 
 ```ruby
