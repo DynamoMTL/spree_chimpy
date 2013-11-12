@@ -1,7 +1,7 @@
 namespace :spree_chimpy do
   namespace :merge_vars do
     desc 'sync merge vars with mail chimp'
-    tast :sync do
+    task :sync do
       Spree::Chimpy.sync_merge_vars
     end
   end
