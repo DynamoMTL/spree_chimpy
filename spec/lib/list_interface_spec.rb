@@ -4,7 +4,7 @@ describe Spree::Chimpy::Interface::List do
   before { Spree::Chimpy.reset }
 
   let(:interface) { Spree::Chimpy::Interface::List.new('Members', 'customers', true) }
-  let(:api)       { mock(:api) }
+  let(:api)       { double(:api) }
 
   before do
     Spree::Chimpy::Config.key = '1234'

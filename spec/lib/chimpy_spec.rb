@@ -27,7 +27,7 @@ describe Spree::Chimpy do
   end
 
   context "sync merge vars" do
-    let(:interface)     { mock(:interface) }
+    let(:interface)     { double(:interface) }
 
     before do
       Spree::Chimpy::Interface::List.should_receive(:new).any_number_of_times.with('Members', 'Customers', false).and_return(interface)

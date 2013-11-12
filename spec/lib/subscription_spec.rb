@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Chimpy::Subscription do
 
   context "mail chimp enabled" do
-    let(:interface)    { mock(:interface) }
+    let(:interface)    { double(:interface) }
 
     before do
       Spree::Chimpy::Config.list_name  = 'Members'
@@ -47,7 +47,7 @@ describe Spree::Chimpy::Subscription do
 
     context "resubscribe" do
       let(:user)         { FactoryGirl.create(:user, subscribed: true) }
-      let(:subscription) { mock(:subscription) }
+      let(:subscription) { double(:subscription) }
 
       before do
         interface.should_receive(:subscribe).once.with(user.email)
