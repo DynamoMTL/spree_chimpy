@@ -73,7 +73,7 @@ describe Spree::Chimpy::Subscription do
     context "subscribing" do
       let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
-      before { interface.should_receive(:subscribe).at_least(0) }
+      before { interface.stub(:subscribe) }
 
       context "subscribed user" do
         let(:user) { FactoryGirl.create(:user, subscribed: true) }
