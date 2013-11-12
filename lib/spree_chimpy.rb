@@ -24,18 +24,22 @@ module Spree::Chimpy
     Config.key.present?
   end
 
+  def reset
+    @list = @api = @orders = nil
+  end
+
   def api
-    Mailchimp::API.new(Config.key, Config.api_options) if configured?
+    @api ||= Mailchimp::API.new(Config.key, Config.api_options) if configured?
   end
 
   def list
-    Interface::List.new(Config.list_name,
+    @list ||= Interface::List.new(Config.list_name,
                         Config.customer_segment_name,
                         Config.double_opt_in) if configured?
   end
 
   def orders
-    Interface::Orders.new if configured?
+    @orders ||= Interface::Orders.new if configured?
   end
 
   def list_exists?

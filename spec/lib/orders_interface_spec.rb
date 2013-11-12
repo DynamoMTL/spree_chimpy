@@ -6,6 +6,7 @@ describe Spree::Chimpy::Interface::Orders do
   let(:order)     { FactoryGirl.build(:completed_order_with_totals) }
 
   before do
+    Spree::Chimpy.reset
     Spree::Chimpy::Config.key = '1234'
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
 
