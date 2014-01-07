@@ -91,6 +91,8 @@ module Spree::Chimpy
 
     if defined?(::Delayed::Job)
       ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
+    elsif defined?(::Sidekiq)
+      Spree::Chimpy::Workers::Sidekiq.perform_async(payload.except(:object))
     else
       perform(payload)
     end
@@ -98,7 +100,8 @@ module Spree::Chimpy
 
   def perform(payload)
     return unless configured?
-
+    payload = payload.symbolize_keys
+    
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
