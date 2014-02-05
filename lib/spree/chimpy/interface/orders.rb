@@ -37,8 +37,8 @@ module Spree::Chimpy
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
-           category_id:   taxon.id,
-           category_name: taxon.name,
+           category_id:   taxon ? taxon.id : 999999,
+           category_name: taxon ? taxon.name : "Uncategorized",
            cost:          variant.price.to_f,
            qty:           line.quantity}
         end
