@@ -46,7 +46,7 @@ module Spree::Chimpy
         data = {
           id:          order.number,
           email:       order.email,
-          total:       order.total.to_f,
+          total:       order.item_total.to_f,
           order_date:  order.completed_at.strftime('%Y-%m-%d'),
           shipping:    order.ship_total.to_f,
           tax:         order.tax_total.to_f,
