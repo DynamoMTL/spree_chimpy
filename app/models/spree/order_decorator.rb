@@ -11,8 +11,7 @@ Spree::Order.class_eval do
 
 private
   def handle_cancelation
-    canceled = state_changed? && canceled?
     yield
-    notify_mail_chimp if canceled
+    notify_mail_chimp if canceled?
   end
 end

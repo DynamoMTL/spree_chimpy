@@ -12,8 +12,8 @@ module Spree::Chimpy
 
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
-
-        @api.list_subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true, double_optin: @double_opt_in, email_type: 'html')
+        update_existing = true
+        @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
 
         segment([email]) if options[:customer]
       end
@@ -21,23 +21,25 @@ module Spree::Chimpy
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
 
-        @api.list_unsubscribe(id: list_id, email_address: email)
+        @api.lists.unsubscribe(list_id, {email: email})
       end
 
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 
-        @api.list_merge_vars(id: list_id).map { |record| record['tag'] }
+        result = @api.lists.merge_vars(Array(list_id))
+        result['data'][0]['merge_vars'].map { |record| record['tag'] }
       end
 
       def add_merge_var(tag, description)
         log "Adding merge var #{tag} to #{@list_name}"
 
-        @api.list_merge_var_add(id: list_id, tag: tag, name: description)
+        @api.lists.merge_var_add(list_id, tag, description)
       end
 
       def find_list_id(name)
-        @api.lists["data"].detect { |r| r["name"] == name }["id"]
+        lists_res = @api.lists.list({'list_name' => name})
+        lists_res['data'][0]["id"]
       end
 
       def list_id
@@ -47,18 +49,18 @@ module Spree::Chimpy
       def segment(emails = [])
         log "Adding #{emails} to segment #{@segment_name}"
 
-        @api.list_static_segment_members_add(id: list_id, seg_id: segment_id, batch: emails)
+        @api.lists.static_segment_members_add(list_id, segment_id, emails)
       end
 
       def create_segment
         log "Creating segment #{@segment_name}"
 
-        @segment_id = @api.list_static_segment_add(id: list_id, name: @segment_name)
+        @segment_id = @api.lists.segment_add(list_id, {type: 'static', name: @segment_name})
       end
 
       def find_segment_id
-        segments = @api.list_static_segments(id: list_id)
-        segment  = segments.detect {|segment| segment['name'].downcase == @segment_name.downcase }
+        segments = @api.lists.segments(list_id, 'static')
+        segment  = segments['static'].detect {|segment| segment['name'].downcase == @segment_name.downcase }
 
         segment['id'] if segment
       end

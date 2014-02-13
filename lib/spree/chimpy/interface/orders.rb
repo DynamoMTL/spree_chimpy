@@ -10,13 +10,13 @@ module Spree::Chimpy
       def add(order)
         log "Adding order #{order.number}"
 
-        @api.ecomm_order_add(order: hash(order))
+        @api.ecomm.order_add(hash(order))
       end
 
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        @api.ecomm_order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number, throws_exceptions: false)
+        @api.ecomm.order_del(Spree::Chimpy::Config.store_id, order.number)
       end
 
       def sync(order)
@@ -33,6 +33,9 @@ module Spree::Chimpy
           # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
           taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
+
+          # assign a default taxon if the product is not associated with a category
+          taxon = root_taxon if taxon.blank?
 
           {product_id:    variant.id,
            sku:           variant.sku,

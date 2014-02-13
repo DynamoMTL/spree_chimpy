@@ -2,48 +2,52 @@ require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
   let(:interface) { Spree::Chimpy::Interface::List.new('Members', 'customers', true) }
-  let(:api)       { double(:api) }
+  let(:api)       { double('api', lists: double) }
+  let(:merge_vars) { {'SIZE' => '10'} }
+  let(:list_id) { 'a3d3' }
+  let(:double_optin) { true }
+  let(:update_existing) { true }
+  let(:segment_id) { 123 }
 
-  before do
-    Spree::Chimpy::Config.key = '1234'
-    Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
-    api.should_receive(:lists).and_return({"data" => [{"name" => "Members", "id" => "a3d3" }]})
+  before(:each) do
+    Spree::Chimpy.stub(:api).and_return(api)
+    api.lists.should_receive(:list).with({'list_name' => 'Members'}).and_return({"data" => [{"name" => "Members", "id" => list_id }]})
   end
 
   it "subscribes" do
-    api.should_receive(:list_subscribe).with({:id => 'a3d3', :email_address => 'user@example.com', :merge_vars => {'SIZE' => '10'}, :email_type => 'html', :double_optin => true, :update_existing => true})
+    api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, merge_vars, 'html', double_optin, update_existing)
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
   it "unsubscribes" do
-    api.should_receive(:list_unsubscribe).with({:id => 'a3d3', :email_address => 'user@example.com'})
+    api.lists.should_receive(:unsubscribe).with(list_id, {email: 'user@example.com'})
     interface.unsubscribe("user@example.com")
   end
 
   it "segments users" do
-    api.should_receive(:list_subscribe).with(id: 'a3d3', email_address: 'user@example.com', merge_vars: {'SIZE' => '10'}, email_type: 'html', update_existing: true, double_optin: true)
-    api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    api.should_receive(:list_static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["user@example.com"])
+    api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, merge_vars, 'html', double_optin, update_existing)
+    api.lists.should_receive(:segments).with(list_id, 'static').and_return({'static' => [{"id" => segment_id, "name" => "customers"}] })
+    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
   it "segments" do
-    api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    api.should_receive(:list_static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["test@test.nl", "test@test.com"])
+    api.lists.should_receive(:segments).with(list_id, 'static').and_return({'static' => [{"id" => segment_id, "name" => "customers"}] })
+    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, ["test@test.nl", "test@test.com"])
     interface.segment(["test@test.nl", "test@test.com"])
   end
 
-  it "find list id" do
+  it "finds list id" do
     interface.list_id
   end
 
   it "checks if merge var exists" do
-    api.should_receive(:list_merge_vars).with({:id => 'a3d3'}).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    api.lists.should_receive(:merge_vars).with([list_id]).and_return({'data' => [{'merge_vars' => [{'tag' => 'FOO'}, {'tag' => 'BAR'}] }] })
     interface.merge_vars.should == %w(FOO BAR)
   end
 
   it "adds a merge var" do
-    api.should_receive(:list_merge_var_add).with({:id => "a3d3", :tag => "SIZE", :name => "Your Size"})
+    api.lists.should_receive(:merge_var_add).with(list_id, "SIZE", "Your Size")
     interface.add_merge_var('SIZE', 'Your Size')
   end
 end

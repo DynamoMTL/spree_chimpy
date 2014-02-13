@@ -1,7 +1,7 @@
-require 'spree_core'
+require 'spree/core'
 require 'spree/chimpy/engine'
-require 'spree/chimpy/subscription'
-require 'spree/chimpy/workers/delayed_job'
+# require 'spree/chimpy/subscription'
+# require 'spree/chimpy/workers/delayed_job'
 require 'mailchimp'
 
 module Spree::Chimpy
@@ -57,7 +57,6 @@ module Spree::Chimpy
   def sync_merge_vars
     existing   = list.merge_vars + %w(EMAIL)
     merge_vars = Config.merge_vars.except(*existing)
-
     merge_vars.each do |tag, method|
       list.add_merge_var(tag.upcase, method.to_s.humanize.titleize)
     end
@@ -88,7 +87,6 @@ module Spree::Chimpy
 
   def handle_event(event, payload = {})
     payload[:event] = event
-
     if defined?(::Delayed::Job)
       ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
     else

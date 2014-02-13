@@ -2,13 +2,14 @@ require 'spec_helper'
 
 describe Spree::Chimpy::Subscription do
 
-  context "mail chimp enabled" do
+  context "Mailchimp enabled" do
     let(:interface)    { double(:interface) }
 
     before do
       Spree::Chimpy::Config.list_name  = 'Members'
       Spree::Chimpy::Config.merge_vars = {'EMAIL' => :email}
       Spree::Chimpy.stub(list: interface)
+      Delayed::Worker.delay_jobs = false
     end
 
     context "subscribing users" do
