@@ -18,7 +18,6 @@ module Spree::Chimpy
       block.call if block
 
       return unless configured?
-
       if unsubscribing?
         unsubscribe
       elsif subscribing? || merge_vars_changed?
@@ -28,15 +27,11 @@ module Spree::Chimpy
 
   private
     def defer(event)
-      enqueue(event, @model) if allowed?
-    end
-
-    def allowed?
-      configured? && @model.subscribed
+      enqueue(event, @model)
     end
 
     def subscribing?
-      merge_vars_changed? && @model.subscribed
+      @model.subscribed
     end
 
     def unsubscribing?
@@ -45,8 +40,7 @@ module Spree::Chimpy
 
     def merge_vars_changed?
       Config.merge_vars.values.any? do |attr|
-        name = "#{attr}_changed?".to_sym
-        !@model.methods.include?(name) || @model.send(name)
+        @model.send("#{attr}_changed?")
       end
     end
   end
