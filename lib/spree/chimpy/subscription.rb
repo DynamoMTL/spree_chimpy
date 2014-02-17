@@ -11,7 +11,7 @@ module Spree::Chimpy
     end
 
     def unsubscribe
-      defer(:unsubscribe)
+      defer(:unsubscribe) if @model.subscribed?
     end
 
     def resubscribe(&block)
@@ -20,7 +20,7 @@ module Spree::Chimpy
       return unless configured?
       if unsubscribing?
         unsubscribe
-      elsif subscribing? || merge_vars_changed?
+      elsif subscribing?
         subscribe
       end
     end
@@ -38,10 +38,5 @@ module Spree::Chimpy
       !@new_record && !@model.subscribed && @model.subscribed_changed?
     end
 
-    def merge_vars_changed?
-      Config.merge_vars.values.any? do |attr|
-        @model.send("#{attr}_changed?")
-      end
-    end
   end
 end

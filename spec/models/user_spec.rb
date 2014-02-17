@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::User do
+describe Spree.user_class do
   context "syncing with mail chimp" do
     let(:subscription) { double(:subscription, needs_update?: true) }
 

@@ -7,6 +7,19 @@ if Spree.user_class
 
     delegate :subscribe, :resubscribe, :unsubscribe, to: :subscription
 
+
+    def first_name
+      shipping_address.firstname
+    end
+
+    def last_name
+      shipping_address.lastname
+    end
+
+    def country
+      shipping_address.country.name
+    end
+
   private
     def subscription
       Spree::Chimpy::Subscription.new(self)

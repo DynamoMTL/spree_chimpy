@@ -10,6 +10,7 @@ describe Spree::Chimpy::Subscription do
       Spree::Chimpy::Config.merge_vars = {'EMAIL' => :email}
       Spree::Chimpy.stub(list: interface)
       Delayed::Worker.delay_jobs = false
+      Spree::Chimpy::Config.stub(key: '1234')
     end
 
     context "subscribing users" do

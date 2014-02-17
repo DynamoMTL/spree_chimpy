@@ -70,7 +70,7 @@ module Spree::Chimpy
 
       [tag, value.to_s]
     end
-
+    
     Hash[array]
   end
 
@@ -96,7 +96,6 @@ module Spree::Chimpy
 
   def perform(payload)
     return unless configured?
-
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
