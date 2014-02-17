@@ -1,6 +1,9 @@
+require File.join(Rails.root, 'lib/helpers/currency_conversion.rb')
+
 module Spree::Chimpy
   module Interface
     class Orders
+      include Helpers::CurrencyConversion
       delegate :log, to: Spree::Chimpy
 
       def initialize
@@ -31,36 +34,37 @@ module Spree::Chimpy
     private
       def hash(order)
         source = order.source
-        root_taxon = Spree::Taxon.find_by_parent_id(nil)
 
         items = order.line_items.map do |line|
-          # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
-          taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
+          product = variant.product
+          
+          category_name = product.martin_type ? product.martin_type.title : product.product_type
+          category_id = product.martin_type ? product.martin_type.id : 9999
 
-          {product_id: variant.id,
-           sku: variant.sku,
-           product_name: variant.name,
-           category_id: taxon ? taxon.id : 999999,
-           category_name: taxon ? taxon.name : "Uncategorized",
-           cost: variant.price.to_f,
-           qty: line.quantity}
+          {product_id:    variant.id,
+           sku:           variant.sku,
+           product_name:  variant.name,
+           category_id:   category_id,
+           category_name: category_name,
+           cost:          to_usd(line.base_price.to_f, line.currency),
+           qty:           line.quantity}
         end
 
         data = {
-          id: order.number,
-          email: order.email,
-          total: order.item_total.to_f,
-          order_date: order.completed_at.strftime('%Y-%m-%d'),
-          shipping: order.ship_total.to_f,
-          tax: order.tax_total.to_f,
-          store_name: Spree::Config.site_name,
-          store_id: Spree::Chimpy::Config.store_id,
-          items: items
+          id:          order.number,
+          email:       order.email,
+          total:       order.total.to_f,
+          order_date:  order.completed_at.strftime('%Y-%m-%d'),
+          shipping:    order.ship_total.to_f,
+          tax:         order.tax.to_f,
+          store_name:  Spree::Config.site_name,
+          store_id:    Spree::Chimpy::Config.store_id,
+          items:       items
         }
 
         if source
-          data[:email_id] = source.email_id
+          data[:email_id]    = source.email_id
           data[:campaign_id] = source.campaign_id
         end
 

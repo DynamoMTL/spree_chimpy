@@ -30,6 +30,29 @@ namespace :spree_chimpy do
   end
 
   namespace :users do
+    desc 'Update subscribed status on Spree user class'
+    task sync: :environment do
+      puts "Updating all users from the subscribed list in Mailchimp"
+      gibbon_export_api = Gibbon::Export.new(Spree::Chimpy::Config.key)
+      list = gibbon_export_api.list({ id: Spree::Chimpy.list.list_id })
+      emails = list.map do |row|
+        email_part = row.split(',').first
+        /\"(.+)\"/.match(email_part)[1]
+      end
+      
+      user_count = Spree::User.count
+      Spree::User.where.not(subscribed: true).find_each do |user|
+        if emails.include? user.email
+          user.update_column(:subscribed, true)
+          emails.
+          puts "\n updated #{user.id} out of #{user_count}"
+        end
+        print '.'
+      end
+      
+      puts "done"
+    end
+
     desc 'segment all subscribed users'
     task segment: :environment do
       if Spree::Chimpy.segment_exists?
