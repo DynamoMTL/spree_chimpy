@@ -20,6 +20,14 @@ if Spree.user_class
       shipping_address.country.name
     end
 
+    def city
+      shipping_address.country.name
+    end
+
+    def source
+      MailchimpSubscriber.where(email: email).first.source
+    end
+
   private
     def subscription
       Spree::Chimpy::Subscription.new(self)
