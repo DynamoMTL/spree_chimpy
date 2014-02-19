@@ -20,9 +20,16 @@ describe Spree::Chimpy::Interface::List do
     interface.unsubscribe("user@example.com")
   end
 
-  it "find member info" do
-    api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
-    interface.info("user@example.com").should == {response: 'foo'}
+  context "member info" do
+    it "find when no errors" do
+      api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
+      interface.info("user@example.com").should == {response: 'foo'}
+    end
+
+    it "returns empty hash on error" do
+      api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'error' => 'foo'}]})
+      interface.info("user@example.com").should == {}
+    end
   end
 
   it "segments users" do

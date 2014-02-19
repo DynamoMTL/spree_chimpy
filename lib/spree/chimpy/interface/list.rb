@@ -28,8 +28,9 @@ module Spree::Chimpy
         log "Checking member info for #{email_or_id} from #{@list_name}"
 
         response = @api.list_member_info(id: list_id, email_address: email_or_id)
+        record = response['data'].first.symbolize_keys
 
-        (response['data'].first || {}).symbolize_keys
+        record.key?(:error) ? {} : record
       end
 
       def merge_vars
