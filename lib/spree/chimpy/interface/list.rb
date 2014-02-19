@@ -29,7 +29,7 @@ module Spree::Chimpy
 
         response = @api.list_member_info(id: list_id, email_address: email_or_id)
 
-        response['data'].first
+        (response['data'].first || {}).symbolize_keys
       end
 
       def merge_vars

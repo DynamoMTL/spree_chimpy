@@ -21,8 +21,8 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "find member info" do
-    api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [:response]})
-    interface.info("user@example.com").should == :response
+    api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
+    interface.info("user@example.com").should == {response: 'foo'}
   end
 
   it "segments users" do
