@@ -24,6 +24,14 @@ module Spree::Chimpy
         @api.list_unsubscribe(id: list_id, email_address: email)
       end
 
+      def info(email_or_id)
+        log "Checking member info for #{email_or_id} from #{@list_name}"
+
+        response = @api.list_member_info(id: list_id, email_address: email_or_id)
+
+        response['data'].first
+      end
+
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 

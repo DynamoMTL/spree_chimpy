@@ -20,6 +20,11 @@ describe Spree::Chimpy::Interface::List do
     interface.unsubscribe("user@example.com")
   end
 
+  it "find member info" do
+    api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [:response]})
+    interface.info("user@example.com").should == :response
+  end
+
   it "segments users" do
     api.should_receive(:list_subscribe).with(id: 'a3d3', email_address: 'user@example.com', merge_vars: {'SIZE' => '10'}, email_type: 'html', update_existing: true, double_optin: true)
     api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
