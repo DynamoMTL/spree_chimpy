@@ -6,7 +6,16 @@ Spree::Order.class_eval do
   around_save :handle_cancelation
 
   def notify_mail_chimp
-    Spree::Chimpy.enqueue(:order, self) if completed? && Spree::Chimpy.configured?
+    if completed? && Spree::Chimpy.configured?
+      if self.user && self.user.subscribed?
+        self.user.update_mailchimp_info
+      else
+        user = Spree.user_class.where(email: self.email, subscribed: true).first
+        user.update_mailchimp_info if user
+      end
+
+      Spree::Chimpy.enqueue(:order, self) 
+    end
   end
 
 private

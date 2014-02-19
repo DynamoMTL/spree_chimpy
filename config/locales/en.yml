@@ -1,6 +1,8 @@
 en:
   spree:
     chimpy:
+      success: <p>You're in!<br />Wool respect</p>
+      failure: <p>Sorry, something went<br />wrong :(</p> 
       subscribed_label: Sign me up to the newsletter
       admin_subscribed_label: Subscribed to newsletter
       subscribe_title: Subscribe to our newsletter
@@ -8,6 +10,3 @@ en:
       email:
         label: Email
         placeholder: Enter your email address
-      subscriber:
-        success: Thanks! you've been successfully added
-        failure: There was a problem processing your sign-up

@@ -1,11 +1,8 @@
 if Spree.user_class
   Spree.user_class.class_eval do
-    after_create  :subscribe
-    around_update :resubscribe
     after_destroy :unsubscribe
-    after_initialize :assign_subscription_default
 
-    delegate :subscribe, :resubscribe, :unsubscribe, to: :subscription
+    delegate :subscribe, :update_mailchimp_info, :unsubscribe, to: :subscription
 
 
     def first_name
@@ -17,24 +14,35 @@ if Spree.user_class
     end
 
     def country
-      shipping_address.country.name
+      if shipping_address
+        shipping_address.country.name
+      else
+        last_complete_order = orders.complete.last
+        if last_complete_order && last_complete_order.shipping_address
+          last_complete_order.shipping_address.country.name
+        end
+      end
     end
 
     def city
-      shipping_address.country.name
+      if shipping_address
+        shipping_address.city
+      else
+        last_complete_order = orders.complete.last
+        if last_complete_order && last_complete_order.shipping_address
+          last_complete_order.shipping_address.city
+        end
+      end
     end
 
     def source
-      MailchimpSubscriber.where(email: email).first.source
+      action = Spree::Chimpy::Action.where(email: email, action: :subscribe).first
+      action.source if action
     end
 
   private
     def subscription
       Spree::Chimpy::Subscription.new(self)
-    end
-
-    def assign_subscription_default
-      self.subscribed = Spree::Chimpy::Config.subscribed_by_default if new_record?
     end
   end
 end

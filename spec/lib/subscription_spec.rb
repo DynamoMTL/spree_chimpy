@@ -13,8 +13,8 @@ describe Spree::Chimpy::Subscription do
       Spree::Chimpy::Config.stub(key: '1234')
     end
 
-    context "subscribing users" do
-      let(:user)         { FactoryGirl.build(:user, subscribed: true) }
+    context "subscribes users" do
+      let(:user)         { FactoryGirl.create(:user, subscribed: false) }
       let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
       before do
@@ -29,46 +29,23 @@ describe Spree::Chimpy::Subscription do
         end
       end
 
-      it "subscribes users" do
+      it "successfully" do
         interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
         subscription.subscribe
       end
 
     end
 
-    context "subscribing subscribers" do
-      let(:subscriber)   { Spree::Chimpy::Subscriber.new(email: "test@example.com") }
+    context "who are not enrolled" do
+      let(:subscriber)   { FactoryGirl.create(:user, enrolled: false) }
       let(:subscription) { Spree::Chimpy::Subscription.new(subscriber) }
 
       it "subscribes subscribers" do
         interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
         interface.should_not_receive(:segment)
         subscription.subscribe
-      end
-    end
 
-    context "resubscribe" do
-      let(:user)         { FactoryGirl.create(:user, subscribed: true) }
-      let(:subscription) { double(:subscription) }
-
-      before do
-        interface.should_receive(:subscribe).once.with(user.email)
-        user.stub(subscription: subscription)
-      end
-
-      context "when update needed" do
-        it "calls resubscribe" do
-          subscription.should_receive(:resubscribe)
-          user.save
-        end
-      end
-
-      context "when update not needed" do
-        it "still calls resubscribe, and does nothing" do
-          subscription.should_receive(:resubscribe)
-          subscription.should_not_receive(:unsubscribe)
-          user.save
-        end
+        subscriber.subscribed.should == true
       end
     end
 
@@ -79,9 +56,11 @@ describe Spree::Chimpy::Subscription do
 
       context "subscribed user" do
         let(:user) { FactoryGirl.create(:user, subscribed: true) }
+
         it "unsubscribes" do
           interface.should_receive(:unsubscribe).with(user.email)
           subscription.unsubscribe
+          user.subscribed.should == false
         end
       end
 
@@ -95,17 +74,17 @@ describe Spree::Chimpy::Subscription do
     end
   end
 
-  context "mail chimp disabled" do
+  context "Mailchimp is disabled" do
     before do
       Spree::Chimpy::Config.stub(key: nil)
 
-      user = FactoryGirl.build(:user, subscribed: true)
+      user = FactoryGirl.create(:user, subscribed: true)
       @subscription = Spree::Chimpy::Subscription.new(user)
     end
 
     specify { @subscription.subscribe }
     specify { @subscription.unsubscribe }
-    specify { @subscription.resubscribe {} }
+    specify { @subscription.update_mailchimp_info }
   end
 
 end
