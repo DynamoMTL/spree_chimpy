@@ -8,9 +8,16 @@ module Spree::Chimpy
       end
 
       def add(order)
-        log "Adding order #{order.number}"
+        info  = @api.info(order.source.email_id)
+        email = info[:email].to_s
 
-        @api.ecomm_order_add(order: hash(order))
+        if email.upcase == order.email.upcase
+          log "Adding order #{order.number}"
+
+          @api.ecomm_order_add(order: hash(order))
+        else
+          log "Skipped adding order #{order.number}, #{email} and #{order.email} dont match"
+        end
       end
 
       def remove(order)
