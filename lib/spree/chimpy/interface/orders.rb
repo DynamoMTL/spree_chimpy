@@ -16,7 +16,7 @@ module Spree::Chimpy
 
           @api.ecomm_order_add(order: hash(order))
         else
-          log "Skipped adding order #{order.number}, #{email} and #{order.email} dont match"
+          log "Adding order #{order.number} skipped, #{email} and #{order.email} dont match"
         end
       end
 
