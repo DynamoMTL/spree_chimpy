@@ -27,7 +27,7 @@ describe Spree::Chimpy::Interface::List do
   it "segments users" do
     api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, merge_vars, 'html', double_optin, update_existing)
     api.lists.should_receive(:segments).with(list_id, 'static').and_return({'static' => [{"id" => segment_id, "name" => "customers"}] })
-    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, ["user@example.com"])
+    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, [{email: "user@example.com"}])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
