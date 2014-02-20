@@ -8,7 +8,7 @@ module Spree::Chimpy
       end
 
       def add(order)
-        info  = @api.info(order.source.email_id)
+        info  = Spree::Chimpy.list.info(order.source.email_id)
         email = info[:email].to_s
 
         if email.upcase == order.email.upcase

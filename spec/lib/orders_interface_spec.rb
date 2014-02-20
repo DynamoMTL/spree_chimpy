@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::Chimpy::Interface::Orders do
   let(:interface) { Spree::Chimpy::Interface::Orders.new }
   let(:api)       { double() }
+  let(:list)      { double() }
 
   def create_order(options={})
     user = FactoryGirl.create(:user, email: options[:email])
@@ -20,6 +21,7 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Chimpy::Config.key = '1234'
     Spree::Chimpy::Config.store_id = "super-store"
     Spree::Config.site_name = "Super Store"
+    Spree::Chimpy.stub(list: list)
 
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
   end
@@ -28,7 +30,7 @@ describe Spree::Chimpy::Interface::Orders do
     it "sync when member info matches" do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
-      api.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
+      list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
       api.should_receive(:ecomm_order_add) { |h| h[:order][:id].should == order.number }.and_return(:response)
 
       interface.add(order).should == :response
@@ -37,7 +39,7 @@ describe Spree::Chimpy::Interface::Orders do
     it "skips mismatches member" do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
-      api.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
+      list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
       api.should_not_receive(:ecomm_order_add)
 
       interface.add(order)
