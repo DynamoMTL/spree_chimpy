@@ -8,16 +8,16 @@ module Spree::Chimpy
       end
 
       def add(order)
-        info  = Spree::Chimpy.list.info(order.source.email_id)
-        email = info[:email].to_s
-
-        if email.upcase == order.email.upcase
-          log "Adding order #{order.number}"
-
-          @api.ecomm_order_add(order: hash(order))
+        if source = order.source
+          info = Spree::Chimpy.list.info(source.email_id)
+          expected_email = info[:email].to_s
         else
-          log "Adding order #{order.number} skipped, #{email} and #{order.email} dont match"
+          expected_email = order.email
         end
+
+        log "Adding order #{order.number}"
+
+        @api.ecomm_order_add(order: hash(order, expected_email))
       end
 
       def remove(order)
@@ -32,7 +32,7 @@ module Spree::Chimpy
       end
 
     private
-      def hash(order)
+      def hash(order, expected_email)
         source = order.source
         root_taxon = Spree::Taxon.find_by_parent_id(nil)
 
@@ -62,7 +62,7 @@ module Spree::Chimpy
           items:       items
         }
 
-        if source
+        if source && expected_email.upcase == order.email.upcase
           data[:email_id]    = source.email_id
           data[:campaign_id] = source.campaign_id
         end

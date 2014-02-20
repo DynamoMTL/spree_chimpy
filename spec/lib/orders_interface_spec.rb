@@ -8,7 +8,7 @@ describe Spree::Chimpy::Interface::Orders do
   def create_order(options={})
     user = FactoryGirl.create(:user, email: options[:email])
     order = FactoryGirl.build(:completed_order_with_totals, user: user, email: options[:email])
-    order.source = Spree::Chimpy::OrderSource.new(email_id: options[:email_id])
+    order.source = Spree::Chimpy::OrderSource.new(email_id: options[:email_id], campaign_id: options[:campaign_id])
 
     # we need to have a saved order in order to have a non-nil order number
     # we need to stub :notify_mail_chimp otherwise sync will be called on the order on update!
@@ -28,19 +28,27 @@ describe Spree::Chimpy::Interface::Orders do
 
   context "adding an order" do
     it "sync when member info matches" do
-      order = create_order(email_id: 'id-abcd', email: 'user@example.com')
+      order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
-      api.should_receive(:ecomm_order_add) { |h| h[:order][:id].should == order.number }.and_return(:response)
+      api.should_receive(:ecomm_order_add) do |h|
+        h[:order][:id].should == order.number
+        h[:order][:email_id].should == 'id-abcd'
+        h[:order][:campaign_id].should == '1234'
+      end
 
-      interface.add(order).should == :response
+      interface.add(order)
     end
 
     it "skips mismatches member" do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
-      api.should_not_receive(:ecomm_order_add)
+      api.should_receive(:ecomm_order_add) do |h|
+        h[:order][:id].should == order.number
+        h[:order][:email_id].should be_nil
+        h[:order][:campaign_id].should be_nil
+      end
 
       interface.add(order)
     end
