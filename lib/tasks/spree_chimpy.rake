@@ -25,13 +25,13 @@ namespace :spree_chimpy do
         end
       end
 
-      puts nil, 'done'
+      puts 'done.'
     end
   end
 
   namespace :users do
     desc 'Update subscribed status on Spree user class'
-    task sync: :environment do
+    task update_subscribed_status: :environment do
       puts "Updating all users from the subscribed list in Mailchimp"
       gibbon_export_api = Gibbon::Export.new(Spree::Chimpy::Config.key)
       list = gibbon_export_api.list({ id: Spree::Chimpy.list.list_id })
@@ -44,26 +44,38 @@ namespace :spree_chimpy do
       Spree::User.where.not(subscribed: true).find_each do |user|
         if emails.include? user.email
           user.update_column(:subscribed, true)
-          emails.
           puts "\n updated #{user.id} out of #{user_count}"
         end
         print '.'
       end
       
-      puts "done"
+      puts "done."
+    end
+
+    desc 'Update merge vars on Mailchimp'
+    task update_mailchimp_subscribers_info: :environment do
+      puts "Updating Mailchimp data from Spree."
+            
+      users = Spree::User.where(subscribed: true)
+      user_count = users.count
+      puts "Updating #{user_count} users. This will take a while..."
+      Spree::Chimpy.batch_subscribe(users)
+      
+      puts "done."
     end
 
     desc 'segment all subscribed users'
     task segment: :environment do
       if Spree::Chimpy.segment_exists?
         emails = Spree.user_class.where(subscribed: true).pluck(:email)
+        emails = emails.map {|email| {email: email} }
         puts "Segmenting all subscribed users"
         response = Spree::Chimpy.list.segment(emails)
         response["errors"].try :each do |error|
           puts "Error #{error["code"]} with email: #{error["email"]} \n msg: #{error["msg"]}"
         end
-        puts "segmented #{response["success"] || 0} out of #{emails.size}"
-        puts "done"
+        puts "segmented #{response['success_count'] || 0} out of #{emails.size}"
+        puts "done."
       end
     end
   end

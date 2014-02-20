@@ -19,4 +19,17 @@ describe Spree.user_class do
   it "doesnt subscribe by default" do
     Spree.user_class.new.subscribed.should == nil
   end
+
+
+  context "Class Methods" do
+    let(:subject) { Spree.user_class }
+    before do
+      FactoryGirl.create(:user, email: 'bob@sponge.net', subscribed: true)
+    end
+
+    it "#customer_has_subscribed?" do
+      expect(subject.customer_has_subscribed?('bob@sponge.net')).to be_true
+    end
+  end
+
 end

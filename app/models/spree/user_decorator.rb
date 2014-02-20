@@ -2,47 +2,50 @@ if Spree.user_class
   Spree.user_class.class_eval do
     after_destroy :unsubscribe
 
-    delegate :subscribe, :update_mailchimp_info, :unsubscribe, to: :subscription
+    delegate :subscribe, :update_member_info, :unsubscribe, to: :subscription
 
 
     def first_name
-      shipping_address.firstname
+      chimpy_shipping_address.firstname if chimpy_shipping_address
     end
 
     def last_name
-      shipping_address.lastname
+      chimpy_shipping_address.lastname if chimpy_shipping_address
     end
 
     def country
-      if shipping_address
-        shipping_address.country.name
-      else
-        last_complete_order = orders.complete.last
-        if last_complete_order && last_complete_order.shipping_address
-          last_complete_order.shipping_address.country.name
-        end
-      end
+      chimpy_shipping_address.country.name if chimpy_shipping_address && chimpy_shipping_address.country
     end
 
     def city
-      if shipping_address
-        shipping_address.city
-      else
-        last_complete_order = orders.complete.last
-        if last_complete_order && last_complete_order.shipping_address
-          last_complete_order.shipping_address.city
-        end
-      end
+      chimpy_shipping_address.city if chimpy_shipping_address
     end
 
     def source
-      action = Spree::Chimpy::Action.where(email: email, action: :subscribe).first
+      action = Spree::Chimpy::Action.where(email: email, action: :subscribe).last
       action.source if action
+    end
+
+    def self.customer_has_subscribed?(email)
+      where(email: email, subscribed: true).any?
     end
 
   private
     def subscription
       Spree::Chimpy::Subscription.new(self)
     end
+
+    def chimpy_shipping_address
+      @chimpy_shipping_address ||= begin
+        if shipping_address
+          shipping_address
+        else
+          last_complete_order = orders.complete.last
+          last_complete_order.shipping_address if last_complete_order
+        end
+      end
+    end
+
+
   end
 end

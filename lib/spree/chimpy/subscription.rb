@@ -17,7 +17,7 @@ module Spree::Chimpy
       end
     end
 
-    def update_mailchimp_info
+    def update_member_info
       if @user.subscribed?
         defer(:subscribe)
       end

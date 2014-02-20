@@ -20,16 +20,5 @@ describe Spree::Chimpy::Action do
 
   end
 
-  context "Class Methods" do
-    let(:subject) { Spree::Chimpy::Action }
-    before do
-      Spree::Chimpy::Action.create(email: 'bob@sponge.net', action: :subscribe)
-    end
-
-    it "#customer_has_subscribed?" do
-      expect(subject.customer_has_subscribed?('bob@sponge.net')).to be_true
-    end
-  end
-
 
 end

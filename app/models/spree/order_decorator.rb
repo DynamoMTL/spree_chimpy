@@ -8,10 +8,10 @@ Spree::Order.class_eval do
   def notify_mail_chimp
     if completed? && Spree::Chimpy.configured?
       if self.user && self.user.subscribed?
-        self.user.update_mailchimp_info
+        self.user.update_member_info
       else
         user = Spree.user_class.where(email: self.email, subscribed: true).first
-        user.update_mailchimp_info if user
+        user.update_member_info if user
       end
 
       Spree::Chimpy.enqueue(:order, self) 

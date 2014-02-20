@@ -6,9 +6,6 @@ class Spree::Chimpy::Action < ActiveRecord::Base
   length:   { :maximum => 100 },
   format:   { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
   
-  validates_uniqueness_of :email, 
-  scope:  :action,
-  if:     Proc.new {|mc| [:subscribe, :unsubscribe, :referrer].include?(mc.action.to_s.to_sym)  }
   
   class << self
     def customer_has_subscribed?(email)

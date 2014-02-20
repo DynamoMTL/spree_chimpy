@@ -84,7 +84,7 @@ describe Spree::Chimpy::Subscription do
 
     specify { @subscription.subscribe }
     specify { @subscription.unsubscribe }
-    specify { @subscription.update_mailchimp_info }
+    specify { @subscription.update_member_info }
   end
 
 end

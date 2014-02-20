@@ -15,7 +15,14 @@ module Spree::Chimpy
         update_existing = true
         @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
 
-        segment([email]) if options[:customer]
+        segment([{email: email}]) if options[:customer]
+      end
+
+      def batch_subscribe(email_batch)
+        log "Batch subscribing to #{@list_name}"
+        update_existing = true
+
+        @api.lists.batch_subscribe(list_id, email_batch, @double_opt_in, update_existing)
       end
 
       def unsubscribe(email)

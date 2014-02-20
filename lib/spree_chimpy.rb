@@ -62,11 +62,22 @@ module Spree::Chimpy
     end
   end
 
-  def merge_vars(model)
+  def batch_subscribe(users)
+    email_batch = []
+    users.find_each do |user|
+      email_batch << {
+        email: {email: user.email},
+        merge_vars: merge_vars(user)
+      }
+    end
+    list.batch_subscribe(email_batch) unless email_batch.empty?
+  end
+
+  def merge_vars(user)
     attributes = Config.merge_vars.except('EMAIL')
 
     array = attributes.map do |tag, method|
-      value = model.send(method) if model.methods.include?(method)
+      value = user.send(method) if user.methods.include?(method)
 
       [tag, value.to_s]
     end
