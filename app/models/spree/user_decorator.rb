@@ -26,10 +26,6 @@ if Spree.user_class
       action.source if action
     end
 
-    def self.customer_has_subscribed?(email)
-      where(email: email, subscribed: true).any?
-    end
-
   private
     def subscription
       Spree::Chimpy::Subscription.new(self)
