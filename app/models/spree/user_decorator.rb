@@ -21,6 +21,22 @@ if Spree.user_class
       chimpy_shipping_address.city if chimpy_shipping_address
     end
 
+    def number_of_orders
+      chimpy_orders.count
+    end
+
+    def total_orders_amount
+      chimpy_orders.sum(:item_total).round
+    end
+
+    def average_basket_size
+      (total_orders_amount > 0) ? (total_orders_amount / number_of_orders).round : 0
+    end
+
+    def city
+      chimpy_shipping_address.city if chimpy_shipping_address
+    end
+
     def source
       action = Spree::Chimpy::Action.where(email: email, action: :subscribe).last
       action.source if action
@@ -37,7 +53,22 @@ if Spree.user_class
           shipping_address
         else
           last_complete_order = orders.complete.last
-          last_complete_order.shipping_address if last_complete_order
+          if last_complete_order
+            last_complete_order.shipping_address 
+          else
+            last_guest_order = Spree::Order.where(email: self.email).last
+            last_guest_order.shipping_address if last_guest_order
+          end
+        end
+      end
+    end
+
+    def chimpy_orders
+      @chimpy_orders ||= begin
+        if enrolled? and orders.complete.any?
+          orders
+        else
+          Spree::Order.complete.where(email: self.email)
         end
       end
     end
