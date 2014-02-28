@@ -51,10 +51,10 @@ module Spree::Chimpy
         data = {
           id:          order.number,
           email:       order.email,
-          total:       order.total.to_f,
+          total:       to_usd(order.total.to_f, order.currency),
           order_date:  order.completed_at.strftime('%Y-%m-%d'),
-          shipping:    order.ship_total.to_f,
-          tax:         order.tax_total.to_f,
+          shipping:    to_usd(order.ship_total.to_f, order.currency),
+          tax:         to_usd(order.tax_total.to_f, order.currency),
           store_name:  Spree::Config.site_name,
           store_id:    Spree::Chimpy::Config.store_id,
           items:       items
