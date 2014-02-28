@@ -1,4 +1,3 @@
 test:
-  override:
+  pre:
     - bundle exec rake test_app
-    - bundle exec rake spec
