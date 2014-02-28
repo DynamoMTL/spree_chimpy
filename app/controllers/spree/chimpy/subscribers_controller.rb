@@ -30,7 +30,7 @@ class Spree::Chimpy::SubscribersController < ApplicationController
       emails.each do |email|
         if email.present?
           mailchimp_action = Spree::Chimpy::Action.create(action = :referrered, source: params[:referrer_email])
-          user = Spree.user_class.find_or_create_unenrolled(email)
+          user = Spree.user_class.find_or_create_unenrolled(email, tracking_cookie)
           user.subscribe(refer_a_friend_params[:signupEmail])
         end
       end
@@ -43,7 +43,7 @@ class Spree::Chimpy::SubscribersController < ApplicationController
     render json: response, layout: false
   end
 
-  private
+  # private
 
   def find_or_create_user
     Spree.user_class.find_or_create_unenrolled(params[:signupEmail], tracking_cookie)

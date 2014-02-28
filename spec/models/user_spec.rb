@@ -6,7 +6,11 @@ describe Spree.user_class do
 
     context "for registered user" do
       let!(:registered_user) { create(:user, enrolled: true) }
-      let!(:complete_order) { create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address) }
+      before do
+        Spree::Chimpy::Config.key = nil
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address)
+        Spree::Chimpy::Config.key = '1234'
+      end
       
       it "accesses the shipping address and order information" do
         expect(registered_user.first_name).to eq 'John'
@@ -15,15 +19,19 @@ describe Spree.user_class do
         expect(registered_user.city).to eq 'Herndon'
 
         expect(registered_user.number_of_orders).to eq 1
-        expect(registered_user.total_orders_amount).to eq complete_order.item_total
-        expect(registered_user.average_basket_size).to eq complete_order.item_total
+        expect(registered_user.total_orders_amount).to eq @completed_order.item_total
+        expect(registered_user.average_basket_size).to eq @completed_order.item_total
       end
 
     end
 
     context "for guest user" do
       let!(:guest_user) { create(:user, email: 'john@doe.com', enrolled: false) }
-      let!(:complete_order) { create(:completed_order_with_totals, user: nil, email: 'john@doe.com') }
+      before do
+        Spree::Chimpy::Config.key = nil
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com')
+        Spree::Chimpy::Config.key = '1234'
+      end
       
       it "accesses the shipping address and order information" do
         expect(guest_user.first_name).to eq 'John'
@@ -32,8 +40,8 @@ describe Spree.user_class do
         expect(guest_user.city).to eq 'Herndon'
 
         expect(guest_user.number_of_orders).to eq 1
-        expect(guest_user.total_orders_amount).to eq complete_order.item_total
-        expect(guest_user.average_basket_size).to eq complete_order.item_total
+        expect(guest_user.total_orders_amount).to eq @completed_order.item_total
+        expect(guest_user.average_basket_size).to eq @completed_order.item_total
       end
     end
   end
@@ -57,16 +65,5 @@ describe Spree.user_class do
     Spree.user_class.new.subscribed.should == nil
   end
 
-
-  context "Class Methods" do
-    let(:subject) { Spree.user_class }
-    before do
-      FactoryGirl.create(:user, email: 'bob@sponge.net', subscribed: true)
-    end
-
-    it "#customer_has_subscribed?" do
-      expect(subject.customer_has_subscribed?('bob@sponge.net')).to be_true
-    end
-  end
 
 end

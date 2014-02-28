@@ -8,7 +8,7 @@ module Spree::Chimpy
 
     def subscribe(source = nil)
       chimpy_action = Spree::Chimpy::Action.new(email: @user.email, source: source, action: :subscribe)
-      if !@user.subscribed? && chimpy_action.save
+      if @user.valid? && !@user.subscribed? && chimpy_action.save
         @user.update_column(:subscribed, true)
         defer(:subscribe)
         true

@@ -1,9 +1,6 @@
-require File.join(Rails.root, 'lib/helpers/currency_conversion.rb')
-
 module Spree::Chimpy
   module Interface
     class Orders
-      include Helpers::CurrencyConversion
       delegate :log, to: Spree::Chimpy
 
       def initialize
@@ -57,7 +54,7 @@ module Spree::Chimpy
           total:       order.total.to_f,
           order_date:  order.completed_at.strftime('%Y-%m-%d'),
           shipping:    order.ship_total.to_f,
-          tax:         order.tax.to_f,
+          tax:         order.tax_total.to_f,
           store_name:  Spree::Config.site_name,
           store_id:    Spree::Chimpy::Config.store_id,
           items:       items
@@ -71,6 +68,10 @@ module Spree::Chimpy
         data
       end
 
+      def to_usd(price, currency, quantity = 1)
+        rates = Spree::Config.currency_conversion_rates
+        (quantity * price  * rates[currency]).to_f
+      end
     end
   end
 end
