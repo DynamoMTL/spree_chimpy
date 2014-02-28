@@ -69,7 +69,7 @@ module Spree::Chimpy
       end
 
       def to_usd(price, currency, quantity = 1)
-        rates = Spree::Config.currency_conversion_rates
+        rates = Spree::Chimpy::Config.to_usd_rates
         (quantity * price  * rates[currency]).to_f
       end
     end
