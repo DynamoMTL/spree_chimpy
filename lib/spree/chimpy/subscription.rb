@@ -34,10 +34,29 @@ module Spree::Chimpy
       end
     end
 
+    def resubscribe(&block)
+      block.call if block
+
+      return unless configured?
+
+      if unsubscribing?
+        defer(:unsubscribe) 
+      elsif @user.subscribed?
+        defer(:subscribe)
+      end
+    end
 
   private
     def defer(event)
       enqueue(event, @user)
+    end
+
+    def subscribing?
+      merge_vars_changed? && @user.subscribed
+    end
+
+    def unsubscribing?
+      !@new_record && !@user.subscribed? && @user.subscribed_changed?
     end
 
   end

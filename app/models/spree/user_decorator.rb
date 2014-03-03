@@ -1,8 +1,9 @@
 if Spree.user_class
   Spree.user_class.class_eval do
     after_destroy :unsubscribe
+    around_update :resubscribe
 
-    delegate :subscribe, :update_member_info, :unsubscribe, to: :subscription
+    delegate :subscribe, :update_member_info, :unsubscribe, :resubscribe, to: :subscription
 
 
     def first_name

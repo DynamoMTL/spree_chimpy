@@ -47,6 +47,39 @@ describe Spree::Chimpy::Subscription do
 
         subscriber.subscribed.should == true
       end
+
+      it "subscribes subscribers" do
+        interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
+        interface.should_not_receive(:segment)
+
+        subscriber.subscribed = true
+        subscriber.save
+        subscriber.subscribed.should == true
+      end
+    end
+
+    context "resubscribe" do
+      let(:user) { FactoryGirl.create(:user, subscribed: true) }
+      let(:subscription) { double(:subscription) }
+
+      before do
+        user.stub(subscription: subscription)
+      end
+
+      context "when update needed" do
+        it "calls resubscribe" do
+          subscription.should_receive(:resubscribe)
+          user.save
+        end
+      end
+
+      context "when update not needed" do
+        it "still calls resubscribe, and does nothing" do
+          subscription.should_receive(:resubscribe)
+          subscription.should_not_receive(:unsubscribe)
+          user.save
+        end
+      end
     end
 
     context "subscribing" do
@@ -57,9 +90,16 @@ describe Spree::Chimpy::Subscription do
       context "subscribed user" do
         let(:user) { FactoryGirl.create(:user, subscribed: true) }
 
-        it "unsubscribes" do
+        it "unsubscribes when calling unsubscribe" do
           interface.should_receive(:unsubscribe).with(user.email)
           subscription.unsubscribe
+          user.subscribed.should == false
+        end
+
+        it "unsubscribes when setting the subscribed column" do
+          interface.should_receive(:unsubscribe).with(user.email)
+          user.subscribed = false
+          user.save
           user.subscribed.should == false
         end
       end
