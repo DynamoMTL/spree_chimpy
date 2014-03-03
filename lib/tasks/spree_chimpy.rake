@@ -50,7 +50,7 @@ namespace :spree_chimpy do
         }
       end
 
-      users = Spree::User.where.not(subscribed: true)
+      users = Spree::User.where(subscribed: nil)
       puts "Updating #{users.count} users. This will take a while..."
       users.find_each do |user|
         users_hash.each do |hash|
