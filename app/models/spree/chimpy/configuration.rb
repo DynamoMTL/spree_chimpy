@@ -9,5 +9,6 @@ module Spree::Chimpy
     preference :api_options,              :hash,    default: { timeout: 60 }
     preference :double_opt_in,            :boolean, default: false
     preference :to_usd_rates,             :hash,    default: {'USD' => 1, 'GBP' => 1.67, 'EUR' => 1.37}
+    preference :to_gbp_rates,             :hash,    default: {'GBP' => 1, 'USD' => 0.60, 'EUR' => 0.82}
   end
 end

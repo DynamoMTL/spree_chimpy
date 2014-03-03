@@ -26,11 +26,11 @@ if Spree.user_class
     end
 
     def total_orders_amount
-      chimpy_orders.sum(:item_total).round
+      to_gbp(chimpy_orders.sum(:item_total)).round(2)
     end
 
     def average_basket_size
-      (total_orders_amount > 0) ? (total_orders_amount / number_of_orders).round : 0
+      (total_orders_amount > 0) ? (total_orders_amount / number_of_orders).round(2) : 0.00
     end
 
     def city
@@ -73,6 +73,10 @@ if Spree.user_class
       end
     end
 
+    def to_gbp(price, currency, quantity = 1)
+      rates = Spree::Chimpy::Config.to_gbp_rates
+      (quantity * price  * rates[currency]).to_f
+    end
 
   end
 end
