@@ -40,8 +40,10 @@ module Spree::Chimpy
       return unless configured?
 
       if unsubscribing?
+        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual subscribe', action: :unsubscribe)
         defer(:unsubscribe) 
       elsif @user.subscribed?
+        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual unsubscribe', action: :subscribe)
         defer(:subscribe)
       end
     end
