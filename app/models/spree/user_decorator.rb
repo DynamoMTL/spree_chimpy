@@ -26,7 +26,7 @@ if Spree.user_class
     end
 
     def total_orders_amount
-      to_gbp(chimpy_orders.sum(:item_total)).round(2)
+      to_gbp(chimpy_orders.sum(:item_total), chimpy_orders.last.currency).round(2)
     end
 
     def average_basket_size

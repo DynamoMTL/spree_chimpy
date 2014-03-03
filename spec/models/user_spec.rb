@@ -8,7 +8,7 @@ describe Spree.user_class do
       let!(:registered_user) { create(:user, enrolled: true) }
       before do
         Spree::Chimpy::Config.key = nil
-        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address)
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address, currency: "GBP")
         Spree::Chimpy::Config.key = '1234'
       end
       
@@ -29,7 +29,7 @@ describe Spree.user_class do
       let!(:guest_user) { create(:user, email: 'john@doe.com', enrolled: false) }
       before do
         Spree::Chimpy::Config.key = nil
-        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com')
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com', currency: "GBP")
         Spree::Chimpy::Config.key = '1234'
       end
       
