@@ -40,10 +40,10 @@ module Spree::Chimpy
       return unless configured?
 
       if unsubscribing?
-        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual subscribe', action: :unsubscribe)
+        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual unsubscribe', action: :unsubscribe)
         defer(:unsubscribe) 
-      elsif @user.subscribed?
-        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual unsubscribe', action: :subscribe)
+      elsif subscribing?
+        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual subscribe', action: :subscribe)
         defer(:subscribe)
       end
     end
@@ -54,7 +54,7 @@ module Spree::Chimpy
     end
 
     def subscribing?
-      merge_vars_changed? && @user.subscribed
+      @user.subscribed? && @user.subscribed_changed?
     end
 
     def unsubscribing?
