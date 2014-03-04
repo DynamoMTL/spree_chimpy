@@ -22,16 +22,14 @@ class Spree::Chimpy::SubscribersController < ApplicationController
     render json: response, layout: false
   end
 
-  # check if it works before using it
   def refer_a_friend
-    mailchimp_action = Spree::Chimpy::Action.new(refer_a_friend_params.merge(request_params: params.to_json))
+    mailchimp_action = Spree::Chimpy::Action.new(email: params[:referrer_email], request_params: params.to_json, source: params[:source], action: :referrer)
     if mailchimp_action.save
-      emails = refer_a_friend_params[:refereeEmails] # check this
+      emails = params[:refereeEmails]
       emails.each do |email|
         if email.present?
-          mailchimp_action = Spree::Chimpy::Action.create(action = :referrered, source: params[:referrer_email])
           user = Spree.user_class.find_or_create_unenrolled(email, tracking_cookie)
-          user.subscribe(refer_a_friend_params[:signupEmail])
+          user.subscribe(params[:referrer_email])
         end
       end
 
@@ -43,13 +41,10 @@ class Spree::Chimpy::SubscribersController < ApplicationController
     render json: response, layout: false
   end
 
-  # private
+  private
 
   def find_or_create_user
     Spree.user_class.find_or_create_unenrolled(params[:signupEmail], tracking_cookie)
   end
 
-  def refer_a_friend_params
-    params.require(:refer_a_friend).permit(:signupEmail, :refereeEmails, :source)
-  end
 end
