@@ -46,7 +46,8 @@ module Spree::Chimpy
 
       def find_list_id(name)
         lists_res = @api.lists.list({'list_name' => name})
-        lists_res['data'][0]["id"]
+        selected_list = lists_res['data'].select { |list_data| list_data["name"] == name }
+        selected_list.first["id"]
       end
 
       def list_id

@@ -36,33 +36,27 @@ namespace :spree_chimpy do
       gibbon_export_api = Gibbon::Export.new(Spree::Chimpy::Config.key)
       list = gibbon_export_api.list({ id: Spree::Chimpy.list.list_id })
       header = list.shift
-      source_index = header.split(',').index("\"Source\"")
-      users_hash = list.map do |row|
-        row_parts = row.split(',')
-        source_part = row_parts[source_index]
-        source = /\"(.+)\"/.match(source_part)
-        source = source[1] if source
-        email_part = row_parts[0]
+      header = JSON.load(header)
+      source_index = header.index("Sign-Up Source")
 
-        {
-          email:  /\"(.+)\"/.match(email_part)[1],
-          source: source
-        }
-      end
+      puts "#{list.count} members in the mailing list. This will take a while..."
+      list.each do |row|
+        json_row = JSON.load(row)
+        source = json_row[source_index]
+        email = json_row[0]
+        user = Spree::User.find_or_create_unenrolled(email)
+        user.update_column(:subscribed, true)
 
-      users = Spree::User.where(subscribed: nil)
-      puts "Updating #{users.count} users. This will take a while..."
-      users.find_each do |user|
-        users_hash.each do |hash|
-          if hash[:email] == user.email
-            user.update_column(:subscribed, true)
-            action = Spree::Chimpy::Action.where(email: user.email, action: :subscribe).last
-            action.update_column(:source, hash[:source])
-            puts "\nupdated #{user.id}"
-          end
-          print '.'
+        action = Spree::Chimpy::Action.where(email: user.email, action: :subscribe).last
+        if action
+          action.update_column(:source, source) if source
+        else
+          Spree::Chimpy::Action.create(email: user.email, action: :subscribe, source: source)
         end
+        print '.'
+        # puts "\n--#{user.id}--"
       end
+
       
       puts "done."
     end
