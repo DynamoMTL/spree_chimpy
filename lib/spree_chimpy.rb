@@ -62,15 +62,17 @@ module Spree::Chimpy
     end
   end
 
-  def batch_subscribe(users)
-    email_batch = []
-    users.each do |user|
-      email_batch << {
-        email: {email: user.email},
-        merge_vars: merge_vars(user)
-      }
+  def batch_subscribe
+    Spree::User.where(subscribed: true).find_in_batches do |group|
+      email_batch = []
+      group.each do |user| 
+        email_batch << {
+          email: {email: user.email},
+          merge_vars: merge_vars(user)
+        }
+      end
+      list.batch_subscribe(email_batch) unless email_batch.empty?
     end
-    list.batch_subscribe(email_batch) unless email_batch.empty?
   end
 
   def merge_vars(user)
@@ -118,7 +120,7 @@ module Spree::Chimpy
     when :unsubscribe
       list.unsubscribe(object.email)
     when :batch_subscribe
-      batch_subscribe(object)
+      batch_subscribe
     end
   end
 end

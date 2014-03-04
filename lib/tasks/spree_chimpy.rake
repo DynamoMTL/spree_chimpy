@@ -64,11 +64,8 @@ namespace :spree_chimpy do
     desc 'Update merge vars on Mailchimp'
     task update_mailchimp_subscribers_info: :environment do
       puts "Updating Mailchimp data from Spree."
-            
-      users = Spree::User.where(subscribed: true).to_a
-      user_count = users.count
-      puts "Updating #{user_count} users. This will take a while..."
-      payload = {object: users}
+      puts "Updating all users. This will take a while..."
+      payload = {object: {}}
       Spree::Chimpy.handle_event('batch_subscribe', payload)
       
       puts "done."
