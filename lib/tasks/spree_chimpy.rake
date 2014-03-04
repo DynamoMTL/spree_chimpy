@@ -37,7 +37,7 @@ namespace :spree_chimpy do
       list = gibbon_export_api.list({ id: Spree::Chimpy.list.list_id })
       header = list.shift
       header = JSON.load(header)
-      source_index = header.index("Sign-Up Source")
+      source_index = header.index("Sign-Up Source") || header.index("Source")
 
       puts "#{list.count} members in the mailing list. This will take a while..."
       list.each do |row|
@@ -65,10 +65,11 @@ namespace :spree_chimpy do
     task update_mailchimp_subscribers_info: :environment do
       puts "Updating Mailchimp data from Spree."
             
-      users = Spree::User.where(subscribed: true)
+      users = Spree::User.where(subscribed: true).to_a
       user_count = users.count
       puts "Updating #{user_count} users. This will take a while..."
-      Spree::Chimpy.batch_subscribe(users)
+      payload = {object: users}
+      Spree::Chimpy.handle_event('batch_subscribe', payload)
       
       puts "done."
     end

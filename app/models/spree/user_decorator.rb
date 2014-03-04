@@ -30,6 +30,8 @@ if Spree.user_class
       last_order = chimpy_orders.last
       if last_order
         to_gbp(chimpy_orders.sum(:item_total), last_order.currency).round(2)
+      else
+        0
       end
     end
 

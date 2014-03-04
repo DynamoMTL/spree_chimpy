@@ -64,7 +64,7 @@ module Spree::Chimpy
 
   def batch_subscribe(users)
     email_batch = []
-    users.find_each do |user|
+    users.each do |user|
       email_batch << {
         email: {email: user.email},
         merge_vars: merge_vars(user)
@@ -117,6 +117,8 @@ module Spree::Chimpy
       list.subscribe(object.email, merge_vars(object), customer: (object.is_a?(Spree.user_class) && object.enrolled) )
     when :unsubscribe
       list.unsubscribe(object.email)
+    when :batch_subscribe
+      batch_subscribe(object)
     end
   end
 end
