@@ -31,12 +31,12 @@ if Spree.user_class
       if last_order
         to_gbp(chimpy_orders.sum(:item_total), last_order.currency).round(2)
       else
-        0
+        0.00
       end
     end
 
     def average_basket_size
-      (total_orders_amount > 0) ? (total_orders_amount / number_of_orders).round(2) : 0.00
+      (number_of_orders > 0) ? (total_orders_amount / number_of_orders).round(2) : 0.00
     end
 
     def city
@@ -62,7 +62,7 @@ if Spree.user_class
           if last_complete_order
             last_complete_order.shipping_address 
           else
-            last_guest_order = Spree::Order.where(email: self.email).last
+            last_guest_order = Spree::Order.where("lower(email) = ?", self.email).last
             last_guest_order.shipping_address if last_guest_order
           end
         end
@@ -74,7 +74,7 @@ if Spree.user_class
         if enrolled? and orders.complete.any?
           orders
         else
-          Spree::Order.complete.where(email: self.email)
+          Spree::Order.complete.where("lower(email) = ?", self.email)
         end
       end
     end

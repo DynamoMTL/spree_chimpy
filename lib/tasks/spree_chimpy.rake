@@ -54,7 +54,6 @@ namespace :spree_chimpy do
           Spree::Chimpy::Action.create(email: user.email, action: :subscribe, source: source)
         end
         print '.'
-        # puts "\n--#{user.id}--"
       end
 
       
@@ -65,16 +64,19 @@ namespace :spree_chimpy do
     task update_mailchimp_subscribers_info: :environment do
       puts "Updating Mailchimp data from Spree."
       puts "Updating all users. This will take a while..."
-      payload = {object: {}}
-      Spree::Chimpy.handle_event('batch_subscribe', payload)
-      
+      Spree::User.where(subscribed: true).find_in_batches do |group|
+        payload = {object: group}
+        Spree::Chimpy.handle_event('batch_subscribe', payload)
+        print '.'
+      end      
       puts "done."
     end
+
 
     desc 'segment all subscribed users'
     task segment: :environment do
       if Spree::Chimpy.segment_exists?
-        emails = Spree.user_class.where(subscribed: true).pluck(:email)
+        emails = Spree.user_class.where(subscribed: true, enrolled: true).pluck(:email)
         emails = emails.map {|email| {email: email} }
         puts "Segmenting all subscribed users"
         response = Spree::Chimpy.list.segment(emails)
