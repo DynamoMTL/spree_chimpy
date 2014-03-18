@@ -1,4 +1,4 @@
-class Spree::Chimpy::SubscribersController < Spree::StoreController
+class Spree::Chimpy::SubscribersController < Spree::BaseController
   def subscribe
     user = find_or_create_user
     if user.subscribe(params[:source])
