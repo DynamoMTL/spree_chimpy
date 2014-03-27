@@ -1,9 +1,9 @@
 <% @subscriber ||= Spree::Chimpy::Subscriber.new %>
 <%= form_for @subscriber do |f| %>
   <div>
-    <h2><%= t "spree.chimpy.subscribe_title" %></h2>
-    <%= f.label :email, t("spree.chimpy.email.label") %>
-    <%= f.email_field :email, placeholder: t("spree.chimpy.email.placeholder") %>
+    <h2><%= Spree.t(:subscribe_title, scope: :chimpy) %></h2>
+    <%= f.label :email, Spree.t(:label, scope: [:chimpy, :email]) %>
+    <%= f.email_field :email, placeholder: Spree.t(:placeholder, scope: [:chimpy, :email]) %>
     <%= f.submit %>
   </div>
 <% end %>

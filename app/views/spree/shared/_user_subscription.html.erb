@@ -1,6 +1,6 @@
 <div id="user-subscribe-container">
   <p>
     <%= f.check_box :subscribed %>
-    <%= f.label :subscribed, t("spree.chimpy.subscribed_label") %>
+    <%= f.label :subscribed, Spree.t(:subscribed_label, scope: :chimpy) %>
   </p>
 </div>
