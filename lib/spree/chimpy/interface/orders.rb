@@ -34,12 +34,15 @@ module Spree::Chimpy
     private
       def hash(order, expected_email)
         source = order.source
-        root_taxon = Spree::Taxon.find_by_parent_id(nil)
+        root_taxon = Spree::Taxon.where(parent_id: nil).take
 
         items = order.line_items.map do |line|
           # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
           taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
+
+          # assign a default taxon if the product is not associated with a category
+          taxon = root_taxon if taxon.blank?
 
           {product_id:    variant.id,
            sku:           variant.sku,
@@ -54,10 +57,10 @@ module Spree::Chimpy
           id:          order.number,
           email:       order.email,
           total:       order.total.to_f,
-          order_date:  order.completed_at.strftime('%Y-%m-%d'),
+          order_date:  order.completed_at ? order.completed_at.to_formatted_s(:db) : nil,
           shipping:    order.ship_total.to_f,
-          tax:         order.tax_total.to_f,
-          store_name:  Spree::Config.site_name,
+          tax:         order.included_tax_total.to_f, # or additional_tax_total
+          store_name:  Spree::Chimpy::Config.store_id.titleize,
           store_id:    Spree::Chimpy::Config.store_id,
           items:       items
         }
