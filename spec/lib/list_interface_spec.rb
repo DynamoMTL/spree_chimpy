@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { Spree::Chimpy::Interface::List.new('Members', 'customers', true) }
+  let(:interface) { described_class.new('Members', 'customers', true) }
   let(:api)       { double(:api) }
 
   before do
@@ -23,12 +23,12 @@ describe Spree::Chimpy::Interface::List do
   context "member info" do
     it "find when no errors" do
       api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
-      interface.info("user@example.com").should == {response: 'foo'}
+      expect(interface.info("user@example.com")).to eq({:response => 'foo'})
     end
 
     it "returns empty hash on error" do
       api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'error' => 'foo'}]})
-      interface.info("user@example.com").should == {}
+      expect(interface.info("user@example.com")).to eq({})
     end
   end
 
@@ -51,7 +51,7 @@ describe Spree::Chimpy::Interface::List do
 
   it "checks if merge var exists" do
     api.should_receive(:list_merge_vars).with({:id => 'a3d3'}).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
-    interface.merge_vars.should == %w(FOO BAR)
+    expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 
   it "adds a merge var" do
