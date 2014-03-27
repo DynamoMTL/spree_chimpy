@@ -1,52 +1,61 @@
-Spree/MailChimp Integration
-============
+# Spree/MailChimp Integration
 
-Makes it easy to integrate your [Spree](http://spreecommerce.com) app with [MailChimp](http://www.mailchimp.com)
-
-[![Travis CI Status](https://travis-ci.org/DynamoMTL/spree_chimpy.png)](https://travis-ci.org/DynamoMTL/spree_chimpy)
+[![Build Status](https://api.travis-ci.org/DynamoMTL/spree_chimpy.png)](https://travis-ci.org/DynamoMTL/spree_chimpy)
 [![Code Climate](https://codeclimate.com/github/DynamoMTL/spree_chimpy.png)](https://codeclimate.com/github/DynamoMTL/spree_chimpy)
 
-- **List synchronization**: Automatically syncs Spree's user list with MailChimp. The user can subscribe/unsubscribe via the registration and account pages.
-- **Order synchronoization**: Fully supports MailChimp's [eCommerce360](http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp/) API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes after the sale (i.e. order modification, cancelation, return).
-- **Campaign Revenue Tracking**: Notifies MailChimp when an order originates from a campaign email.
-- **Custom User Data**: Easily add your own custom merge vars. We'll only sync them when data changes
-- **Existing Stores**: Provides a handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. Run this after installing spree_chimpy to an existing store.
-- **Deferred Processing**: Communication between Spree and MailChimp is synchronous by default. If you have `delayed_job` in your bundle, the communication is queued up and deferred to one of your workers. (`sidekiq` support also planned)
+Makes it easy to integrate your [Spree][1] app with [MailChimp][2].
 
-Installing
------------
+**List synchronization**
+> Automatically syncs Spree's user list with MailChimp. The user can subscribe/unsubscribe via the registration and account pages.
 
-Add spree_chimpy to your Gemfile:
+**Order synchronoization**
+> Fully supports MailChimp's [eCommerce360][3] API. Allows you to create targeted campaigns in MailChimp based on a user's purchase history. We'll even update MailChimp if the order changes after the sale (i.e. order modification, cancelation, return).
+
+**Campaign Revenue Tracking**
+> Notifies MailChimp when an order originates from a campaign email.
+
+**Custom User Data**
+> Easily add your own custom merge vars. We'll only sync them when data changes.
+
+**Existing Stores**
+> Provides a handy rake task `rake spree_chimpy:orders:sync` is included to sync up all your existing order data with mail chimp. Run this after installing spree_chimpy to an existing store.
+
+**Deferred Processing**
+> Communication between Spree and MailChimp is synchronous by default. If you have `delayed_job` in your bundle, the communication is queued up and deferred to one of your workers. (`sidekiq` support also planned).
+
+## Installing
+
+Add spree_chimpy to your `Gemfile`:
 
 ```ruby
-gem "spree_chimpy"
+gem 'spree_chimpy'
 ```
 
 Alternatively you can use the git repo directly:
 
 ```ruby
-gem "spree_chimpy", github: "DynamoMTL/spree_chimpy"
+gem 'spree_chimpy', github: 'DynamoMTL/spree_chimpy', branch: 'master'
 ```
 
-Run bundler
+Run bundler:
 
     bundle
 
-Install migrations & initializer file
+Install migrations & initializer file:
 
     bundle exec rails g spree_chimpy:install
 
-MailChimp Setup
----------------
+---
 
-If you don't already have an account, you can [create one here](https://login.mailchimp.com/signup/) for free.
+### MailChimp Setup
 
-Make sure to create a list if you don't already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting
+If you don't already have an account, you can [create one here][4] for free.
 
-Spree Setup
------------
+Make sure to create a list if you don't already have one. Use any name you like, just dont forget to update the `Spree::Chimpy::Config#list_name` setting.
 
-Edit the initializer created by the `spree_chimpy:install` generator. Only the API key is required
+### Spree Setup
+
+Edit the initializer created by the `spree_chimpy:install` generator. Only the API key is required.
 
 ```ruby
 # config/initializers/spree_chimpy.rb
@@ -86,7 +95,6 @@ end
 
 When adding custom merge vars, you'll need to notify MailChimp by running the rake task: `rake spree_chimpy:merge_vars:sync`
 
-
 For deployment on Heroku, you can configure the API key with environment variables:
 
 ```ruby
@@ -123,36 +131,51 @@ You can run this task recurring by setting up a cron using [whenever](https://gi
 spree_chimpy comes with a default subscription form for users who are not logged in, just add the following deface override:
 
 ```ruby
-Deface::Override.new(:virtual_path => "spree/shared/_footer",
-                     :name         => "spree_chimpy_subscription_form",
+Deface::Override.new(:virtual_path  => "spree/shared/_footer",
+                     :name          => "spree_chimpy_subscription_form",
                      :insert_bottom => "#footer-right",
-                     :partial      => "spree/shared/guest_subscription_form")
+                     :partial       => "spree/shared/guest_subscription_form")
 ```
 
 The selector and virtual path can be changed to taste.
 
+---
 
-Testing
--------
+## Contributing
 
-Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
+In the spirit of [free software][5], **everyone** is encouraged to help improve this project.
 
-    $ bundle
-    $ bundle exec rake test_app
+Here are some ways *you* can contribute:
 
-To run tests:
+* by using prerelease versions
+* by reporting [bugs][6]
+* by suggesting new features
+* by writing translations
+* by writing or editing documentation
+* by writing specifications
+* by writing code (*no patch is too small*: fix typos, add comments, clean up inconsistent whitespace)
+* by refactoring code
+* by resolving [issues][6]
+* by reviewing patches
 
-    $ bundle exec rspec spec
+Starting point:
 
-To run tests with guard (preferred):
+* Fork the repo
+* Clone your repo
+* Run `bundle install`
+* Run `bundle exec rake test_app` to create the test application in `spec/test_app`
+* Make your changes
+* Ensure specs pass by running `bundle exec rspec spec`
+* Submit your pull request
 
-    $ bundle exec guard
+Copyright (c) 2014 [Joshua Nussbaum][8] and [contributors][9], released under the [New BSD License][7]
 
-Contributors
-------------
-- [@joshnuss](http://github.com/joshnuss)
-- [@bryanmtl](http://github.com/bryanmtl)
-- [@johanb](http://github.com/johanb)
-- [@iloveitaly](http://github.com/iloveitaly)
-
-Copyright (c) 2013 Dynamo, released under the New BSD License
+[1]: http://spreecommerce.com
+[2]: http://www.mailchimp.com
+[3]: http://kb.mailchimp.com/article/what-is-ecommerce360-and-how-does-it-work-with-mailchimp
+[4]: https://login.mailchimp.com/signup
+[5]: http://www.fsf.org/licensing/essays/free-sw.html
+[6]: https://github.com/DynamoMTL/spree_chimpy/issues
+[7]: https://github.com/DynamoMTL/spree_chimpy/tree/master/LICENSE.md
+[8]: https://github.com/joshnuss
+[9]: https://github.com/DynamoMTL/spree_chimpy/contributors
