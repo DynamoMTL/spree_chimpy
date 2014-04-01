@@ -6,11 +6,6 @@ module Spree::Chimpy
 
     config.autoload_paths += %W(#{config.root}/lib)
 
-    # use rspec for tests
-    config.generators do |g|
-      g.test_framework :rspec
-    end
-
     initializer "spree_chimpy.environment", before: :load_config_initializers do |app|
       Spree::Chimpy::Config = Spree::Chimpy::Configuration.new
     end

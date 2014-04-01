@@ -1,0 +1,15 @@
+---
+sv:
+  spree:
+    chimpy:
+      subscribed_label: Registrera mig till nyhetsbrevet
+      admin_subscribed_label: Prenumererat på nyhetsbrev
+      subscribe_title: Prenumerera på vårt nyhetsbrev
+      subscribed: Prenumererat
+      uncategorized: Okategoriserad
+      email:
+        label: Epost
+        placeholder: Ange din e-postadress
+      subscriber:
+        success: Tack! du har lagts till i vår prenumerations lista
+        failure: Det uppstod ett problem med att registrera din sign-up

@@ -1,3 +1,4 @@
+---
 en:
   spree:
     chimpy:
@@ -5,6 +6,7 @@ en:
       admin_subscribed_label: Subscribed to newsletter
       subscribe_title: Subscribe to our newsletter
       subscribed: Subscribed
+      uncategorized: Uncategorized
       email:
         label: Email
         placeholder: Enter your email address

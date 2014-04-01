@@ -9,7 +9,7 @@ describe Spree::Chimpy do
       config(key: '1234', list_name: 'Members')
     end
 
-    subject { Spree::Chimpy }
+    subject { described_class }
 
     specify      { should be_configured }
     its(:list)   { should == :list }
@@ -19,7 +19,7 @@ describe Spree::Chimpy do
   context "disabled" do
     before { config(key: nil) }
 
-    subject { Spree::Chimpy }
+    subject { described_class }
 
     specify      { should_not be_configured }
     its(:list)   { should be_nil }
@@ -41,21 +41,21 @@ describe Spree::Chimpy do
       interface.should_receive(:add_merge_var).with('FNAME', 'First Name')
       interface.should_receive(:add_merge_var).with('LNAME', 'Last Name')
 
-      Spree::Chimpy.sync_merge_vars
+      subject.sync_merge_vars
     end
 
     it "skips vars that exist" do
       interface.should_receive(:merge_vars).and_return(%w(EMAIL FNAME))
       interface.should_receive(:add_merge_var).with('LNAME', 'Last Name')
 
-      Spree::Chimpy.sync_merge_vars
+      subject.sync_merge_vars
     end
 
     it "doesnt sync if all exist" do
       interface.should_receive(:merge_vars).and_return(%w(EMAIL FNAME LNAME))
       interface.should_not_receive(:add_merge_var)
 
-      Spree::Chimpy.sync_merge_vars
+      subject.sync_merge_vars
     end
   end
 

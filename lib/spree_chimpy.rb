@@ -3,6 +3,7 @@ require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
 require 'spree/chimpy/workers/delayed_job'
 require 'mailchimp'
+require 'coffee_script'
 
 module Spree::Chimpy
   extend self

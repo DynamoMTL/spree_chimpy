@@ -1,6 +1,6 @@
 <tr data-hook="subscribed">
-  <th><%= t("spree.chimpy.subscribed") %></th>
+  <th><%= Spree.t(:subscribed, scope: :chimpy) %></th>
   <td>
-    <%= @user.subscribed ? 'Yes' : 'No' %>
+    <%= @user.subscribed ? Spree.t(:say_yes) : Spree.t(:say_no) %>
   </td>
 </tr>

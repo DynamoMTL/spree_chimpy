@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::Orders do
-  let(:interface) { Spree::Chimpy::Interface::Orders.new }
+  let(:interface) { described_class.new }
   let(:api)       { double() }
   let(:list)      { double() }
 
   def create_order(options={})
-    user = FactoryGirl.create(:user, email: options[:email])
-    order = FactoryGirl.build(:completed_order_with_totals, user: user, email: options[:email])
+    user  = create(:user, email: options[:email])
+    order = build(:completed_order_with_totals, user: user, email: options[:email])
     order.source = Spree::Chimpy::OrderSource.new(email_id: options[:email_id], campaign_id: options[:campaign_id])
 
     # we need to have a saved order in order to have a non-nil order number
@@ -20,7 +20,6 @@ describe Spree::Chimpy::Interface::Orders do
   before do
     Spree::Chimpy::Config.key = '1234'
     Spree::Chimpy::Config.store_id = "super-store"
-    Spree::Config.site_name = "Super Store"
     Spree::Chimpy.stub(list: list)
 
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
@@ -32,9 +31,9 @@ describe Spree::Chimpy::Interface::Orders do
 
       list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
       api.should_receive(:ecomm_order_add) do |h|
-        h[:order][:id].should == order.number
-        h[:order][:email_id].should == 'id-abcd'
-        h[:order][:campaign_id].should == '1234'
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to eq 'id-abcd'
+        expect(h[:order][:campaign_id]).to eq '1234'
       end
 
       interface.add(order)
@@ -45,9 +44,9 @@ describe Spree::Chimpy::Interface::Orders do
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
       api.should_receive(:ecomm_order_add) do |h|
-        h[:order][:id].should == order.number
-        h[:order][:email_id].should be_nil
-        h[:order][:campaign_id].should be_nil
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to be_nil
+        expect(h[:order][:campaign_id]).to be_nil
       end
 
       interface.add(order)
@@ -56,9 +55,7 @@ describe Spree::Chimpy::Interface::Orders do
 
   it "removes an order" do
     order = create_order(email: 'foo@example.com')
-
     api.should_receive(:ecomm_order_del).with({store_id: 'super-store', order_id: order.number, throws_exceptions: false}).and_return(true)
-
-    interface.remove(order).should be_true
+    expect(interface.remove(order)).to be_true
   end
 end
