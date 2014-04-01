@@ -1,3 +1,4 @@
+---
 nl:
   spree:
     chimpy:
@@ -5,6 +6,7 @@ nl:
       admin_subscribed_label: "Ingeschreven voor de nieuwsbrief"
       subscribed: "Ingeschreven"
       subscribe_title: "Schrijf je in voor onze nieuwsbrief"
+      uncategorized: Ongecatagoriseerd
       email:
         label: "Blijf op de hoogte van onze aanbiedingen en ontvang exclusieve korting"
         placeholder: "Voer hier je email adres in"

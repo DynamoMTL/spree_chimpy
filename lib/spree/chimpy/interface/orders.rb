@@ -41,14 +41,11 @@ module Spree::Chimpy
           variant = line.variant
           taxon = variant.product.taxons.map(&:self_and_ancestors).flatten.uniq.detect { |t| t.parent == root_taxon }
 
-          # assign a default taxon if the product is not associated with a category
-          taxon = root_taxon if taxon.blank?
-
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
            category_id:   taxon ? taxon.id : 999999,
-           category_name: taxon ? taxon.name : "Uncategorized",
+           category_name: taxon ? taxon.name : Spree.t(:uncategorized, scope: :chimpy, default: 'Uncategorized'),
            cost:          variant.price.to_f,
            qty:           line.quantity}
         end

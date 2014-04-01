@@ -6,6 +6,7 @@ sv:
       admin_subscribed_label: Prenumererat på nyhetsbrev
       subscribe_title: Prenumerera på vårt nyhetsbrev
       subscribed: Prenumererat
+      uncategorized: Okategoriserad
       email:
         label: Epost
         placeholder: Ange din e-postadress
