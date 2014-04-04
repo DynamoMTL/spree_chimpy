@@ -3,10 +3,8 @@ Spree::Order.class_eval do
 
   register_update_hook :notify_mail_chimp
 
-  around_save :handle_cancelation
-
   def notify_mail_chimp
-    if completed? && Spree::Chimpy.configured?
+    if Spree::Chimpy.configured? and ((completed? && total_changed?) or canceled?)
       if self.user && self.user.subscribed?
         self.user.update_member_info
       else
@@ -18,10 +16,4 @@ Spree::Order.class_eval do
     end
   end
 
-private
-  def handle_cancelation
-    canceled = state_changed? && canceled?
-    yield
-    notify_mail_chimp if canceled
-  end
 end

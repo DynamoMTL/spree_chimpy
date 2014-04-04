@@ -27,7 +27,7 @@ describe Spree::Order do
     end
     
     it "sync when order is completed" do
-      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order).exactly(3).times
+      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order)
       @completed_order.cancel!
     end
   end

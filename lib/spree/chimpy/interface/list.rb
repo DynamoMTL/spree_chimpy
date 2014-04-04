@@ -12,6 +12,17 @@ module Spree::Chimpy
 
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
+        member = @api.lists.member_info(list_id, [{email: email}])
+        # returning if the user was found, but is not subscribed, 
+        # then we update our information and do not subscribe them again.
+        if member && member['success_count'] == 1
+          if member['data'][0]['status'] != 'subscribed'
+            user = Spree.user_class.where(email: email, subscribed: true).first
+            user.update_column(:subscribed, false) if user
+            return
+          end
+        end
+
         update_existing = true
         @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
 

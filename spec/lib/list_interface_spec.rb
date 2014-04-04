@@ -15,8 +15,18 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "subscribes" do
+    api.lists.should_receive(:member_info).with(list_id, [{email:'user@example.com'}]).and_return(nil)
     api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, merge_vars, 'html', double_optin, update_existing)
     interface.subscribe("user@example.com", 'SIZE' => '10')
+  end
+
+  it "does not subscribe when the user has unsubscribed from remote" do
+    user = FactoryGirl.create(:user, email: "user@example.com", subscribed: true)
+    api.lists.should_receive(:member_info).with(list_id, [{email:'user@example.com'}]).and_return({'success_count'=>1, 'data' => ['status'=>'unsubscribed']})
+    api.lists.should_not_receive(:subscribe)
+    
+    interface.subscribe("user@example.com", 'SIZE' => '10')
+    expect(user.reload.subscribed).to be_false
   end
 
   it "unsubscribes" do
@@ -25,6 +35,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "segments users" do
+    api.lists.should_receive(:member_info).with(list_id, [{email:'user@example.com'}]).and_return(nil)
     api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, merge_vars, 'html', double_optin, update_existing)
     api.lists.should_receive(:segments).with(list_id, 'static').and_return({'static' => [{"id" => segment_id, "name" => "customers"}] })
     api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, [{email: "user@example.com"}])
