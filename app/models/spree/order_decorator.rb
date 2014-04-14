@@ -4,7 +4,7 @@ Spree::Order.class_eval do
   register_update_hook :notify_mail_chimp
 
   def notify_mail_chimp
-    if Spree::Chimpy.configured? and ((completed? && total_changed?) or canceled?)
+    if Spree::Chimpy.configured? and completed?
       if self.user && self.user.subscribed?
         self.user.update_member_info
       else
