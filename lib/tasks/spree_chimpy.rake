@@ -42,5 +42,26 @@ namespace :spree_chimpy do
         puts "done"
       end
     end
+
+    desc 'sync all users with mailchimp'
+    task sync: :environment do
+      emails = Spree.user_class.pluck(:email)
+      puts "Syncing all users"
+      emails.each do |email|
+        response = Spree::Chimpy.list.info(email)
+        print '.'
+
+        response["errors"].try :each do |error|
+          puts "Error #{error["code"]} with email: #{error["email"]} \n msg: #{error["msg"]}"
+        end
+
+        case response[:status]
+        when "subscribed"
+          Spree.user_class.where(email: email).update_all(subscribed: true)
+        when "unsubscribed"
+          Spree.user_class.where(email: email).update_all(subscribed: false)
+        end
+      end
+    end
   end
 end
