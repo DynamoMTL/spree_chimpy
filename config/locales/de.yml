@@ -1,0 +1,15 @@
+---
+de:
+  spree:
+    chimpy:
+      subscribed_label: Schweine-Newsletter abonnieren
+      admin_subscribed_label: Für Newsletter angemeldet
+      subscribe_title: Für unseren Newsletter anmelden
+      subscribed: Für Newsletter angemeldet
+      uncategorized: Unkategorisiert
+      email:
+        label: Email
+        placeholder: E-Mail Adresse eingeben
+      subscriber:
+        success: Danke! Du wurdest erfolgreich hinzugefügt
+        failure: Es gabe ein Problem bei der Newsletter Anmeldung
