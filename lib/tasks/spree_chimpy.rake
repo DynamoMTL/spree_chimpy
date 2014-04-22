@@ -77,7 +77,6 @@ namespace :spree_chimpy do
     task segment: :environment do
       if Spree::Chimpy.segment_exists?
         emails = Spree.user_class.where(subscribed: true, enrolled: true).pluck(:email)
-        emails = emails.map {|email| {email: email} }
         puts "Segmenting all subscribed users"
         response = Spree::Chimpy.list.segment(emails)
         response["errors"].try :each do |error|
