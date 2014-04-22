@@ -1,25 +1,6 @@
 require 'spec_helper'
 
 describe Spree.user_class do
-
-  context "try_subscribe" do
-
-    let!(:user) { create(:user, enrolled: false, subscribed: false) }
-
-    it "should call subscribe" do
-      Spree::Chimpy::Subscription.any_instance.should_receive(:subscribe).with('Website - Registration')
-      user.try_subscribe = 1
-      user.save
-    end
-
-    it "should not call subscribe" do
-      Spree::Chimpy::Subscription.any_instance.should_not_receive(:subscribe)
-      user.try_subscribe = 0
-      user.save
-    end
-
-  end
-
   context "data accessor methods" do
     let(:shipping_address) { create(:ship_address)}
 
@@ -30,7 +11,7 @@ describe Spree.user_class do
         @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address, currency: "GBP")
         Spree::Chimpy::Config.key = '1234'
       end
-
+      
       it "accesses the shipping address and order information" do
         expect(registered_user.first_name).to eq 'John'
         expect(registered_user.last_name).to eq 'Doe'
@@ -51,7 +32,7 @@ describe Spree.user_class do
         @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com', currency: "GBP")
         Spree::Chimpy::Config.key = '1234'
       end
-
+      
       it "accesses the shipping address and order information" do
         expect(guest_user.first_name).to eq 'John'
         expect(guest_user.last_name).to eq 'Doe'

@@ -5,9 +5,6 @@ if Spree.user_class
 
     delegate :subscribe, :update_member_info, :unsubscribe, :resubscribe, to: :subscription
 
-    attr_accessor :try_subscribe
-
-    after_save { subscribe("Website - Registration") if try_subscribe.to_i == 1 }
 
     def first_name
       chimpy_shipping_address.firstname if chimpy_shipping_address
