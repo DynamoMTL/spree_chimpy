@@ -24,9 +24,13 @@ module Spree::Chimpy
         end
 
         update_existing = true
-        @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
+        begin
+          @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
+          segment([email]) if options[:customer]
+        rescue Mailchimp::ListInvalidImportError => e
+          Rails.logger.error("spree_chimpy: Error in subscribing email: #{email} - #{e.inspect}")
+        end
 
-        segment([{email: email}]) if options[:customer]
       end
 
       def batch_subscribe(email_batch)
@@ -67,21 +71,25 @@ module Spree::Chimpy
 
       def segment(emails = [])
         log "Adding #{emails} to segment #{@segment_name}"
-
+        emails = emails.map {|email| {email: email} }
         @api.lists.static_segment_members_add(list_id, segment_id, emails)
       end
 
       def create_segment
         log "Creating segment #{@segment_name}"
 
-        @segment_id = @api.lists.segment_add(list_id, {type: 'static', name: @segment_name})
+        @segment_id = @api.lists.segment_add(list_id, {type: 'static', name: @segment_name})['id']
       end
 
       def find_segment_id
         segments = @api.lists.segments(list_id, 'static')
         segment  = segments['static'].detect {|segment| segment['name'].downcase == @segment_name.downcase }
 
-        segment['id'] if segment
+        if segment.blank?
+          create_segment
+        else
+          segment['id']
+        end
       end
 
       def segment_id

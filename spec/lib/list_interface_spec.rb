@@ -44,7 +44,7 @@ describe Spree::Chimpy::Interface::List do
 
   it "segments" do
     api.lists.should_receive(:segments).with(list_id, 'static').and_return({'static' => [{"id" => segment_id, "name" => "customers"}] })
-    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, ["test@test.nl", "test@test.com"])
+    api.lists.should_receive(:static_segment_members_add).with(list_id, segment_id, [{email: "test@test.nl"}, {email: "test@test.com"}])
     interface.segment(["test@test.nl", "test@test.com"])
   end
 
