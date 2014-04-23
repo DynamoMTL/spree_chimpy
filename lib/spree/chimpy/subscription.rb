@@ -7,8 +7,8 @@ module Spree::Chimpy
     end
 
     def subscribe(source = nil)
-      chimpy_action = Spree::Chimpy::Action.new(email: @user.email, source: source, action: :subscribe)
-      if @user.valid? && !@user.subscribed? && chimpy_action.save
+      chimpy_action = Spree::Chimpy::Action.where(email: @user.email, source: source, action: :subscribe).first_or_initialize
+      if @user.valid? && chimpy_action.save
         @user.update_column(:subscribed, true)
         defer(:subscribe)
         true
@@ -43,7 +43,7 @@ module Spree::Chimpy
         chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual unsubscribe', action: :unsubscribe)
         defer(:unsubscribe) 
       elsif subscribing?
-        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Manual subscribe', action: :subscribe)
+        chimpy_action = Spree::Chimpy::Action.create(email: @user.email, source: 'Website - Subscribe', action: :subscribe)
         defer(:subscribe)
       end
     end

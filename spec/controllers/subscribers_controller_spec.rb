@@ -28,13 +28,6 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
       expect(Spree::Chimpy::Action.count).to    eq(0)
       expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to    be_false
     end
-    
-    it "should only accept one email per action" do
-      2.times do
-        spree_post :subscribe, {signupEmail: 'luther@bbc.co.uk'}
-      end
-      should_be_failure(response)
-    end
   end
 
   

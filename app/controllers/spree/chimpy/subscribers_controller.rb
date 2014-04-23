@@ -23,15 +23,22 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
   end
 
   def refer_a_friend
-    mailchimp_action = Spree::Chimpy::Action.new(email: params[:referrer_email], request_params: params.to_json, source: params[:source], action: :referrer)
+    mailchimp_action = Spree::Chimpy::Action.new(email: params[:referrerEmail], request_params: params.to_json, source: params[:source], action: :referrer)
     if mailchimp_action.save
-      emails = params[:refereeEmails]
-      emails.each do |email|
-        if email.present?
-          user = Spree.user_class.find_or_create_unenrolled(email, tracking_cookie)
-          user.subscribe(params[:referrer_email])
+      double_opt_in = false
+      
+      referee_batch = params[:refereeEmails].map do |email| 
+        if email.present? and email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+          { email: {email: email}, 
+            merge_vars: { "REFERRER" => params[:referrerEmail] } } 
         end
-      end
+      end.compact
+
+      list = Spree::Chimpy::Interface::List.new(params[:referee_list_name], 'customers', double_opt_in)
+      res = list.batch_subscribe(referee_batch)
+
+      list = Spree::Chimpy::Interface::List.new(params[:referrer_list_name], 'customers', double_opt_in)
+      res = list.batch_subscribe([{email: {email: params[:referrerEmail]} }])
 
       response = { response: :success, message: I18n.t("spree.chimpy.success") }
     else
