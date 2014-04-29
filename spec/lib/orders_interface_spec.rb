@@ -30,6 +30,7 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
+      list.should_receive(:subscribe).with('User@Example.com').and_return(nil)
       api.should_receive(:ecomm_order_add) do |h|
         expect(h[:order][:id]).to eq order.number
         expect(h[:order][:email_id]).to eq 'id-abcd'
@@ -43,6 +44,7 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
+      list.should_receive(:subscribe).with('other@home.com').and_return(nil)
       api.should_receive(:ecomm_order_add) do |h|
         expect(h[:order][:id]).to eq order.number
         expect(h[:order][:email_id]).to be_nil
