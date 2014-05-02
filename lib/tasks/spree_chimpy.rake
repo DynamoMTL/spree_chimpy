@@ -65,8 +65,14 @@ namespace :spree_chimpy do
       puts "Updating Mailchimp data from Spree."
       puts "Updating all users. This will take a while..."
       Spree::User.where(subscribed: true).find_in_batches do |group|
-        payload = {object: group}
-        Spree::Chimpy.handle_event('batch_subscribe', payload)
+        email_batch = []
+        group.each do |user| 
+          email_batch << {
+            email: {email: user.email},
+            merge_vars: merge_vars(user)
+          }
+        end
+        Spree::Chimpy.handle_event('batch_subscribe', {object: email_batch})
         print '.'
       end      
       puts "done."

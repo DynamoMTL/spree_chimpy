@@ -61,4 +61,10 @@ describe Spree::Chimpy::Interface::List do
     api.lists.should_receive(:merge_var_add).with(list_id, "SIZE", "Your Size")
     interface.add_merge_var('SIZE', 'Your Size')
   end
+
+  it "directly subscribes" do
+    api.lists.should_receive(:subscribe).with(list_id, {email:'user@example.com'}, {}, 'html', double_optin, update_existing)
+    interface.direct_subscribe("user@example.com")
+  end
+
 end

@@ -30,7 +30,17 @@ module Spree::Chimpy
         rescue Mailchimp::ListInvalidImportError => e
           Rails.logger.error("spree_chimpy: Error in subscribing email: #{email} - #{e.inspect}")
         end
+      end
 
+      def direct_subscribe(email, merge_vars={})
+        log "Subscribing #{email} to #{@list_name}"
+
+        update_existing = true
+        begin
+          @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
+        rescue Mailchimp::ListInvalidImportError => e
+          Rails.logger.error("spree_chimpy: Error in subscribing email: #{email} - #{e.inspect}")
+        end
       end
 
       def batch_subscribe(email_batch)

@@ -30,6 +30,20 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
     end
   end
 
+  context "subscribe to list of choice" do
+    let(:interface) { double('List') }
+    before do
+      expect(Spree::Chimpy::Interface::List).to receive(:new).with('Testing', anything, anything).and_return(interface)
+      expect(interface).to receive(:direct_subscribe).with('luther@bbc.co.uk', {"SOURCE" => 'Test Source'})
+    end
+
+    it "should subsribe directly" do
+      spree_post :subscribe_to_list, {signupEmail: 'luther@bbc.co.uk', list_name: 'Testing', source: 'Test Source'}
+      should_be_successful(response)
+    end
+
+  end
+
   
   context "unsubscribe" do
     before do 

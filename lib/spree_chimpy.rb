@@ -62,17 +62,6 @@ module Spree::Chimpy
     end
   end
 
-  def batch_subscribe(group)
-    email_batch = []
-    group.each do |user| 
-      email_batch << {
-        email: {email: user.email},
-        merge_vars: merge_vars(user)
-      }
-    end
-    list.batch_subscribe(email_batch) unless email_batch.empty?
-  end
-
   def merge_vars(user)
     attributes = Config.merge_vars.except('EMAIL')
 
@@ -118,7 +107,7 @@ module Spree::Chimpy
     when :unsubscribe
       list.unsubscribe(object.email)
     when :batch_subscribe
-      batch_subscribe(object)
+      list.batch_subscribe(object)
     end
   end
 end
