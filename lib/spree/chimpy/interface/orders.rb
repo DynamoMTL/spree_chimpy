@@ -13,9 +13,12 @@ module Spree::Chimpy
           expected_email = info[:email].to_s
         else
           expected_email = order.email
-        end
+        end        
+        
+        log "Adding order #{order.number} for #{expected_email}"
 
-        log "Adding order #{order.number}"
+        # make sure the email address is already in mail chimp before adding the order
+        Spree::Chimpy.list.subscribe(expected_email)
 
         @api.ecomm_order_add(order: hash(order, expected_email))
       end
@@ -56,7 +59,7 @@ module Spree::Chimpy
           total:       order.total.to_f,
           order_date:  order.completed_at ? order.completed_at.to_formatted_s(:db) : nil,
           shipping:    order.ship_total.to_f,
-          tax:         order.included_tax_total.to_f, # or additional_tax_total
+          tax:         order.try(:included_tax_total).to_f, # or additional_tax_total
           store_name:  Spree::Chimpy::Config.store_id.titleize,
           store_id:    Spree::Chimpy::Config.store_id,
           items:       items
@@ -66,7 +69,6 @@ module Spree::Chimpy
           data[:email_id]    = source.email_id
           data[:campaign_id] = source.campaign_id
         end
-
         data
       end
 
