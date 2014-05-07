@@ -10,7 +10,9 @@ module Spree::Chimpy
       def add(order)
         if source = order.source
           info = Spree::Chimpy.list.info(source.email_id)
-          expected_email = info[:email].to_s
+          # use the one from mail chimp or fall back to the order's email 
+          # happens when this is a new user
+          expected_email = (info[:email] || order.email).to_s
         else
           expected_email = order.email
         end        
