@@ -9,11 +9,19 @@ module Spree::Chimpy
       if params[:mc_eid] || params[:mc_cid]
         attributes = {campaign_id: params[:mc_cid],
                       email_id:    params[:mc_eid]}
-
-        if current_order(true).source
-          current_order.source.update_attributes(attributes)
+        
+        if self.class.to_s.include?('Api')
+          if current_api_order.source
+            current_api_order.source.update_attributes(attributes)
+          else
+            current_api_order.create_source(attributes)
+          end
         else
-          current_order.create_source(attributes)
+          if current_order(true).source
+            current_order.source.update_attributes(attributes)
+          else
+            current_order.create_source(attributes)
+          end
         end
       end
     end

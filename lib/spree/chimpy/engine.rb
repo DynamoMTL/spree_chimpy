@@ -36,6 +36,11 @@ module Spree::Chimpy
         Spree::BaseController.send(:include,  Spree::Chimpy::ControllerFilters)
       end
 
+      # for those shops that use the api controller
+      if defined?(Spree::Api::BaseController)
+        Spree::Api::BaseController.send(:include,  Spree::Chimpy::ControllerFilters)
+      end
+      
       Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
