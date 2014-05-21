@@ -48,7 +48,7 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
       res = list.batch_subscribe(referee_batch)
 
       list = Spree::Chimpy::Interface::List.new(params[:referrer_list_name], 'customers', double_opt_in)
-      res = list.batch_subscribe([{email: {email: params[:referrerEmail]} }])
+      res = list.batch_subscribe([{email: {email: params[:referrerEmail]}, merge_vars: { "SOURCE" => params[:source] } }])
 
       response = { response: :success, message: I18n.t("spree.chimpy.success") }
     else
