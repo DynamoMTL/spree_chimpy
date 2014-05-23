@@ -19,8 +19,8 @@ module Spree::Chimpy
         
         log "Adding order #{order.number} for #{expected_email}"
 
-        # make sure the email address is already in mail chimp before adding the order
-        Spree::Chimpy.list.subscribe(expected_email)
+        # create the user if it does not exist yet 
+        # Spree::Chimpy.list.subscribe(expected_email)
 
         @api.ecomm_order_add(order: hash(order, expected_email))
       end
