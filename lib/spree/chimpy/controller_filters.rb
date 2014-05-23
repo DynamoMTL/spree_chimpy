@@ -6,9 +6,11 @@ module Spree::Chimpy
 
   private
     def find_mail_chimp_params
-      if params[:mc_eid] || params[:mc_cid]
-        attributes = {campaign_id: params[:mc_cid],
-                      email_id:    params[:mc_eid]}
+      mc_eid = params[:mc_eid] || session[:mc_eid]
+      mc_cid = params[:mc_cid] || session[:mc_cid]
+      if (mc_eid || mc_cid) && session[:order_id]
+        attributes = {campaign_id: mc_cid,
+                      email_id:    mc_eid}
         
         if self.class.to_s.include?('Api')
           if current_api_order.source
