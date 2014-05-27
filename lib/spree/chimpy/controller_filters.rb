@@ -2,23 +2,18 @@ module Spree::Chimpy
   module ControllerFilters
     extend ActiveSupport::Concern
 
-    included { before_filter :find_mail_chimp_params }
+    included do |variable|
+      before_filter :find_mail_chimp_params
+      
+      include ::Spree::Core::ControllerHelpers::Order
 
-  private
-    def find_mail_chimp_params
-      mc_eid = params[:mc_eid] || session[:mc_eid]
-      mc_cid = params[:mc_cid] || session[:mc_cid]
-      if (mc_eid || mc_cid) && session[:order_id]
-        attributes = {campaign_id: mc_cid,
-                      email_id:    mc_eid}
-        
-        if self.class.to_s.include?('Api')
-          if current_api_order.source
-            current_api_order.source.update_attributes(attributes)
-          else
-            current_api_order.create_source(attributes)
-          end
-        else
+    private
+      def find_mail_chimp_params
+        mc_eid = params[:mc_eid] || session[:mc_eid]
+        mc_cid = params[:mc_cid] || session[:mc_cid]
+        if (mc_eid || mc_cid) && session[:order_id]
+          attributes = {campaign_id: mc_cid,
+                        email_id:    mc_eid}
           if current_order(true).source
             current_order.source.update_attributes(attributes)
           else
