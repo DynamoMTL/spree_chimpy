@@ -8,7 +8,7 @@ describe Spree.user_class do
       let!(:registered_user) { create(:user, enrolled: true) }
       before do
         Spree::Chimpy::Config.key = nil
-        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address, currency: "GBP")
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: registered_user, ship_address: shipping_address)
         Spree::Chimpy::Config.key = '1234'
       end
       
@@ -19,8 +19,8 @@ describe Spree.user_class do
         expect(registered_user.city).to eq 'Herndon'
 
         expect(registered_user.number_of_orders).to eq 1
-        expect(registered_user.total_orders_amount).to eq @completed_order.item_total
-        expect(registered_user.average_basket_size).to eq @completed_order.item_total
+        expect(registered_user.total_orders_amount).to eq @completed_order.item_total * Spree::Chimpy::Config.to_gbp_rates['USD']
+        expect(registered_user.average_basket_size).to eq @completed_order.item_total * Spree::Chimpy::Config.to_gbp_rates['USD']
       end
 
     end
@@ -29,7 +29,7 @@ describe Spree.user_class do
       let!(:guest_user) { create(:user, email: 'john@doe.com', enrolled: false) }
       before do
         Spree::Chimpy::Config.key = nil
-        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com', currency: "GBP")
+        @completed_order     = FactoryGirl.create(:completed_order_with_totals, user: nil, email: 'john@doe.com')
         Spree::Chimpy::Config.key = '1234'
       end
       
@@ -40,8 +40,8 @@ describe Spree.user_class do
         expect(guest_user.city).to eq 'Herndon'
 
         expect(guest_user.number_of_orders).to eq 1
-        expect(guest_user.total_orders_amount).to eq @completed_order.item_total
-        expect(guest_user.average_basket_size).to eq @completed_order.item_total
+        expect(guest_user.total_orders_amount).to eq @completed_order.item_total * Spree::Chimpy::Config.to_gbp_rates['USD']
+        expect(guest_user.average_basket_size).to eq @completed_order.item_total * Spree::Chimpy::Config.to_gbp_rates['USD']
       end
     end
   end

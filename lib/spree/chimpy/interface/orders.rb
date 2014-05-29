@@ -35,15 +35,12 @@ module Spree::Chimpy
         items = order.line_items.map do |line|
           variant = line.variant
           product = variant.product
-          
-          category_name = product.martin_type ? product.martin_type.title : product.product_type
-          category_id = product.martin_type ? product.martin_type.id : 9999
 
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
-           category_id:   category_id,
-           category_name: category_name,
+           category_id:   product.product_type.id,
+           category_name: product.product_type.title,
            cost:          to_usd(line.base_price.to_f, line.currency),
            qty:           line.quantity}
         end

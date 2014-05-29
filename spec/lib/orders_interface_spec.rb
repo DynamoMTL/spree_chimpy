@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Chimpy::Interface::Orders do
   let(:interface) { Spree::Chimpy::Interface::Orders.new }
   let(:api)       { double('api', ecomm: double) }
-  let(:order)     { FactoryGirl.build(:completed_order_with_totals) }
+  let(:order)     { FactoryGirl.build(:completed_order_with_totals, completed_at: Time.now) }
   let(:true_response) { {"complete" => true } }
 
   before do
