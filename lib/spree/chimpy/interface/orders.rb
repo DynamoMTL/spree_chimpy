@@ -9,8 +9,8 @@ module Spree::Chimpy
 
       def add(order)
         log "Adding order #{order.number}"
-
-        response = @api.ecomm.order_add(hash(order))
+        order_hash = hash(order)
+        response = @api.ecomm.order_add(order_hash)
         log "Order #{order.number} added successfully!" if response["complete"]
         response["complete"]
       end
@@ -39,8 +39,8 @@ module Spree::Chimpy
           {product_id:    variant.id,
            sku:           variant.sku,
            product_name:  variant.name,
-           category_id:   product.product_type.id,
-           category_name: product.product_type.title,
+           category_id:   product.marketing_type.id,
+           category_name: product.marketing_type.title,
            cost:          to_usd(line.base_price.to_f, line.currency),
            qty:           line.quantity}
         end
