@@ -40,7 +40,7 @@ module Spree::Chimpy
            sku:           variant.sku,
            product_name:  variant.name,
            category_id:   product.marketing_type.id,
-           category_name: product.marketing_type.title,
+           category_name: product.marketing_type.name,
            cost:          to_usd(line.base_price.to_f, line.currency),
            qty:           line.quantity}
         end
