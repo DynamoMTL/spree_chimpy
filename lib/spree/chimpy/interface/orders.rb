@@ -10,9 +10,13 @@ module Spree::Chimpy
       def add(order)
         log "Adding order #{order.number}"
         order_hash = hash(order)
-        response = @api.ecomm.order_add(order_hash)
-        log "Order #{order.number} added successfully!" if response["complete"]
-        response["complete"]
+        if order_hash[:items].present?
+          response = @api.ecomm.order_add(order_hash)
+          log "Order #{order.number} added successfully!" if response["complete"]
+          response["complete"]
+        else
+          log "Order #{order.number} did not have any valid lines!"
+        end
       end
 
       def remove(order)
@@ -36,13 +40,15 @@ module Spree::Chimpy
           variant = line.variant
           product = variant.product
 
-          {product_id:    variant.id,
-           sku:           variant.sku,
-           product_name:  variant.name,
-           category_id:   product.marketing_type.id,
-           category_name: product.marketing_type.name,
-           cost:          to_usd(line.base_price.to_f, line.currency),
-           qty:           line.quantity}
+          {
+             product_id:    variant.id,
+             sku:           variant.sku,
+             product_name:  variant.name,
+             category_id:   product.marketing_type.id,
+             category_name: product.marketing_type.name,
+             cost:          to_usd(line.base_price.to_f, line.currency),
+             qty:           line.quantity
+           }
         end
 
         data = {

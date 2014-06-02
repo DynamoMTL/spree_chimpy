@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Chimpy::Interface::Orders do
   let(:interface) { Spree::Chimpy::Interface::Orders.new }
   let(:api)       { double('api', ecomm: double) }
-  let(:order)     { FactoryGirl.build(:completed_order_with_totals, completed_at: Time.now) }
+  let(:order)     { FactoryGirl.create(:completed_order_with_totals) }
   let(:true_response) { {"complete" => true } }
 
   before do
@@ -11,7 +11,8 @@ describe Spree::Chimpy::Interface::Orders do
     # we need to have a saved order in order to have a non-nil order number
     # we need to stub :notify_mail_chimp otherwise sync will be called on the order on update!
     order.stub(:notify_mail_chimp).and_return(true_response)
-    order.save
+    allow_any_instance_of(Spree::Product).to receive(:marketing_type).and_return(double(id: 1, name: 'Marketing Type'))
+    allow_any_instance_of(Spree::LineItem).to receive(:base_price).and_return(10.99)
   end
 
   it "adds an order" do
