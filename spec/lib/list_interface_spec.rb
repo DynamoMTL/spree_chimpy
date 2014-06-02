@@ -26,7 +26,7 @@ describe Spree::Chimpy::Interface::List do
     api.lists.should_not_receive(:subscribe)
     
     interface.subscribe("user@example.com", 'SIZE' => '10')
-    expect(user.reload.subscribed).to be_false
+    expect(user.reload.subscribed).to be false
   end
 
   it "unsubscribes" do

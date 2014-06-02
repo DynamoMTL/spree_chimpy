@@ -21,13 +21,13 @@ describe Spree::Chimpy::Interface::Orders do
 
     api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_return(true_response)
 
-    interface.add(order).should be_true
+    expect(interface.add(order)).to be true
   end
 
   it "removes an order" do
     Spree::Chimpy::Config.store_id = "super-store"
     api.ecomm.should_receive(:order_del).with('super-store', order.number).and_return(true_response)
 
-    interface.remove(order).should be_true
+    expect(interface.remove(order)).to be true
   end
 end

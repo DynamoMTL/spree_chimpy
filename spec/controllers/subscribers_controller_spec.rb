@@ -16,7 +16,7 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
       should_be_successful(response)
       expect(Spree::Chimpy::Action.count).to    eq(1)
       expect(Spree::Chimpy::Action.first.source).to    eq('Website - Hero')
-      expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to    be_true
+      expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to be true
     end
     
     it "should return error message for invalid email" do
@@ -26,7 +26,7 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
 
       should_be_failure(response)
       expect(Spree::Chimpy::Action.count).to    eq(0)
-      expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to    be_false
+      expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to be false
     end
   end
 
