@@ -11,9 +11,17 @@ module Spree::Chimpy
         log "Adding order #{order.number}"
         order_hash = hash(order)
         if order_hash[:items].present?
-          response = @api.ecomm.order_add(order_hash)
-          log "Order #{order.number} added successfully!" if response["complete"]
-          response["complete"]
+
+          response = safe_add(order, order_hash)
+
+          if !response.nil? and response["complete"]
+            log "Order #{order.number} added successfully!" 
+            true
+          else
+            Rails.logger.error "Order #{order.number} not added!" 
+            false
+          end
+
         else
           log "Order #{order.number} did not have any valid lines!"
         end
@@ -33,6 +41,21 @@ module Spree::Chimpy
       end
 
     private
+
+      def safe_add(order, order_hash)
+        response = nil
+        begin
+          response = @api.ecomm.order_add(order_hash)
+        rescue Mailchimp::InvalidEcommOrderError => e
+          if e.message.match(/Order Id \"#{order.number}\" has already been recorded/)
+            Rails.logger.error "Order #{order.number} was not added as it has already been recorded!" 
+          else
+            raise e
+          end
+        end
+        response
+      end
+
       def hash(order)
         source = order.source
 

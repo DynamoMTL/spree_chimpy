@@ -5,6 +5,7 @@ describe Spree::Chimpy::Interface::Orders do
   let(:api)       { double('api', ecomm: double) }
   let(:order)     { FactoryGirl.create(:completed_order_with_totals) }
   let(:true_response) { {"complete" => true } }
+  let(:false_response) { {"complete" => false } }
 
   before do
     Spree::Chimpy.stub(:api).and_return(api)
@@ -22,6 +23,36 @@ describe Spree::Chimpy::Interface::Orders do
     api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_return(true_response)
 
     expect(interface.add(order)).to be true
+  end
+
+  it "handles a duplicate order" do
+    Spree::Config.site_name = "Super Store"
+    Spree::Chimpy::Config.store_id = "super-store"
+
+    e = Mailchimp::InvalidEcommOrderError.new("Order Id \"#{order.number}\" has already been recorded.")
+    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_raise(e)
+
+    expect(interface.add(order)).to be false
+  end
+
+  it "throws errors" do
+    Spree::Config.site_name = "Super Store"
+    Spree::Chimpy::Config.store_id = "super-store"
+
+    e = Mailchimp::InvalidEcommOrderError.new("foobar")
+    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_raise(e)
+
+    lambda { interface.add(order) }.should raise_error(e)
+  end
+
+  it "returns false if there is a false response" do
+    Spree::Config.site_name = "Super Store"
+    Spree::Chimpy::Config.store_id = "super-store"
+
+    e = Mailchimp::InvalidEcommOrderError.new("foobar")
+    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_return(false_response)
+
+    expect(interface.add(order)).to be false
   end
 
   it "removes an order" do
