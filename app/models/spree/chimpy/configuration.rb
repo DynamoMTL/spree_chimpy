@@ -4,6 +4,7 @@ module Spree::Chimpy
     preference :subscribed_by_default, :boolean, default: false
     preference :key,                   :string
     preference :list_name,             :string,  default: 'Members'
+    preference :list_id,               :string,  default: nil
     preference :customer_segment_name, :string,  default: 'Customers'
     preference :merge_vars,            :hash,    default: { 'EMAIL' => :email }
     preference :api_options,           :hash,    default: { timeout: 60 }
