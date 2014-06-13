@@ -3,11 +3,12 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(list_name, segment_name, double_opt_in)
+      def initialize(list_name, segment_name, double_opt_in, list_id)
         @api           = Spree::Chimpy.api
-        @list_name     = list_name
+        @list_id       = list_id
         @segment_name  = segment_name
         @double_opt_in = double_opt_in
+        @list_name     = list_name
       end
 
       def subscribe(email, merge_vars = {}, options = {})

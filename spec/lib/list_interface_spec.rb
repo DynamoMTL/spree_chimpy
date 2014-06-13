@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { described_class.new('Members', 'customers', true) }
+  let(:interface) { described_class.new('Members', 'customers', true, nil) }
   let(:api)       { double(:api) }
 
   before do
