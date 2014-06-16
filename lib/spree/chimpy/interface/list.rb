@@ -11,10 +11,14 @@ module Spree::Chimpy
         @list_name     = list_name
       end
 
+      def api_call
+        @api.lists
+      end
+
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        @api.list_subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true, double_optin: @double_opt_in, email_type: 'html')
+        api_call.subscribe(id: list_id, email_address: email, merge_vars: merge_vars, update_existing: true, double_optin: @double_opt_in, email_type: 'html')
 
         segment([email]) if options[:customer]
       end
