@@ -23,18 +23,18 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "unsubscribes" do
-    api.should_receive(:list_unsubscribe).with({:id => 'a3d3', :email_address => 'user@example.com'})
+    expect(lists).to receive(:unsubscribe).with({:id => 'a3d3', :email_address => 'user@example.com'})
     interface.unsubscribe("user@example.com")
   end
 
   context "member info" do
     it "find when no errors" do
-      api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
+      expect(lists).to receive(:member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({:response => 'foo'})
     end
 
     it "returns empty hash on error" do
-      api.should_receive(:list_member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'error' => 'foo'}]})
+      expect(lists).to receive(:member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'error' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({})
     end
   end
@@ -46,14 +46,14 @@ describe Spree::Chimpy::Interface::List do
             :merge_vars => {'SIZE' => '10'},
             :email_type => 'html', :double_optin => true,
             :update_existing => true})
-    api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    api.should_receive(:list_static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["user@example.com"])
+    expect(lists).to receive(:static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    expect(lists).to receive(:static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
   it "segments" do
-    api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    api.should_receive(:list_static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["test@test.nl", "test@test.com"])
+    expect(lists).to receive(:static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    expect(lists).to receive(:static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["test@test.nl", "test@test.com"])
     interface.segment(["test@test.nl", "test@test.com"])
   end
 
@@ -62,12 +62,12 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "checks if merge var exists" do
-    api.should_receive(:list_merge_vars).with({:id => 'a3d3'}).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    expect(lists).to receive(:merge_vars).with({:id => 'a3d3'}).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
     expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 
   it "adds a merge var" do
-    api.should_receive(:list_merge_var_add).with({:id => "a3d3", :tag => "SIZE", :name => "Your Size"})
+    expect(lists).to receive(:merge_var_add).with({:id => "a3d3", :tag => "SIZE", :name => "Your Size"})
     interface.add_merge_var('SIZE', 'Your Size')
   end
 end
