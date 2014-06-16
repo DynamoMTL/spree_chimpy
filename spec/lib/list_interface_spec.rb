@@ -4,17 +4,16 @@ require 'pry-debugger'
 describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, nil) }
   let(:api)       { double(:api) }
-  let(:api_call)  { double(:api_call) }
-  let(:data)      { {"data" => [{"name" => "Members", "id" => "a3d3" }]} }
+  let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
 
   before do
     Spree::Chimpy::Config.key = '1234'
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
-    api.stub(:lists).and_return(data)
+    api.stub(:lists).and_return(lists)
   end
 
   it "subscribes" do
-    expect(data).to receive(:subscribe).
+    expect(lists).to receive(:subscribe).
       with({:id => 'a3d3',
             :email_address => 'user@example.com',
             :merge_vars => {'SIZE' => '10'},
@@ -41,7 +40,12 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "segments users" do
-    api.should_receive(:list_subscribe).with(id: 'a3d3', email_address: 'user@example.com', merge_vars: {'SIZE' => '10'}, email_type: 'html', update_existing: true, double_optin: true)
+    expect(lists).to receive(:subscribe).
+      with({:id => 'a3d3',
+            :email_address => 'user@example.com',
+            :merge_vars => {'SIZE' => '10'},
+            :email_type => 'html', :double_optin => true,
+            :update_existing => true})
     api.should_receive(:list_static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
     api.should_receive(:list_static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
