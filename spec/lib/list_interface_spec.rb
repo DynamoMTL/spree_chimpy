@@ -1,17 +1,25 @@
 require 'spec_helper'
+require 'pry-debugger'
 
 describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, nil) }
   let(:api)       { double(:api) }
+  let(:api_call)  { double(:api_call) }
+  let(:data)      { {"data" => [{"name" => "Members", "id" => "a3d3" }]} }
 
   before do
     Spree::Chimpy::Config.key = '1234'
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
-    api.should_receive(:lists).and_return({"data" => [{"name" => "Members", "id" => "a3d3" }]})
+    api.stub(:lists).and_return(data)
   end
 
   it "subscribes" do
-    api.should_receive(:list_subscribe).with({:id => 'a3d3', :email_address => 'user@example.com', :merge_vars => {'SIZE' => '10'}, :email_type => 'html', :double_optin => true, :update_existing => true})
+    expect(data).to receive(:subscribe).
+      with({:id => 'a3d3',
+            :email_address => 'user@example.com',
+            :merge_vars => {'SIZE' => '10'},
+            :email_type => 'html', :double_optin => true,
+            :update_existing => true})
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
