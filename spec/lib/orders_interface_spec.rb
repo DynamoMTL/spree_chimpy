@@ -20,6 +20,7 @@ describe Spree::Chimpy::Interface::Orders do
   before do
     Spree::Chimpy::Config.key = '1234'
     Spree::Chimpy::Config.store_id = "super-store"
+    Spree::Chimpy::Config.subscribe_to_list = true
     Spree::Chimpy.stub(list: list)
 
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
@@ -49,6 +50,21 @@ describe Spree::Chimpy::Interface::Orders do
         expect(h[:order][:id]).to eq order.number
         expect(h[:order][:email_id]).to be_nil
         expect(h[:order][:campaign_id]).to be_nil
+      end
+
+      interface.add(order)
+    end
+
+    it 'skips subscription if manually turned off in config' do
+      order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
+      Spree::Chimpy::Config.subscribe_to_list = false
+
+      expect(list).to receive(:info).with('id-abcd').and_return(email: 'user@example.com')
+      expect(list).to_not receive(:subscribe).with('user@example.com')
+      expect(api).to receive(:ecomm_order_add) do |h|
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to eq 'id-abcd'
+        expect(h[:order][:campaign_id]).to eq '1234'
       end
 
       interface.add(order)
