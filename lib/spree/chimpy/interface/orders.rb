@@ -10,17 +10,17 @@ module Spree::Chimpy
       def add(order)
         if source = order.source
           info = Spree::Chimpy.list.info(source.email_id)
-          # use the one from mail chimp or fall back to the order's email 
+          # use the one from mail chimp or fall back to the order's email
           # happens when this is a new user
           expected_email = (info[:email] || order.email).to_s
         else
           expected_email = order.email
-        end        
-        
+        end
+
         log "Adding order #{order.number} for #{expected_email}"
 
-        # create the user if it does not exist yet 
-        # Spree::Chimpy.list.subscribe(expected_email)
+        # create the user if it does not exist yet
+        Spree::Chimpy.list.subscribe(expected_email) if Spree::Chimpy::Config.subscribe_to_list
 
         @api.ecomm_order_add(order: hash(order, expected_email))
       end
