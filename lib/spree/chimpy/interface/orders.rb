@@ -7,6 +7,10 @@ module Spree::Chimpy
         @api = Spree::Chimpy.api
       end
 
+      def api_call
+        @api.ecomm
+      end
+
       def add(order)
         if source = order.source
           info = Spree::Chimpy.list.info(source.email_id)
@@ -22,13 +26,13 @@ module Spree::Chimpy
         # create the user if it does not exist yet
         Spree::Chimpy.list.subscribe(expected_email) if Spree::Chimpy::Config.subscribe_to_list
 
-        @api.ecomm_order_add(order: hash(order, expected_email))
+        api_call.order_add(order: hash(order, expected_email))
       end
 
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        @api.ecomm_order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number, throws_exceptions: false)
+        api_call.order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number)
       end
 
       def sync(order)
