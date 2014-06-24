@@ -32,7 +32,7 @@ module Spree::Chimpy
       def remove(order)
         log "Attempting to remove order #{order.number}"
 
-        api_call.order_del(store_id: Spree::Chimpy::Config.store_id, order_id: order.number)
+        api_call.order_del(Spree::Chimpy::Config.store_id, order.number)
       end
 
       def sync(order)
