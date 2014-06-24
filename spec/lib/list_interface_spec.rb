@@ -47,14 +47,14 @@ describe Spree::Chimpy::Interface::List do
             :merge_vars => {'SIZE' => '10'},
             :email_type => 'html', :double_optin => true,
             :update_existing => true})
-    expect(lists).to receive(:static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    expect(lists).to receive(:static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["user@example.com"])
+    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
   it "segments" do
-    expect(lists).to receive(:static_segments).with(id: 'a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    expect(lists).to receive(:static_segment_members_add).with(id: 'a3d3', seg_id: '123', batch: ["test@test.nl", "test@test.com"])
+    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
+    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["test@test.nl", "test@test.com"])
     interface.segment(["test@test.nl", "test@test.com"])
   end
 

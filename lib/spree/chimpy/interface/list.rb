@@ -62,17 +62,17 @@ module Spree::Chimpy
       def segment(emails = [])
         log "Adding #{emails} to segment #{@segment_name}"
 
-        api_call.static_segment_members_add(id: list_id, seg_id: segment_id, batch: emails)
+        api_call.static_segment_members_add(list_id, segment_id.to_i, emails)
       end
 
       def create_segment
         log "Creating segment #{@segment_name}"
 
-        @segment_id = api_call.static_segment_add(id: list_id, name: @segment_name)
+        @segment_id = api_call.static_segment_add(list_id, @segment_name)
       end
 
       def find_segment_id
-        segments = api_call.static_segments(id: list_id)
+        segments = api_call.static_segments(list_id)
         segment  = segments.detect {|segment| segment['name'].downcase == @segment_name.downcase }
 
         segment['id'] if segment
