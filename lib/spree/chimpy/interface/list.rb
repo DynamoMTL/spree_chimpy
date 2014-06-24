@@ -52,7 +52,7 @@ module Spree::Chimpy
       end
 
       def find_list_id(name)
-        @api.lists["data"].detect { |r| r["name"] == name }["id"]
+        @api.lists.list["data"].detect { |r| r["name"] == name }["id"]
       end
 
       def list_id

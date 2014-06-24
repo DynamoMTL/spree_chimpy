@@ -9,6 +9,7 @@ describe Spree::Chimpy::Interface::List do
   before do
     Spree::Chimpy::Config.key = '1234'
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
+    lists.stub(:list).and_return(lists)
     api.stub(:lists).and_return(lists)
   end
 
