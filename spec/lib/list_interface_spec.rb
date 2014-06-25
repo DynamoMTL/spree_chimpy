@@ -15,38 +15,32 @@ describe Spree::Chimpy::Interface::List do
 
   it "subscribes" do
     expect(lists).to receive(:subscribe).
-      with({:id => 'a3d3',
-            :email_address => 'user@example.com',
-            :merge_vars => {'SIZE' => '10'},
-            :email_type => 'html', :double_optin => true,
-            :update_existing => true})
+      with('a3d3', 'user@example.com',
+            {'SIZE' => '10'}, 'html', true, true)
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
   it "unsubscribes" do
-    expect(lists).to receive(:unsubscribe).with({:id => 'a3d3', :email_address => 'user@example.com'})
+    expect(lists).to receive(:unsubscribe).with('a3d3', 'user@example.com')
     interface.unsubscribe("user@example.com")
   end
 
   context "member info" do
     it "find when no errors" do
-      expect(lists).to receive(:member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'response' => 'foo'}]})
+      expect(lists).to receive(:member_info).with('a3d3', 'user@example.com').and_return({'data' => [{'response' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({:response => 'foo'})
     end
 
     it "returns empty hash on error" do
-      expect(lists).to receive(:member_info).with({:id => 'a3d3', :email_address => 'user@example.com'}).and_return({'data' => [{'error' => 'foo'}]})
+      expect(lists).to receive(:member_info).with('a3d3', 'user@example.com').and_return({'data' => [{'error' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({})
     end
   end
 
   it "segments users" do
     expect(lists).to receive(:subscribe).
-      with({:id => 'a3d3',
-            :email_address => 'user@example.com',
-            :merge_vars => {'SIZE' => '10'},
-            :email_type => 'html', :double_optin => true,
-            :update_existing => true})
+      with('a3d3', 'user@example.com', {'SIZE' => '10'},
+            'html', true, true)
     expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
     expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
@@ -63,12 +57,12 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "checks if merge var exists" do
-    expect(lists).to receive(:merge_vars).with({:id => 'a3d3'}).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    expect(lists).to receive(:merge_vars).with('a3d3').and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
     expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 
   it "adds a merge var" do
-    expect(lists).to receive(:merge_var_add).with({:id => "a3d3", :tag => "SIZE", :name => "Your Size"})
+    expect(lists).to receive(:merge_var_add).with("a3d3", "SIZE", "Your Size")
     interface.add_merge_var('SIZE', 'Your Size')
   end
 end
