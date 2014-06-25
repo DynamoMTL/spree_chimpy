@@ -18,7 +18,7 @@ module Spree::Chimpy
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        api_call.subscribe(list_id, email, merge_vars, 'html', @double_opt_in, true)
+        api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true)
 
         segment([email]) if options[:customer]
       end
@@ -26,7 +26,7 @@ module Spree::Chimpy
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
 
-        api_call.unsubscribe(list_id, email)
+        api_call.unsubscribe(list_id, { email: email })
       end
 
       def info(email_or_id)
