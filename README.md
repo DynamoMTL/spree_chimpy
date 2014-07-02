@@ -134,7 +134,7 @@ spree_chimpy comes with a default subscription form for users who are not logged
 Deface::Override.new(:virtual_path  => "spree/shared/_footer",
                      :name          => "spree_chimpy_subscription_form",
                      :insert_bottom => "#footer-right",
-                     :partial       => "spree/shared/guest_subscription_form")
+                     :partial       => "spree/shared/guest_subscription")
 ```
 
 The selector and virtual path can be changed to taste.
