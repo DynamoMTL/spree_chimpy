@@ -26,13 +26,17 @@ module Spree::Chimpy
         # create the user if it does not exist yet
         Spree::Chimpy.list.subscribe(expected_email) if Spree::Chimpy::Config.subscribe_to_list
 
-        api_call.order_add(order: hash(order, expected_email))
+        api_call.order_add(hash(order, expected_email))
       end
 
       def remove(order)
         log "Attempting to remove order #{order.number}"
-
-        api_call.order_del(Spree::Chimpy::Config.store_id, order.number)
+        
+        begin
+          api_call.order_del(Spree::Chimpy::Config.store_id, order.number)
+        rescue => e
+          log "error removing #{order.number} | #{e}"
+        end
       end
 
       def sync(order)
