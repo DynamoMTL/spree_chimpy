@@ -36,6 +36,8 @@ module Spree::Chimpy
       end
 
       def sync(order)
+        add(order)
+      rescue Mailchimp::InvalidEcommOrderError
         remove(order)
         add(order)
       end
