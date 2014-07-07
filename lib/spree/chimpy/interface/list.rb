@@ -42,7 +42,7 @@ module Spree::Chimpy
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 
-        api_call.merge_vars(list_id).map { |record| record['tag'] }
+         api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
       end
 
       def add_merge_var(tag, description)
