@@ -23,6 +23,8 @@ Spree::Chimpy.config do |config|
   # define a list of merge vars:
   # - key: a unique name that mail chimp uses. 10 letters max
   # - value: the name of any method on the user class.
+  # make sure to avoid any of these reserved field names:
+  # http://kb.mailchimp.com/article/i-got-a-message-saying-that-my-list-field-name-is-reserved-and-cant-be-used
   # default is {'EMAIL' => :email}
   # config.merge_vars = {
   #   'EMAIL' => :email,
