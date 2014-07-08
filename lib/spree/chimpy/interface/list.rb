@@ -33,10 +33,10 @@ module Spree::Chimpy
         log "Checking member info for #{email_or_id} from #{@list_name}"
 
         #maximum of 50 emails allowed to be passed in
-        response = api_call.member_info(list_id, email_or_id)
-        record = response['data'].first.symbolize_keys
+        response = api_call.member_info(list_id, [{email: email_or_id}])
+        record = response['data'].first.symbolize_keys if response['data'] != []
 
-        record.key?(:error) ? {} : record
+        record.nil? ? response : record
       end
 
       def merge_vars

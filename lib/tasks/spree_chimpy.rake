@@ -53,7 +53,8 @@ namespace :spree_chimpy do
       print '.'
 
       response["errors"].try :each do |error|
-        puts "Error #{error["code"]} with email: #{error["email"]} \n msg: #{error["msg"]}"
+        puts "Error #{error['error']["code"]} with email: #{error['email']["email"]} \n
+              msg: #{error["error"]}"
       end
 
       case response[:status]
