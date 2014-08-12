@@ -4,8 +4,8 @@ describe Spree::Chimpy do
 
   context "enabled" do
     before do
-      Spree::Chimpy::Interface::List.stub(new: :list)
-      Spree::Chimpy::Interface::Orders.stub(new: :orders)
+      allow(Spree::Chimpy::Interface::List).to receive(:new).and_return(:list)
+      allow(Spree::Chimpy::Interface::Orders).to receive(:new).and_return(:orders)
       config(key: '1234', list_name: 'Members')
     end
 
@@ -24,7 +24,7 @@ describe Spree::Chimpy do
 
   context "sync merge vars" do
     before do
-      subject.stub(:list).and_return(double('List'))
+      allow(subject).to receive(:list).and_return(double('List'))
       config(key: '1234',
              list_name: 'Members',
              merge_vars: {'EMAIL' => :email, 'FNAME' => :first_name, 'LNAME' => :last_name})

@@ -44,7 +44,7 @@ if Spree.user_class
     end
 
     def source
-      action = Spree::Chimpy::Action.where(email: email, action: :subscribe).last
+      action = Spree::Chimpy::Action.where(email: email, action: :subscribe).where.not(source: nil).first
       action.source if action
     end
 
@@ -60,7 +60,7 @@ if Spree.user_class
         else
           last_complete_order = orders.complete.last
           if last_complete_order
-            last_complete_order.shipping_address 
+            last_complete_order.shipping_address
           else
             last_guest_order = Spree::Order.where("lower(email) = ?", self.email).last
             last_guest_order.shipping_address if last_guest_order

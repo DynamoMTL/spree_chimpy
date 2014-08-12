@@ -7,21 +7,21 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
   context "subscribe" do
     before do
       user = create(:user, email: 'luther@bbc.co.uk', subscribed: false)
-      subject.stub(:find_or_create_user).and_return(user)
+      allow(subject).to receive(:find_or_create_user).and_return(user)
     end
 
     it "should register the customer" do
       spree_post :subscribe, {signupEmail: 'luther@bbc.co.uk', source: 'Website - Hero'}
-      
+
       should_be_successful(response)
       expect(Spree::Chimpy::Action.count).to    eq(1)
       expect(Spree::Chimpy::Action.first.source).to    eq('Website - Hero')
       expect(Spree.user_class.find_by(email:'luther@bbc.co.uk').subscribed).to be true
     end
-    
+
     it "should return error message for invalid email" do
       user = build(:user, email: 'luther', subscribed: false)
-      subject.stub(:find_or_create_user).and_return(user)
+      allow(subject).to receive(:find_or_create_user).and_return(user)
       spree_post :subscribe, {signupEmail: 'luther'}
 
       should_be_failure(response)
@@ -44,14 +44,14 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
 
   end
 
-  
+
   context "unsubscribe" do
-    before do 
+    before do
       user = create(:user, email: 'luther@bbc.co.uk', subscribed: true)
       Spree::Chimpy::Action.create(email: 'luther@bbc.co.uk', action: :subscribe)
-      subject.stub(:find_or_create_user).and_return(user)
+      allow(subject).to receive(:find_or_create_user).and_return(user)
     end
-   
+
     it "should remove customer from newsletter" do
       spree_post :unsubscribe, {signupEmail: 'luther@bbc.co.uk'}
       should_be_successful(response)
