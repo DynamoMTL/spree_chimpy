@@ -21,6 +21,7 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Chimpy::Config.key = '1234'
     Spree::Chimpy::Config.store_id = "super-store"
     Spree::Config.site_name = "Super Store"
+    Spree::Chimpy::Config.subscribe_to_list = true
     Spree::Chimpy.stub(list: list)
 
     Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
@@ -52,13 +53,26 @@ describe Spree::Chimpy::Interface::Orders do
 
       interface.add(order)
     end
+
+    it 'skips subscription if manually turned off in config' do
+      order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
+      Spree::Chimpy::Config.subscribe_to_list = false
+
+      expect(list).to receive(:info).with('id-abcd').and_return(email: 'user@example.com')
+      expect(list).to_not receive(:subscribe).with('user@example.com')
+      expect(api).to receive(:ecomm_order_add) do |h|
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to eq 'id-abcd'
+        expect(h[:order][:campaign_id]).to eq '1234'
+      end
+
+      interface.add(order)
+    end
   end
 
   it "removes an order" do
     order = create_order(email: 'foo@example.com')
-
-    api.should_receive(:ecomm_order_del).with({store_id: 'super-store', order_id: order.number, throws_exceptions: false}).and_return(true)
-
-    interface.remove(order).should be_true
+    api.should_receive(:order_del).with('super-store', order.number).and_return(true)
+    expect(interface.remove(order)).to be_true
   end
 end
