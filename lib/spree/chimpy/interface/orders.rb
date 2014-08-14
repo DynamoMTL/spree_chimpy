@@ -31,7 +31,7 @@ module Spree::Chimpy
 
       def remove(order)
         log "Attempting to remove order #{order.number}"
-        
+
         begin
           api_call.order_del(Spree::Chimpy::Config.store_id, order.number)
         rescue => e
@@ -43,7 +43,6 @@ module Spree::Chimpy
         add(order)
       rescue Mailchimp::InvalidEcommOrderError
         remove(order)
-        add(order)
       end
 
     private
