@@ -12,4 +12,4 @@ nl:
         placeholder: "Voer hier je email adres in"
       subscriber:
         success: "Bedankt voor je inschrijving"
-        failure: "Er ging helaas iets mist bij het verwerken van je inschrijving"
+        failure: "Er ging helaas iets mis bij het verwerken van je inschrijving"
