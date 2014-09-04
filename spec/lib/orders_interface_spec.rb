@@ -32,10 +32,11 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
-      api.should_receive(:ecomm_order_add) do |h|
-        h[:order][:id].should == order.number
-        h[:order][:email_id].should == 'id-abcd'
-        h[:order][:campaign_id].should == '1234'
+      expect(list).to_receive(:subscribe).with('User@Example.com').and_return(nil)
+      api.should_receive(:order_add) do |h|
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to eq 'id-abcd'
+        expect(h[:order][:campaign_id]).to eq '1234'
       end
 
       interface.add(order)
@@ -45,10 +46,11 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
-      api.should_receive(:ecomm_order_add) do |h|
-        h[:order][:id].should == order.number
-        h[:order][:email_id].should be_nil
-        h[:order][:campaign_id].should be_nil
+      expect(list).to_receive(:subscribe).with('other@home.com').and_return(nil)
+      api.should_receive(:order_add) do |h|
+        expect(h[:order][:id]).to eq order.number
+        expect(h[:order][:email_id]).to be_nil
+        expect(h[:order][:campaign_id]).to be_nil
       end
 
       interface.add(order)
@@ -60,7 +62,8 @@ describe Spree::Chimpy::Interface::Orders do
 
       expect(list).to receive(:info).with('id-abcd').and_return(email: 'user@example.com')
       expect(list).to_not receive(:subscribe).with('user@example.com')
-      expect(api).to receive(:ecomm_order_add) do |h|
+      expect(api).to have_received(:ecomm)
+      expect(api).to receive(:order_add) do |h|
         expect(h[:order][:id]).to eq order.number
         expect(h[:order][:email_id]).to eq 'id-abcd'
         expect(h[:order][:campaign_id]).to eq '1234'
@@ -73,6 +76,7 @@ describe Spree::Chimpy::Interface::Orders do
   it "removes an order" do
     order = create_order(email: 'foo@example.com')
     api.should_receive(:order_del).with('super-store', order.number).and_return(true)
+    expect(api).to have_received(:ecomm)
     expect(interface.remove(order)).to be_true
   end
 end
