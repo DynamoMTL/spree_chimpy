@@ -27,12 +27,12 @@ describe Spree::Chimpy::Interface::List do
 
   context "member info" do
     it "find when no errors" do
-      expect(lists).to receive(:member_info).with('a3d3', 'user@example.com').and_return({'data' => [{'response' => 'foo'}]})
+      expect(lists).to receive(:member_info).with('a3d3', [{:email=>"user@example.com"}]).and_return({'data' => [{'response' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({:response => 'foo'})
     end
 
     it "returns empty hash on error" do
-      expect(lists).to receive(:member_info).with('a3d3', 'user@example.com').and_return({'data' => [{'error' => 'foo'}]})
+      expect(lists).to receive(:member_info).with('a3d3', [{:email=>'user@example.com'}]).and_return({'data' => [{'error' => 'foo'}]})
       expect(interface.info("user@example.com")).to eq({})
     end
   end
@@ -57,7 +57,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "checks if merge var exists" do
-    expect(lists).to receive(:merge_vars).with('a3d3').and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    expect(lists).to receive(:merge_vars).with(['a3d3']).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
     expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 
