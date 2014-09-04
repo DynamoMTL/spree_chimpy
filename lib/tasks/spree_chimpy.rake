@@ -19,7 +19,11 @@ namespace :spree_chimpy do
           begin
             order.notify_mail_chimp
           rescue => exception
-            puts exception
+            if defined?(::Delayed::Job)
+              raise exception
+            else
+              puts exception
+            end
           end
         end
       end
