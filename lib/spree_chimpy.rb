@@ -29,7 +29,7 @@ module Spree::Chimpy
   end
 
   def api
-    @api ||= Mailchimp::API.new(Config.key, Config.api_options) if configured?
+    @api = Mailchimp::API.new(Config.key, Config.api_options) if configured?
   end
 
   def list
