@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'pry-debugger'
+require 'pry-byebug'
 
 describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, nil) }
