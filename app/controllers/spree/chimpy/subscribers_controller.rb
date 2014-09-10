@@ -11,7 +11,8 @@ class Spree::Chimpy::SubscribersController < ApplicationController
       flash[:error] = Spree.t(:failure, scope: [:chimpy, :subscriber])
     end
 
-    respond_with @subscriber, location: request.referer
+    referer = request.referer || root_url # Referer is optional in request.
+    respond_with @subscriber, location: referer
   end
 
   private
