@@ -1,5 +1,5 @@
 class Spree::Chimpy::SubscribersController < ApplicationController
-  respond_to :html
+  respond_to :html, :json
 
   def create
     @subscriber = Spree::Chimpy::Subscriber.where(email: subscriber_params[:email]).first_or_initialize
