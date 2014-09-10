@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec-rails', '~> 2.14'
   s.add_development_dependency 'capybara', '~> 2.2.1'
-  s.add_development_dependency 'selenium-webdriver', '~> 2.40'
+  s.add_development_dependency 'selenium-webdriver', '~> 2.43'
   s.add_development_dependency 'factory_girl', '~> 4.4'
   s.add_development_dependency 'shoulda-matchers', '~> 2.5'
   s.add_development_dependency 'sqlite3', '~> 1.3.9'
