@@ -57,7 +57,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "checks if merge var exists" do
-    expect(lists).to receive(:merge_vars).with(['a3d3']).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    expect(lists).to receive(:merge_vars).with(['a3d3']).and_return({'data' => [{ 'merge_vars' => [{'tag' => 'FOO'}, {'tag' => 'BAR'}]}]})
     expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 
