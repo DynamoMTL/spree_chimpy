@@ -26,7 +26,10 @@ module Spree::Chimpy
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
 
-        api_call.unsubscribe(list_id, { email: email })
+        begin
+          api_call.unsubscribe(list_id, { email: email })
+        rescue Mailchimp::EmailNotExistsError
+        end
       end
 
       def info(email_or_id)
@@ -42,7 +45,7 @@ module Spree::Chimpy
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 
-         api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
+        api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
       end
 
       def add_merge_var(tag, description)
