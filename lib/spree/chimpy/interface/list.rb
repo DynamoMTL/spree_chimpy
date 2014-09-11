@@ -28,7 +28,7 @@ module Spree::Chimpy
 
         begin
           api_call.unsubscribe(list_id, { email: email })
-        rescue Mailchimp::EmailNotExistsError
+        rescue Mailchimp::EmailNotExistsError, Mailchimp::ListNotSubscribedError
           true
         end
       end
