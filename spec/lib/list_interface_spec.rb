@@ -30,6 +30,11 @@ describe Spree::Chimpy::Interface::List do
       expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::EmailNotExistsError
       expect(interface.unsubscribe("user@example.com")).to_not raise_error(Mailchimp::EmailNotExistsError)
     end
+
+    it "ignores exception Mailchimp::ListNotSubscribedError" do
+      expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::ListNotSubscribedError
+      expect(interface.unsubscribe("user@example.com")).to_not raise_error(Mailchimp::ListNotSubscribedError)
+    end
   end
 
   context "member info" do
