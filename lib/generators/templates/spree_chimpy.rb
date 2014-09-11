@@ -17,6 +17,10 @@ Spree::Chimpy.config do |config|
   # asking to confirm their subscription. Defaults to false
   # config.double_opt_in = false
 
+  # Send a welcome email after subscribing to a list.
+  # It is recommended to send on wieh double_opt_in is false.
+  # config.send_welcome_email = true
+
   # id of your store. max 10 letters. defaults to "spree"
   # config.store_id = 'acme'
 

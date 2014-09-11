@@ -3,11 +3,12 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(list_name, segment_name, double_opt_in, list_id)
+      def initialize(list_name, segment_name, double_opt_in, send_welcome_email, list_id)
         @api           = Spree::Chimpy.api
         @list_id       = list_id
         @segment_name  = segment_name
         @double_opt_in = double_opt_in
+        @send_welcome_email = send_welcome_email
         @list_name     = list_name
       end
 
@@ -18,7 +19,7 @@ module Spree::Chimpy
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true)
+        api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true, true, @send_welcome_email)
 
         segment([email]) if options[:customer]
       end
