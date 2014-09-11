@@ -28,7 +28,10 @@ module Spree::Chimpy
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
 
-        api_call.unsubscribe(list_id, { email: email })
+        begin
+          api_call.unsubscribe(list_id, { email: email })
+        rescue Mailchimp::EmailNotExistsError
+        end
       end
 
       def info(email_or_id)
