@@ -65,9 +65,10 @@ module Spree::Chimpy
       end
 
       def segment(emails = [])
-        log "Adding #{emails} to segment #{@segment_name}"
+        log "Adding #{emails} to segment #{@segment_name} [#{segment_id}] in list [#{list_id}]"
 
-        api_call.static_segment_members_add(list_id, segment_id.to_i, emails)
+        params = emails.map { |email| { email: email } }
+        response = api_call.static_segment_members_add(list_id, segment_id.to_i, params)
       end
 
       def create_segment
