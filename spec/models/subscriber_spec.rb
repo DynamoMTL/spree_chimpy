@@ -8,11 +8,11 @@ describe Spree::Chimpy::Subscriber do
     end
 
     it 'is not valid without an email' do
-      expect(described_class.create(email: nil)).to have(1).errors_on(:email)
+      expect(described_class.new(email: nil)).to have(1).errors_on(:email)
     end
 
     it 'can be valid' do
-      expect(described_class.create(email: 'test@example.com')).to be_valid
+      expect(described_class.new(email: 'test@example.com')).to be_valid
     end
   end
 end
