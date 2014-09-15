@@ -15,4 +15,14 @@ describe Spree::Chimpy::Subscriber do
       expect(described_class.new(email: 'test@example.com')).to be_valid
     end
   end
+
+  context 'with wrong email' do
+    it 'is invalid when bad domain' do
+      expect(described_class.new(email: 'test@example')).to_not be_valid
+    end
+
+    it 'is invalid when missing @domain' do
+      expect(described_class.new(email: 'test')).to_not be_valid
+    end
+  end
 end
