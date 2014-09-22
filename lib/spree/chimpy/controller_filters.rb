@@ -14,7 +14,7 @@ module Spree::Chimpy
         if (mc_eid || mc_cid) && session[:order_id]
           attributes = {campaign_id: mc_cid,
                         email_id:    mc_eid}
-          if current_order(true).source
+          if current_order(create_order_if_necessary: true).source
             current_order.source.update_attributes(attributes)
           else
             current_order.create_source(attributes)
