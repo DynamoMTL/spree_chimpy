@@ -22,7 +22,7 @@ module Spree::Chimpy
   end
 
   def configured?
-    Config.key.present?
+    Config.key.present? && (Config.list_name.present? || Config.list_id.present?)
   end
 
   def reset
@@ -79,7 +79,12 @@ module Spree::Chimpy
   end
 
   def ensure_list
-    Rails.logger.error("spree_chimpy: hmm.. a list named `#{Config.list_name}` was not found. please add it and reboot the app") unless list_exists?
+    if Config.list_name.present?
+      Rails.logger.error("spree_chimpy: hmm.. a list named `#{Config.list_name}` was not found. Please add it and reboot the app") unless list_exists?
+    end
+    if Config.list_id.present?
+      Rails.logger.error("spree_chimpy: hmm.. a list with ID `#{Config.list_id}` was not found. Please add it and reboot the app") unless list_exists?
+    end
   end
 
   def ensure_segment
