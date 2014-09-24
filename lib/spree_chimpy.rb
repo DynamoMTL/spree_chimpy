@@ -88,7 +88,7 @@ module Spree::Chimpy
   end
 
   def ensure_segment
-    unless segment_exists?
+    if list_exists? && !segment_exists?
       create_segment
       Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{Config.customer_segment_name}` was not found. Creating it now")
     end
