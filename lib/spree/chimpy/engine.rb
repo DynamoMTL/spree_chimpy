@@ -10,12 +10,12 @@ module Spree::Chimpy
       Spree::Chimpy::Config = Spree::Chimpy::Configuration.new
     end
 
-    # initializer 'spree_chimpy.ensure' do
-    #   if !Rails.env.test? && Spree::Chimpy.configured?
-    #     Spree::Chimpy.ensure_list
-    #     Spree::Chimpy.ensure_segment
-    #   end
-    # end
+    initializer 'spree_chimpy.ensure' do
+      if !Rails.env.test? && Spree::Chimpy.configured?
+        Spree::Chimpy.ensure_list
+        Spree::Chimpy.ensure_segment
+      end
+    end
 
     initializer 'spree_chimpy.double_opt_in' do
       if Spree::Chimpy::Config.subscribed_by_default && !Spree::Chimpy::Config.double_opt_in
