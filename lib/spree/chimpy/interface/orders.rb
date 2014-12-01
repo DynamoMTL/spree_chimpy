@@ -29,7 +29,15 @@ module Spree::Chimpy
 
         data = hash(order, expected_email)
         log "Adding order #{order.number} for #{expected_email} with campaign #{data[:campaign_id]}"
-        api_call.order_add(data)
+        begin
+          api_call.order_add(data)
+        rescue Mailchimp::EmailNotExistsError => e
+          if source
+            log "invalid eid (#{source.email_id}) for email #{expected_email} [#{e.message}]"
+          else
+            log "invalid email #{expected_email} [#{e.message}]"
+          end
+        end
       end
 
       def remove(order)
