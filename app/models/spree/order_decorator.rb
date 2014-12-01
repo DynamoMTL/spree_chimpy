@@ -1,7 +1,9 @@
 Spree::Order.class_eval do
   has_one :source, class_name: 'Spree::Chimpy::OrderSource'
 
-  register_update_hook :notify_mail_chimp
+  state_machine do
+    after_transition :to => :complete, :do => :notify_mail_chimp
+  end
 
   around_save :handle_cancelation
 

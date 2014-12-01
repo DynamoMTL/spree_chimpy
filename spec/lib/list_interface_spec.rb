@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'pry-byebug'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { described_class.new('Members', 'customers', true, nil) }
+  let(:interface) { described_class.new('Members', 'customers', true, true, nil) }
   let(:api)       { double(:api) }
   let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
 
@@ -13,16 +13,37 @@ describe Spree::Chimpy::Interface::List do
     api.stub(:lists).and_return(lists)
   end
 
-  it "subscribes" do
-    expect(lists).to receive(:subscribe).
-      with('a3d3', {email: 'user@example.com'},
-            {'SIZE' => '10'}, 'html', true, true)
-    interface.subscribe("user@example.com", 'SIZE' => '10')
+  context "#subscribe" do
+    it "subscribes" do
+      expect(lists).to receive(:subscribe).
+        with('a3d3', {email: 'user@example.com'},
+              {'SIZE' => '10'}, 'html', true, true, true, true)
+      interface.subscribe("user@example.com", 'SIZE' => '10')
+    end
+
+    it "ignores exception Mailchimp::ListInvalidImportError" do
+      expect(lists).to receive(:subscribe).
+        with('a3d3', {email: 'user@example.com'},
+              {}, 'html', true, true, true, true).and_raise Mailchimp::ListInvalidImportError
+      expect(lambda { interface.subscribe("user@example.com") }).to_not raise_error(Mailchimp::ListInvalidImportError)
+    end
   end
 
-  it "unsubscribes" do
-    expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' })
-    interface.unsubscribe("user@example.com")
+  context "#unsubscribe" do
+    it "unsubscribes" do
+      expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' })
+      interface.unsubscribe("user@example.com")
+    end
+
+    it "ignores exception Mailchimp::EmailNotExistsError" do
+      expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::EmailNotExistsError
+      expect(lambda { interface.unsubscribe("user@example.com") }).to_not raise_error(Mailchimp::EmailNotExistsError)
+    end
+
+    it "ignores exception Mailchimp::ListNotSubscribedError" do
+      expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::ListNotSubscribedError
+      expect(lambda { interface.unsubscribe("user@example.com") }).to_not raise_error(Mailchimp::ListNotSubscribedError)
+    end
   end
 
   context "member info" do
@@ -40,15 +61,15 @@ describe Spree::Chimpy::Interface::List do
   it "segments users" do
     expect(lists).to receive(:subscribe).
       with('a3d3', {email: 'user@example.com'}, {'SIZE' => '10'},
-            'html', true, true)
+            'html', true, true, true, true)
     expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["user@example.com"])
+    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, [{ email: "user@example.com"}])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
   it "segments" do
     expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["test@test.nl", "test@test.com"])
+    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, [{email: "test@test.nl"}, {email: "test@test.com"}])
     interface.segment(["test@test.nl", "test@test.com"])
   end
 
@@ -57,7 +78,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "checks if merge var exists" do
-    expect(lists).to receive(:merge_vars).with(['a3d3']).and_return([{'tag' => 'FOO'}, {'tag' => 'BAR'}])
+    expect(lists).to receive(:merge_vars).with(['a3d3']).and_return({'data' => [{ 'merge_vars' => [{'tag' => 'FOO'}, {'tag' => 'BAR'}]}]})
     expect(interface.merge_vars).to match_array %w(FOO BAR)
   end
 

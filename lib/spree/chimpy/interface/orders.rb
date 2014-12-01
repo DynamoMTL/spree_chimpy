@@ -21,12 +21,23 @@ module Spree::Chimpy
           expected_email = order.email
         end
 
-        log "Adding order #{order.number} for #{expected_email}"
-
         # create the user if it does not exist yet
-        Spree::Chimpy.list.subscribe(expected_email) if Spree::Chimpy::Config.subscribe_to_list
+        if Spree::Chimpy::Config.subscribe_to_list
+          log "Subscribing #{expected_email} to list"
+          Spree::Chimpy.list.subscribe(expected_email)
+        end
 
-        api_call.order_add(hash(order, expected_email))
+        data = hash(order, expected_email)
+        log "Adding order #{order.number} for #{expected_email} with campaign #{data[:campaign_id]}"
+        begin
+          api_call.order_add(data)
+        rescue Mailchimp::EmailNotExistsError => e
+          if source
+            log "invalid eid (#{source.email_id}) for email #{expected_email} [#{e.message}]"
+          else
+            log "invalid email #{expected_email} [#{e.message}]"
+          end
+        end
       end
 
       def remove(order)
@@ -41,8 +52,8 @@ module Spree::Chimpy
 
       def sync(order)
         add(order)
-      rescue Mailchimp::InvalidEcommOrderError
-        remove(order)
+      rescue Mailchimp::InvalidEcommOrderError => e
+        log "invalid ecomm order error [#{e.message}]"
       end
 
     private

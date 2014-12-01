@@ -29,7 +29,7 @@ describe Spree::Chimpy::Subscription do
 
       it "subscribes users" do
         interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
-        subscription.subscribe
+        user.save
       end
     end
 
@@ -40,7 +40,7 @@ describe Spree::Chimpy::Subscription do
       it "subscribes subscribers" do
         interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
         interface.should_not_receive(:segment)
-        subscription.subscribe
+        subscriber.save
       end
     end
 

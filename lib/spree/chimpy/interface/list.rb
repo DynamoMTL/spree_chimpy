@@ -3,11 +3,12 @@ module Spree::Chimpy
     class List
       delegate :log, to: Spree::Chimpy
 
-      def initialize(list_name, segment_name, double_opt_in, list_id)
+      def initialize(list_name, segment_name, double_opt_in, send_welcome_email, list_id)
         @api           = Spree::Chimpy.api
         @list_id       = list_id
         @segment_name  = segment_name
         @double_opt_in = double_opt_in
+        @send_welcome_email = send_welcome_email
         @list_name     = list_name
       end
 
@@ -18,15 +19,24 @@ module Spree::Chimpy
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true)
+        begin
+          api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true, true, @send_welcome_email)
 
-        segment([email]) if options[:customer]
+          segment([email]) if options[:customer]
+        rescue Mailchimp::ListInvalidImportError, Mailchimp::ValidationError => ex
+          log "Subscriber #{email} rejected for reason: [#{ex.message}]"
+          true
+        end
       end
 
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
 
-        api_call.unsubscribe(list_id, { email: email })
+        begin
+          api_call.unsubscribe(list_id, { email: email })
+        rescue Mailchimp::EmailNotExistsError, Mailchimp::ListNotSubscribedError
+          true
+        end
       end
 
       def info(email_or_id)
@@ -42,7 +52,7 @@ module Spree::Chimpy
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 
-         api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
+        api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
       end
 
       def add_merge_var(tag, description)
@@ -52,7 +62,8 @@ module Spree::Chimpy
       end
 
       def find_list_id(name)
-        @api.lists.list["data"].detect { |r| r["name"] == name }["id"]
+        list = @api.lists.list["data"].detect { |r| r["name"] == name }
+        list["id"] if list
       end
 
       def list_id
@@ -60,9 +71,10 @@ module Spree::Chimpy
       end
 
       def segment(emails = [])
-        log "Adding #{emails} to segment #{@segment_name}"
+        log "Adding #{emails} to segment #{@segment_name} [#{segment_id}] in list [#{list_id}]"
 
-        api_call.static_segment_members_add(list_id, segment_id.to_i, emails)
+        params = emails.map { |email| { email: email } }
+        response = api_call.static_segment_members_add(list_id, segment_id.to_i, params)
       end
 
       def create_segment

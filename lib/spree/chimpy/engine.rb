@@ -40,7 +40,7 @@ module Spree::Chimpy
       if defined?(Spree::Api::BaseController)
         Spree::Api::BaseController.send(:include,  Spree::Chimpy::ControllerFilters)
       end
-      
+
       Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end

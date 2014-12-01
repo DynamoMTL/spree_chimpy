@@ -79,6 +79,9 @@ Spree::Chimpy.config do |config|
   # change the double-opt-in behavior
   config.double_opt_in = false
 
+  # send welcome email
+  config.send_welcome_email = true
+
   # id of your store. max 10 letters. defaults to "spree"
   config.store_id = 'acme'
 

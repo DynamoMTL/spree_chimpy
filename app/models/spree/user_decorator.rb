@@ -14,7 +14,7 @@ if Spree.user_class
     end
 
     def assign_subscription_default
-      self.subscribed = Spree::Chimpy::Config.subscribed_by_default if new_record?
+      self.subscribed ||= Spree::Chimpy::Config.subscribed_by_default if new_record?
     end
   end
 end
