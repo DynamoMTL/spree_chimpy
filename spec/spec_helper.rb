@@ -20,7 +20,7 @@ FactoryGirl.find_definitions
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
-
+  config.infer_spec_type_from_file_location!
   # == URL Helpers
   #
   # Allows access to Spree's routes in specs:
