@@ -3,15 +3,16 @@ require 'spec_helper'
 describe Spree::Chimpy::Subscriber do
   context "without email" do
     it "is invalid" do
-      create.should_not be_valid
+      expect(create).to_not be_valid
     end
 
     it "is not valid without an email" do
-      create(email: nil).should have(1).errors_on(:email)
+      record = create(email: nil)
+      expect(record.errors[:email].count).to eq 1
     end
 
     it "can be valid" do
-      create(email: 'test@example.com').should be_valid
+      expect(create(email: 'test@example.com')).to be_valid
     end
 
     def create(options={})
