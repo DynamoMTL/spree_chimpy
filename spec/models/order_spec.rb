@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Order do
 
   it "has a source" do
-    order = described_class.new
+    order = Spree::Order.new
     expect(order).to respond_to(:source)
   end
 
@@ -17,19 +17,20 @@ describe Spree::Order do
       Spree::Chimpy::Config.key = '1234'
     end
 
+    subject { Spree::Chimpy }
+
     it "doesnt update when order is not completed" do
-      Spree::Chimpy.should_not_receive(:enqueue)
+      expect(subject).to_not receive(:enqueue)
       @not_completed_order.update!
     end
 
     it "updates when order is completed" do
-      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order)
+      expect(subject).to receive(:enqueue).with(:order, @completed_order)
       @completed_order.update!
     end
 
     it "sync when order is completed" do
-      pending ':enqueue return order only once not twice'
-      Spree::Chimpy.should_receive(:enqueue).with(:order, @completed_order).twice
+      expect(subject).to receive(:enqueue).with(:order, @completed_order)
       @completed_order.cancel!
     end
   end
