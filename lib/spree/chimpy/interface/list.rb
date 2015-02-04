@@ -34,15 +34,17 @@ module Spree::Chimpy
 
         #maximum of 50 emails allowed to be passed in
         response = api_call.member_info(list_id, [{email: email_or_id}])
-        record = response['data'].first.symbolize_keys if response['data'] != []
+        if response['success_count'] && response['success_count'] > 0
+          record = response['data'].first.symbolize_keys
+        end
 
-        record.nil? ? response : record
+        record.nil? ? {} : record
       end
 
       def merge_vars
         log "Finding merge vars for #{@list_name}"
 
-         api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
+        api_call.merge_vars([list_id])['data'].first['merge_vars'].map {|record| record['tag']}
       end
 
       def add_merge_var(tag, description)
