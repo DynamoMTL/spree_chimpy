@@ -91,8 +91,11 @@ module Spree::Chimpy
   def handle_event(event, payload = {})
     payload[:event] = event
 
-    if defined?(::Delayed::Job)
+    case
+    when defined?(::Delayed::Job)
       ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
+    when defined?(::Sidekiq)
+      Spree::Chimpy::Workers::Sidekiq.perform_async(payload.except(:object))
     else
       perform(payload)
     end
