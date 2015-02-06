@@ -31,10 +31,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coffee-rails', '~> 4.0.1'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'
   s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'guard-rspec'
   s.add_development_dependency 'launchy'
   s.add_development_dependency 'byebug'
-  s.add_development_dependency 'pry-rails'
-  s.add_development_dependency 'pry-byebug'
-  s.add_development_dependency 'pry-rescue'
 end
