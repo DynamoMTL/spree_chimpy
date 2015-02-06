@@ -2,8 +2,6 @@ module Spree::Chimpy
   module Workers
     class DelayedJob
       delegate :log, to: Spree::Chimpy
-      CONNECTION_TERMINATED = [Excon::Errors::Timeout,
-                               Excon::Errors::SocketError]
 
       def initialize(payload)
         @payload = payload
@@ -11,7 +9,7 @@ module Spree::Chimpy
 
       def perform
         Spree::Chimpy.perform(@payload)
-      rescue *CONNECTION_TERMINATED
+      rescue Excon::Errors::Timeout, Excon::Errors::SocketError
         log "Mailchimp connection timeout reached, closing"
       end
 
