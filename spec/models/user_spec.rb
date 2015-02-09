@@ -24,12 +24,12 @@ describe Spree::User do
   context "defaults" do
     it "subscribed by default" do
       Spree::Chimpy::Config.subscribed_by_default = true
-      expect(described_class.new.subscribed).to be_true
+      expect(described_class.new.subscribed).to be_truthy
     end
 
     it "doesnt subscribe by default" do
       Spree::Chimpy::Config.subscribed_by_default = false
-      expect(described_class.new.subscribed).to be_false
+      expect(described_class.new.subscribed).to be_falsey
     end
   end
 end

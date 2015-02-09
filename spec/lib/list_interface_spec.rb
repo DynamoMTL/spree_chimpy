@@ -4,10 +4,11 @@ describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, nil) }
   let(:api)       { double(:api) }
   let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
+  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
 
   before do
-    Spree::Chimpy::Config.key = '1234'
-    Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
+    Spree::Chimpy::Config.key = key
+    Mailchimp::API.should_receive(:new).with(key, { timeout: 60 }).and_return(api)
     lists.stub(:list).and_return(lists)
     api.stub(:lists).and_return(lists)
   end
