@@ -4,6 +4,7 @@ describe Spree::Chimpy::Interface::Orders do
   let(:interface) { described_class.new }
   let(:api)       { double(:api) }
   let(:list)      { double() }
+  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
 
   def create_order(options={})
     user  = create(:user, email: options[:email])
@@ -18,12 +19,12 @@ describe Spree::Chimpy::Interface::Orders do
   end
 
   before do
-    Spree::Chimpy::Config.key = '1234'
+    Spree::Chimpy::Config.key = key
     Spree::Chimpy::Config.store_id = "super-store"
     Spree::Chimpy::Config.subscribe_to_list = true
     Spree::Chimpy.stub(list: list)
 
-    Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
+    Mailchimp::API.should_receive(:new).with(key, { timeout: 60 }).and_return(api)
     allow(api).to receive(:ecomm).and_return(api)
   end
 

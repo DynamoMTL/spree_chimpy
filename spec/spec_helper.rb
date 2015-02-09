@@ -9,16 +9,21 @@ end
 
 ENV['RAILS_ENV'] = 'test'
 
+
 require File.expand_path('../dummy/config/environment.rb',  __FILE__)
+require 'spree/testing_support/url_helpers'
 
 require 'rspec/rails'
 require 'capybara/rspec'
 require 'capybara/rails'
 require 'shoulda-matchers'
 require 'ffaker'
+require 'capybara/poltergeist'
 
+Capybara.javascript_driver = :poltergeist
+
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
-  config.include FactoryGirl::Syntax::Methods
   config.infer_spec_type_from_file_location!
   # == URL Helpers
   #
@@ -26,7 +31,7 @@ RSpec.configure do |config|
   #
   # visit spree.admin_path
   # current_path.should eql(spree.products_path)
-  config.include Spree::Core::UrlHelpers
+  config.include Spree::TestingSupport::UrlHelpers
 
   # == Mock Framework
   #
@@ -42,4 +47,3 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 end
 
-Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }

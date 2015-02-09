@@ -14,5 +14,9 @@ describe Spree::Chimpy::Subscriber do
     it "can be valid" do
       expect(create(email: 'test@example.com')).to be_valid
     end
+
+    def create(options={})
+      Spree::Chimpy::Subscriber.create(options)
+    end
   end
 end

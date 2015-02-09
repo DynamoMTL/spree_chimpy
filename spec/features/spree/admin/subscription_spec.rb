@@ -29,7 +29,7 @@ feature 'Chimpy Admin', :js do
     check 'user_subscribed'
     click_button 'Update'
 
-    expect(Spree::User.last.subscribed).to be_true
+    expect(Spree::User.last.subscribed).to be_truthy
   end
 
   scenario 'new user subscription with subscription un-checked' do
@@ -50,7 +50,7 @@ feature 'Chimpy Admin', :js do
 
     click_button 'Update'
 
-    expect(Spree::User.last.subscribed).to be_false
+    expect(Spree::User.last.subscribed).to be_falsey
   end
 
   private
