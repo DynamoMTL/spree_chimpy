@@ -62,8 +62,8 @@ describe Spree::Chimpy::Interface::List do
     expect(lists).to receive(:subscribe).
       with('a3d3', {email: 'user@example.com'}, {'SIZE' => '10'},
             'html', true, true, true, true)
-    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
-    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, [{ email: "user@example.com"}])
+    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => 123, "name" => "customers"}])
+    expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, [{:email => "user@example.com"}])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 
