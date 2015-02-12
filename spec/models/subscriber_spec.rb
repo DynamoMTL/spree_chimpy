@@ -11,12 +11,12 @@ describe Spree::Chimpy::Subscriber do
       expect(record.errors[:email].count).to eq 1
     end
 
-    it "can be valid" do
-      expect(create(email: 'test@example.com')).to be_valid
+    it 'is not valid without an email' do
+      expect(described_class.new(email: nil)).to have(1).errors_on(:email)
     end
 
-    def create(options={})
-      Spree::Chimpy::Subscriber.create(options)
+    it 'can be valid' do
+      expect(described_class.new(email: 'test@example.com')).to be_valid
     end
   end
 end
