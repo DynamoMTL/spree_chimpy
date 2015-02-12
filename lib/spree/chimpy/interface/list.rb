@@ -19,11 +19,14 @@ module Spree::Chimpy
       def subscribe(email, merge_vars = {}, options = {})
         log "Subscribing #{email} to #{@list_name}"
 
-        api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true, true, @send_welcome_email)
+        begin
+          api_call.subscribe(list_id, { email: email }, merge_vars, 'html', @double_opt_in, true, true, @send_welcome_email)
 
-        segment([email]) if options[:customer]
-      rescue Mailchimp::ListInvalidImportError
-        log "#{email} unable to be signed up"
+          segment([email]) if options[:customer]
+        rescue Mailchimp::ListInvalidImportError => ex
+          log "Subscriber #{email} rejected for reason: [#{ex.message}]"
+          true
+        end
       end
 
       def unsubscribe(email)
