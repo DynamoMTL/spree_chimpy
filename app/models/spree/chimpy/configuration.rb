@@ -10,5 +10,6 @@ module Spree::Chimpy
     preference :merge_vars,            :hash,    default: { 'EMAIL' => :email }
     preference :api_options,           :hash,    default: { timeout: 60 }
     preference :double_opt_in,         :boolean, default: false
+    preference :send_welcome_email,    :boolean, default: true
   end
 end

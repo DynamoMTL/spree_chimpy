@@ -37,6 +37,7 @@ module Spree::Chimpy
     @list ||= Interface::List.new(Config.list_name,
                         Config.customer_segment_name,
                         Config.double_opt_in,
+                        Config.send_welcome_email,
                         Config.list_id) if configured?
   end
 

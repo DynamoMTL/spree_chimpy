@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Chimpy::Interface::List do
-  let(:interface) { described_class.new('Members', 'customers', true, nil) }
+  let(:interface) { described_class.new('Members', 'customers', true, true, nil) }
   let(:api)       { double(:api) }
   let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
   let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
@@ -16,7 +16,7 @@ describe Spree::Chimpy::Interface::List do
   it "subscribes" do
     expect(lists).to receive(:subscribe).
       with('a3d3', {email: 'user@example.com'},
-            {'SIZE' => '10'}, 'html', true, true)
+            {'SIZE' => '10'}, 'html', true, true, true, true)
     interface.subscribe("user@example.com", 'SIZE' => '10')
   end
 
@@ -52,8 +52,8 @@ describe Spree::Chimpy::Interface::List do
   it "segments users" do
     expect(lists).to receive(:subscribe).
       with('a3d3', {email: 'user@example.com'}, {'SIZE' => '10'},
-            'html', true, true)
-    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => 123, "name" => "customers"}])
+            'html', true, true, true, true)
+    expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
     expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, ["user@example.com"])
     interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
