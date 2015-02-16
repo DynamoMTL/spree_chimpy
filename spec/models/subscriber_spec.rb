@@ -3,7 +3,9 @@ require 'spec_helper'
 describe Spree::Chimpy::Subscriber do
   context "without email" do
     it 'is not valid without an email' do
-      expect(described_class.new(email: nil)).to have(1).errors_on(:email)
+      record = described_class.new(email: nil)
+      record.valid?
+      expect(record.errors[:email].size).to eq(1)
     end
 
     it 'can be valid' do
