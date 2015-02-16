@@ -25,7 +25,7 @@ describe Spree::Chimpy::Interface::List do
       expect(lists).to receive(:subscribe).
         with('a3d3', {email: 'user@example.com'},
               {}, 'html', true, true, true, true).and_raise Mailchimp::ListInvalidImportError
-      expect(lambda { interface.subscribe("user@example.com") }).to_not raise_error(Mailchimp::ListInvalidImportError)
+      expect(lambda { interface.subscribe("user@example.com") }).not_to raise_error
     end
   end
 
@@ -37,12 +37,12 @@ describe Spree::Chimpy::Interface::List do
 
     it "ignores exception Mailchimp::EmailNotExistsError" do
       expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::EmailNotExistsError
-      expect(lambda { interface.unsubscribe("user@example.com") }).to_not raise_error(Mailchimp::EmailNotExistsError)
+      expect(lambda { interface.unsubscribe("user@example.com") }).not_to raise_error
     end
 
     it "ignores exception Mailchimp::ListNotSubscribedError" do
       expect(lists).to receive(:unsubscribe).with('a3d3', { email: 'user@example.com' }).and_raise Mailchimp::ListNotSubscribedError
-      expect(lambda { interface.unsubscribe("user@example.com") }).to_not raise_error(Mailchimp::ListNotSubscribedError)
+      expect(lambda { interface.unsubscribe("user@example.com") }).not_to raise_error
     end
   end
 
