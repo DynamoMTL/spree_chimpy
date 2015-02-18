@@ -8,9 +8,9 @@ describe Spree::Chimpy::Subscription do
     before do
       Spree::Chimpy::Config.list_name  = 'Members'
       Spree::Chimpy::Config.merge_vars = {'EMAIL' => :email}
-      Spree::Chimpy.stub(list: interface)
+      allow(Spree::Chimpy).to receive_messages(list: interface)
       # Delayed::Worker.delay_jobs = false # enable if test_failures
-      Spree::Chimpy::Config.stub(key: '1234')
+      allow(Spree::Chimpy::Config).to receive_messages(key: '1234')
     end
 
     context "subscribes users" do
@@ -30,7 +30,7 @@ describe Spree::Chimpy::Subscription do
       end
 
       it "successfully" do
-        interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
+        expect(interface).to receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
         subscription.subscribe
       end
 
@@ -41,20 +41,20 @@ describe Spree::Chimpy::Subscription do
       let(:subscription) { Spree::Chimpy::Subscription.new(subscriber) }
 
       it "subscribes subscribers" do
-        interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
-        interface.should_not_receive(:segment)
+        expect(interface).to receive(:subscribe).with(subscriber.email, {}, customer: false)
+        expect(interface).not_to receive(:segment)
         subscription.subscribe
 
-        subscriber.subscribed.should == true
+        expect(subscriber.subscribed).to eq(true)
       end
 
       it "subscribes subscribers" do
-        interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
-        interface.should_not_receive(:segment)
+        expect(interface).to receive(:subscribe).with(subscriber.email, {}, customer: false)
+        expect(interface).not_to receive(:segment)
 
         subscriber.subscribed = true
         subscriber.save
-        subscriber.subscribed.should == true
+        expect(subscriber.subscribed).to eq(true)
       end
     end
 
@@ -63,20 +63,20 @@ describe Spree::Chimpy::Subscription do
       let(:subscription) { double(:subscription) }
 
       before do
-        user.stub(subscription: subscription)
+        allow(user).to receive_messages(subscription: subscription)
       end
 
       context "when update needed" do
         it "calls resubscribe" do
-          subscription.should_receive(:resubscribe)
+          expect(subscription).to receive(:resubscribe)
           user.save
         end
       end
 
       context "when update not needed" do
         it "still calls resubscribe, and does nothing" do
-          subscription.should_receive(:resubscribe)
-          subscription.should_not_receive(:unsubscribe)
+          expect(subscription).to receive(:resubscribe)
+          expect(subscription).not_to receive(:unsubscribe)
           user.save
         end
       end
@@ -85,29 +85,29 @@ describe Spree::Chimpy::Subscription do
     context "subscribing" do
       let(:subscription) { Spree::Chimpy::Subscription.new(user) }
 
-      before { interface.stub(:subscribe) }
+      before { allow(interface).to receive(:subscribe) }
 
       context "subscribed user" do
         let(:user) { FactoryGirl.create(:user, subscribed: true) }
 
         it "unsubscribes when calling unsubscribe" do
-          interface.should_receive(:unsubscribe).with(user.email)
+          expect(interface).to receive(:unsubscribe).with(user.email)
           subscription.unsubscribe
-          user.subscribed.should == false
+          expect(user.subscribed).to eq(false)
         end
 
         it "unsubscribes when setting the subscribed column" do
-          interface.should_receive(:unsubscribe).with(user.email)
+          expect(interface).to receive(:unsubscribe).with(user.email)
           user.subscribed = false
           user.save
-          user.subscribed.should == false
+          expect(user.subscribed).to eq(false)
         end
       end
 
       context "non-subscribed user" do
         let(:user) { FactoryGirl.build(:user, subscribed: false) }
         it "does nothing" do
-          interface.should_not_receive(:unsubscribe)
+          expect(interface).not_to receive(:unsubscribe)
           subscription.unsubscribe
         end
       end
@@ -116,7 +116,7 @@ describe Spree::Chimpy::Subscription do
 
   context "Mailchimp is disabled" do
     before do
-      Spree::Chimpy::Config.stub(key: nil)
+      allow(Spree::Chimpy::Config).to receive_messages(key: nil)
 
       user = FactoryGirl.create(:user, subscribed: true)
       @subscription = Spree::Chimpy::Subscription.new(user)

@@ -8,10 +8,10 @@ describe Spree::Chimpy::Interface::Orders do
   let(:false_response) { {"complete" => false } }
 
   before do
-    Spree::Chimpy.stub(:api).and_return(api)
+    allow(Spree::Chimpy).to receive(:api).and_return(api)
     # we need to have a saved order in order to have a non-nil order number
     # we need to stub :notify_mail_chimp otherwise sync will be called on the order on update!
-    order.stub(:notify_mail_chimp).and_return(true_response)
+    allow(order).to receive(:notify_mail_chimp).and_return(true_response)
     allow_any_instance_of(Spree::Product).to receive(:marketing_type).and_return(double(id: 1, name: 'Marketing Type'))
     allow_any_instance_of(Spree::LineItem).to receive(:base_price).and_return(10.99)
   end
@@ -20,7 +20,7 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Config.site_name = "Super Store"
     Spree::Chimpy::Config.store_id = "super-store"
 
-    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_return(true_response)
+    expect(api.ecomm).to receive(:order_add) { |h| expect(h[:id]).to eq(order.number) }.and_return(true_response)
 
     expect(interface.add(order)).to be true
   end
@@ -30,7 +30,7 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Chimpy::Config.store_id = "super-store"
 
     e = Mailchimp::InvalidEcommOrderError.new("Order Id \"#{order.number}\" has already been recorded.")
-    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_raise(e)
+    expect(api.ecomm).to receive(:order_add) { |h| expect(h[:id]).to eq(order.number) }.and_raise(e)
 
     expect(interface.add(order)).to be false
   end
@@ -40,9 +40,9 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Chimpy::Config.store_id = "super-store"
 
     e = Mailchimp::InvalidEcommOrderError.new("foobar")
-    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_raise(e)
+    expect(api.ecomm).to receive(:order_add) { |h| expect(h[:id]).to eq(order.number) }.and_raise(e)
 
-    lambda { interface.add(order) }.should raise_error(e)
+    expect { interface.add(order) }.to raise_error(e)
   end
 
   it "returns false if there is a false response" do
@@ -50,14 +50,14 @@ describe Spree::Chimpy::Interface::Orders do
     Spree::Chimpy::Config.store_id = "super-store"
 
     e = Mailchimp::InvalidEcommOrderError.new("foobar")
-    api.ecomm.should_receive(:order_add) { |h| h[:id].should == order.number }.and_return(false_response)
+    expect(api.ecomm).to receive(:order_add) { |h| expect(h[:id]).to eq(order.number) }.and_return(false_response)
 
     expect(interface.add(order)).to be false
   end
 
   it "removes an order" do
     Spree::Chimpy::Config.store_id = "super-store"
-    api.ecomm.should_receive(:order_del).with('super-store', order.number).and_return(true_response)
+    expect(api.ecomm).to receive(:order_del).with('super-store', order.number).and_return(true_response)
 
     expect(interface.remove(order)).to be true
   end

@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Spree::Chimpy::Action do
   context "Validation" do
     it "can be valid" do
-      Spree::Chimpy::Action.create(email: 'test@example.com').should be_valid
+      expect(Spree::Chimpy::Action.create(email: 'test@example.com')).to be_valid
     end
 
     it "is invalid without email" do
-      Spree::Chimpy::Action.new(email: nil).should_not be_valid
+      expect(Spree::Chimpy::Action.new(email: nil)).not_to be_valid
     end
 
     it "is invalid with bad emails" do
@@ -15,7 +15,7 @@ describe Spree::Chimpy::Action do
         Spree::Chimpy::Action.new(email: email, action: :subscribe)
       end
      
-      bad_emails.each {|email| email.should be_invalid }
+      bad_emails.each {|email| expect(email).to be_invalid }
     end
 
   end

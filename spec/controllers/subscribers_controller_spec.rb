@@ -62,13 +62,13 @@ describe Spree::Chimpy::SubscribersController, type: :controller do
   def should_be_successful(response)
     expect(response).to be_success
     response_hash = JSON.parse(response.body)
-    response_hash['response'].should eql('success')
+    expect(response_hash['response']).to eql('success')
   end
 
   def should_be_failure(response)
     expect(response).to be_success
     response_hash = JSON.parse(response.body)
-    response_hash['response'].should eql('failure')
+    expect(response_hash['response']).to eql('failure')
   end
 
 end
