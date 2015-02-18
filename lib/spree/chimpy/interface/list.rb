@@ -27,8 +27,8 @@ module Spree::Chimpy
         begin
           @api.lists.subscribe(list_id, {email: email}, merge_vars, 'html', @double_opt_in, update_existing)
           segment([email]) if options[:customer]
-        rescue Mailchimp::ListInvalidImportError => e
-          Rails.logger.error("spree_chimpy: Error in subscribing email: #{email} - #{e.inspect}")
+        rescue Mailchimp::ListInvalidImportError, Mailchimp::ValidationError => e
+          Rails.logger.error("spree_chimpy: Error in subscribing email: #{email} - #{e.message}")
         end
       end
 
