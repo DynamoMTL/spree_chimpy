@@ -43,9 +43,16 @@ describe Spree::Chimpy::Interface::List do
     end
   end
 
-  it "unsubscribes" do
-    expect(api.lists).to receive(:unsubscribe).with(list_id, {email: 'user@example.com'})
-    interface.unsubscribe("user@example.com")
+  describe "#unsubscribe" do
+    it "unsubscribes" do
+      expect(api.lists).to receive(:unsubscribe).with(list_id, {email: 'user@example.com'})
+      interface.unsubscribe("user@example.com")
+    end
+
+    it "handles Mailchimp Validation error" do
+      expect(api.lists).to receive(:unsubscribe).and_raise Mailchimp::EmailNotExistsError
+      interface.unsubscribe("user@example.com")
+    end
   end
 
   describe "segmentation" do

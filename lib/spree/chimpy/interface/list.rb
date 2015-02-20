@@ -52,8 +52,11 @@ module Spree::Chimpy
 
       def unsubscribe(email)
         log "Unsubscribing #{email} from #{@list_name}"
-
-        @api.lists.unsubscribe(list_id, {email: email})
+        begin
+          @api.lists.unsubscribe(list_id, {email: email})
+        rescue Mailchimp::EmailNotExistsError => e
+          Rails.logger.error("spree_chimpy: unsubscribing error - email does not exist: #{email} - #{e.message}")
+        end
       end
 
       def merge_vars
