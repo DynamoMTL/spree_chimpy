@@ -18,11 +18,11 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', '~> 2.1'
-  s.add_dependency 'mailchimp', '>= 0.0.9'
+  s.add_dependency 'mailchimp-api', '~> 2.0.5'
 
   s.add_development_dependency 'rspec-rails', '~> 2.14'
   s.add_development_dependency 'capybara', '~> 2.2.1'
-  s.add_development_dependency 'selenium-webdriver', '~> 2.40'
+  s.add_development_dependency 'poltergeist'
   s.add_development_dependency 'factory_girl', '~> 4.4'
   s.add_development_dependency 'shoulda-matchers', '~> 2.5'
   s.add_development_dependency 'sqlite3', '~> 1.3.9'
@@ -31,9 +31,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'coffee-rails', '~> 4.0.1'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'
   s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'guard-rspec'
   s.add_development_dependency 'launchy'
-  s.add_development_dependency 'pry-rails'
-  s.add_development_dependency 'pry-debugger'
-  s.add_development_dependency 'pry-rescue'
 end

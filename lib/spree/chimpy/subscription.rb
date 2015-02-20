@@ -7,11 +7,13 @@ module Spree::Chimpy
     end
 
     def subscribe
-      defer(:subscribe)
+      return unless configured?
+      defer(:subscribe) if subscribing?
     end
 
     def unsubscribe
-      defer(:unsubscribe)
+      return unless configured?
+      defer(:unsubscribe) if unsubscribing?
     end
 
     def resubscribe(&block)
@@ -20,27 +22,23 @@ module Spree::Chimpy
       return unless configured?
 
       if unsubscribing?
-        unsubscribe
+        defer(:unsubscribe)
       elsif subscribing? || merge_vars_changed?
-        subscribe
+        defer(:subscribe)
       end
     end
 
   private
     def defer(event)
-      enqueue(event, @model) if allowed?
-    end
-
-    def allowed?
-      configured? && @model.subscribed
+      enqueue(event, @model)
     end
 
     def subscribing?
-      merge_vars_changed? && @model.subscribed
+      @model.subscribed && (@model.subscribed_changed? || @model.id_changed? || @model.new_record?)
     end
 
     def unsubscribing?
-      !@new_record && !@model.subscribed && @model.subscribed_changed?
+      !@model.new_record? && !@model.subscribed && @model.subscribed_changed?
     end
 
     def merge_vars_changed?

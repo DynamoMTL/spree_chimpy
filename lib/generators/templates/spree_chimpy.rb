@@ -17,12 +17,18 @@ Spree::Chimpy.config do |config|
   # asking to confirm their subscription. Defaults to false
   # config.double_opt_in = false
 
+  # Send a welcome email after subscribing to a list.
+  # It is recommended to send on wieh double_opt_in is false.
+  # config.send_welcome_email = true
+
   # id of your store. max 10 letters. defaults to "spree"
   # config.store_id = 'acme'
 
   # define a list of merge vars:
   # - key: a unique name that mail chimp uses. 10 letters max
   # - value: the name of any method on the user class.
+  # make sure to avoid any of these reserved field names:
+  # http://kb.mailchimp.com/article/i-got-a-message-saying-that-my-list-field-name-is-reserved-and-cant-be-used
   # default is {'EMAIL' => :email}
   # config.merge_vars = {
   #   'EMAIL' => :email,

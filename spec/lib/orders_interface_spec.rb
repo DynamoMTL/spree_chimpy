@@ -2,8 +2,9 @@ require 'spec_helper'
 
 describe Spree::Chimpy::Interface::Orders do
   let(:interface) { described_class.new }
-  let(:api)       { double() }
+  let(:api)       { double(:api) }
   let(:list)      { double() }
+  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
 
   def create_order(options={})
     user  = create(:user, email: options[:email])
@@ -18,23 +19,24 @@ describe Spree::Chimpy::Interface::Orders do
   end
 
   before do
-    Spree::Chimpy::Config.key = '1234'
+    Spree::Chimpy::Config.key = key
     Spree::Chimpy::Config.store_id = "super-store"
+    Spree::Chimpy::Config.subscribe_to_list = true
     Spree::Chimpy.stub(list: list)
 
-    Mailchimp::API.should_receive(:new).with('1234', { timeout: 60 }).and_return(api)
+    Mailchimp::API.should_receive(:new).with(key, { timeout: 60 }).and_return(api)
+    allow(api).to receive(:ecomm).and_return(api)
   end
 
   context "adding an order" do
     it "sync when member info matches" do
       order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
-
-      list.should_receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
-      list.should_receive(:subscribe).with('User@Example.com').and_return(nil)
-      api.should_receive(:ecomm_order_add) do |h|
-        expect(h[:order][:id]).to eq order.number
-        expect(h[:order][:email_id]).to eq 'id-abcd'
-        expect(h[:order][:campaign_id]).to eq '1234'
+      allow(list).to receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
+      expect(list).to receive(:subscribe).with('User@Example.com').and_return(nil)
+      expect(api).to receive(:order_add) do |h|
+        expect(h[:id]).to eq order.number
+        expect(h[:email_id]).to eq 'id-abcd'
+        expect(h[:campaign_id]).to eq '1234'
       end
 
       interface.add(order)
@@ -44,11 +46,26 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
-      list.should_receive(:subscribe).with('other@home.com').and_return(nil)
-      api.should_receive(:ecomm_order_add) do |h|
-        expect(h[:order][:id]).to eq order.number
-        expect(h[:order][:email_id]).to be_nil
-        expect(h[:order][:campaign_id]).to be_nil
+      expect(list).to receive(:subscribe).with('other@home.com').and_return(nil)
+      api.should_receive(:order_add) do |h|
+        expect(h[:id]).to eq order.number
+        expect(h[:email_id]).to be_nil
+        expect(h[:campaign_id]).to be_nil
+      end
+
+      interface.add(order)
+    end
+
+    it 'skips subscription if manually turned off in config' do
+      order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
+      Spree::Chimpy::Config.subscribe_to_list = false
+
+      expect(list).to receive(:info).with('id-abcd').and_return(email: 'user@example.com')
+      expect(list).to_not receive(:subscribe).with('user@example.com')
+      expect(api).to receive(:order_add) do |h|
+        expect(h[:id]).to eq order.number
+        expect(h[:email_id]).to eq 'id-abcd'
+        expect(h[:campaign_id]).to eq '1234'
       end
 
       interface.add(order)
@@ -57,7 +74,7 @@ describe Spree::Chimpy::Interface::Orders do
 
   it "removes an order" do
     order = create_order(email: 'foo@example.com')
-    api.should_receive(:ecomm_order_del).with({store_id: 'super-store', order_id: order.number, throws_exceptions: false}).and_return(true)
-    expect(interface.remove(order)).to be_true
+    api.should_receive(:order_del).with('super-store', order.number).and_return(true)
+    expect(interface.remove(order)).to be_truthy
   end
 end

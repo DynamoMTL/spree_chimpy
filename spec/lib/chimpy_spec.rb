@@ -12,8 +12,10 @@ describe Spree::Chimpy do
     subject { described_class }
 
     specify      { should be_configured }
-    its(:list)   { should == :list }
-    its(:orders) { should == :orders }
+    specify "attributes of Spree::Chimpy when configured" do
+      expect(subject.list).to eq :list
+      expect(subject.orders).to eq :orders
+    end
   end
 
   context "disabled" do
@@ -22,8 +24,10 @@ describe Spree::Chimpy do
     subject { described_class }
 
     specify      { should_not be_configured }
-    its(:list)   { should be_nil }
-    its(:orders) { should be_nil }
+    specify "attributes of Spree::Chimpy when not configured" do
+      expect(subject.list).to be_nil
+      expect(subject.orders).to be_nil
+    end
   end
 
   context "sync merge vars" do

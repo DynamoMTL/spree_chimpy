@@ -1,6 +1,6 @@
 # Spree/MailChimp Integration
 
-[![Build Status](https://api.travis-ci.org/DynamoMTL/spree_chimpy.png)](https://travis-ci.org/DynamoMTL/spree_chimpy)
+[![Build Status](https://app.wercker.com/status/03e07999926ddaf022b4ad7ec6460f27/s "wercker status")](https://app.wercker.com/project/bykey/03e07999926ddaf022b4ad7ec6460f27)
 [![Code Climate](https://codeclimate.com/github/DynamoMTL/spree_chimpy.png)](https://codeclimate.com/github/DynamoMTL/spree_chimpy)
 
 Makes it easy to integrate your [Spree][1] app with [MailChimp][2].
@@ -78,6 +78,9 @@ Spree::Chimpy.config do |config|
 
   # change the double-opt-in behavior
   config.double_opt_in = false
+
+  # send welcome email
+  config.send_welcome_email = true
 
   # id of your store. max 10 letters. defaults to "spree"
   config.store_id = 'acme'

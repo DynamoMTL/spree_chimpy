@@ -22,7 +22,7 @@ module Spree::Chimpy
   end
 
   def configured?
-    Config.key.present?
+    Config.key.present? && (Config.list_name.present? || Config.list_id.present?)
   end
 
   def reset
@@ -30,13 +30,15 @@ module Spree::Chimpy
   end
 
   def api
-    @api ||= Mailchimp::API.new(Config.key, Config.api_options) if configured?
+    @api = Mailchimp::API.new(Config.key, Config.api_options) if configured?
   end
 
   def list
     @list ||= Interface::List.new(Config.list_name,
                         Config.customer_segment_name,
-                        Config.double_opt_in) if configured?
+                        Config.double_opt_in,
+                        Config.send_welcome_email,
+                        Config.list_id) if configured?
   end
 
   def orders
@@ -77,11 +79,16 @@ module Spree::Chimpy
   end
 
   def ensure_list
-    Rails.logger.error("spree_chimpy: hmm.. a list named `#{Config.list_name}` was not found. please add it and reboot the app") unless list_exists?
+    if Config.list_name.present?
+      Rails.logger.error("spree_chimpy: hmm.. a list named `#{Config.list_name}` was not found. Please add it and reboot the app") unless list_exists?
+    end
+    if Config.list_id.present?
+      Rails.logger.error("spree_chimpy: hmm.. a list with ID `#{Config.list_id}` was not found. Please add it and reboot the app") unless list_exists?
+    end
   end
 
   def ensure_segment
-    unless segment_exists?
+    if list_exists? && !segment_exists?
       create_segment
       Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{Config.customer_segment_name}` was not found. Creating it now")
     end
@@ -90,8 +97,11 @@ module Spree::Chimpy
   def handle_event(event, payload = {})
     payload[:event] = event
 
-    if defined?(::Delayed::Job)
+    case
+    when defined?(::Delayed::Job)
       ::Delayed::Job.enqueue(Spree::Chimpy::Workers::DelayedJob.new(payload))
+    when defined?(::Sidekiq)
+      Spree::Chimpy::Workers::Sidekiq.perform_async(payload.except(:object))
     else
       perform(payload)
     end
