@@ -23,6 +23,9 @@ Makes it easy to integrate your [Spree][1] app with [MailChimp][2].
 **Deferred Processing**
 > Communication between Spree and MailChimp is synchronous by default. If you have `delayed_job` in your bundle, the communication is queued up and deferred to one of your workers. (`sidekiq` support also planned).
 
+**Angular.js/Sprangular**
+> You can integrate it with [sprangular](https://github.com/sprangular/sprangular) by using the [sprangular_chimpy](https://github.com/sprangular/sprangular_chimpy) gem.
+
 ## Installing
 
 Add spree_chimpy to your `Gemfile`:
