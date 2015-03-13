@@ -139,6 +139,15 @@ describe Spree::Chimpy::Subscription do
       end
     end
 
+    context 'when adding a user that is not allowed' do
+      let(:user) { create(:user, subscribed: true) }
+
+      it 'rejects and unsubscribes the model' do
+        interface.stub(:subscribe).and_raise(Spree::Chimpy::EmailError)
+        expect(user.subscribed).to be false
+      end
+    end
+
     context "when updating a user and not changing subscription details" do
       it "does not update mailchimp" do
         interface.stub(:subscribe)
