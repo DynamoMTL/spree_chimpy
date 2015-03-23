@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-class Spree::Adjustment::Adjustable; end
-
 describe Spree::Order do
   let(:key) { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
   let(:order) { create(:completed_order_with_totals) }
