@@ -3,13 +3,15 @@ module Spree::Chimpy
     extend ActiveSupport::Concern
 
     included do
-      before_filter :set_mailchimp_params
-      before_filter { |c| c.send(:find_mail_chimp_params) if c.send(:mailchimp_params?) }
       include ::Spree::Core::ControllerHelpers::Order
+
+      before_filter :set_mailchimp_params
+      before_filter :find_mail_chimp_params, if: :mailchimp_params?
+      # before_filter :no_current_order, unless: :mailchimp_params?
     end
 
-
     private
+
     attr_reader :mc_eid, :mc_cid
 
     def set_mailchimp_params
@@ -21,6 +23,10 @@ module Spree::Chimpy
       (!mc_eid.nil? || !mc_cid.nil?) &&
         (!session[:order_id].nil? || !params[:record_mc_details].nil?)
     end
+
+    # def no_current_order
+    #   send(:remove_method, :set_current_order)
+    # end
 
     def find_mail_chimp_params
       attributes = {campaign_id: mc_cid, email_id: mc_eid}

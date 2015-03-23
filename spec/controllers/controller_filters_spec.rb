@@ -36,9 +36,9 @@ describe ::Spree::StoreController do
   end
 
   it 'skips the set_current_order filter if not needed' do
-    expect(subject).to_not receive(:set_curent_order)
+    filter_list = subject._process_action_callbacks.map(&:filter)
+    expect(filter_list).to_not include(:set_curent_order)
 
     get :index
   end
-
 end
