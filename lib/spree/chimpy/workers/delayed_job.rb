@@ -10,7 +10,9 @@ module Spree::Chimpy
       def perform
         Spree::Chimpy.perform(@payload)
       rescue Excon::Errors::Timeout, Excon::Errors::SocketError
-        log "Mailchimp connection timeout reached, closing"
+        log 'Mailchimp connection timeout reached, closing'
+      rescue Mailchimp::CampaignDoesNotExistError
+        log 'Mailchimp campaign no longer exists'
       end
 
       def max_attempts
