@@ -2,7 +2,7 @@
 de:
   spree:
     chimpy:
-      subscribed_label: Schweine-Newsletter abonnieren
+      subscribed_label: Newsletter abonnieren
       admin_subscribed_label: Für Newsletter angemeldet
       subscribe_title: Für unseren Newsletter anmelden
       subscribed: Für Newsletter angemeldet
