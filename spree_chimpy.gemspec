@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.1'
+  s.add_dependency 'spree_core', '~> 3.0'
   s.add_dependency 'mailchimp-api', '~> 2.0.5'
 
-  s.add_development_dependency 'rspec-rails', '~> 2.14'
+  s.add_development_dependency 'rspec-rails', '~> 3.1'
   s.add_development_dependency 'rubocop'
   s.add_development_dependency 'capybara', '~> 2.2.1'
   s.add_development_dependency 'poltergeist'
