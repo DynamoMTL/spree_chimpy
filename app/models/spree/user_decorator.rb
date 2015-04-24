@@ -2,7 +2,6 @@ if Spree.user_class
   Spree.user_class.class_eval do
 
     after_create  :subscribe
-    around_update :resubscribe
     after_destroy :unsubscribe
     after_initialize :assign_subscription_default
 
