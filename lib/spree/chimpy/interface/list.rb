@@ -75,6 +75,7 @@ module Spree::Chimpy
       def find_list_id(name)
         lists_res = @api.lists.list({'list_name' => name})
         selected_list = lists_res['data'].select { |list_data| list_data["name"] == name }
+        raise Mailchimp::ValidationError unless selected_list.present?
         selected_list.first["id"]
       end
 
