@@ -20,9 +20,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_core', '~> 3.0'
   s.add_dependency 'mailchimp-api', '~> 2.0.5'
 
-  s.add_development_dependency 'rspec-rails', '~> 3.1'
+  s.add_development_dependency 'rspec-rails', '~> 2.99'
   s.add_development_dependency 'rubocop'
-  s.add_development_dependency 'capybara', '~> 2.2.1'
+  s.add_development_dependency 'capybara', '~> 2.4.4'
   s.add_development_dependency 'poltergeist'
   s.add_development_dependency 'factory_girl', '~> 4.4'
   s.add_development_dependency 'shoulda-matchers', '~> 2.5'
