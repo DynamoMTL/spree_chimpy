@@ -53,16 +53,8 @@ describe Spree::Chimpy::Subscription do
         user.stub(subscription: subscription)
       end
 
-      context "when update needed" do
-        it "calls resubscribe" do
-          subscription.should_receive(:resubscribe)
-          user.save
-        end
-      end
-
       context "when update not needed" do
         it "still calls resubscribe, and does nothing" do
-          subscription.should_receive(:resubscribe)
           subscription.should_not_receive(:unsubscribe)
           user.save
         end
