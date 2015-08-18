@@ -1,4 +1,17 @@
 class Spree::Chimpy::SubscribersController < Spree::BaseController
+
+  class Spree::Chimpy::ListSubscriber
+    def initialize(list_name, double_opt_in, email, source)
+      @list = Spree::Chimpy::Interface::List.new(list_name, 'customers', double_opt_in)
+      @email = email
+      @source = source
+    end
+
+    def perform
+      @list.direct_subscribe(@email, {"SOURCE" => @source})
+    end
+  end
+
   def subscribe
     user = find_or_create_user
     if user.subscribe(params[:source])
@@ -23,24 +36,23 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
   end
 
   def subscribe_to_list
-    begin
-      list = Spree::Chimpy::Interface::List.new(params[:list_name], 'customers', double_opt_in)
-      list.direct_subscribe(params[:signupEmail], {"SOURCE" => params[:source]})
-    rescue Mailchimp::ValidationError => e
-      response = { response: :failure, message: I18n.t("spree.chimpy.failure") }
-    end
-
+    Delayed::Job.enqueue(Spree::Chimpy::ListSubscriber.new(params[:list_name],
+                                                           double_opt_in,
+                                                           params[:signupEmail],
+                                                           params[:source]))
+                                                           
     response ||= { response: :success, message: I18n.t("spree.chimpy.success") }
     render json: response, layout: false
   end
 
+
   def refer_a_friend
     mailchimp_action = Spree::Chimpy::Action.new(email: params[:referrerEmail], request_params: params.to_json, source: params[:source], action: :referrer)
     if mailchimp_action.save
-      referee_batch = params[:refereeEmails].map do |email| 
+      referee_batch = params[:refereeEmails].map do |email|
         if email.present? and email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
-          { email: {email: email}, 
-            merge_vars: { "REFERRER" => params[:referrerEmail] } } 
+          { email: {email: email},
+            merge_vars: { "REFERRER" => params[:referrerEmail] } }
         end
       end.compact
 
