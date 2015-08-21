@@ -1,17 +1,4 @@
 class Spree::Chimpy::SubscribersController < Spree::BaseController
-
-  class Spree::Chimpy::ListSubscriber
-    def initialize(list_name, double_opt_in, email, source)
-      @list = Spree::Chimpy::Interface::List.new(list_name, 'customers', double_opt_in)
-      @email = email
-      @source = source
-    end
-
-    def perform
-      @list.direct_subscribe(@email, {"SOURCE" => @source})
-    end
-  end
-
   def subscribe
     user = find_or_create_user
     if user.subscribe(params[:source])
@@ -22,7 +9,7 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
 
     render json: response, layout: false
   end
-  
+
   def unsubscribe
     user = find_or_create_user
 
@@ -40,7 +27,7 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
                                                            double_opt_in,
                                                            params[:signupEmail],
                                                            params[:source]))
-                                                           
+
     response ||= { response: :success, message: I18n.t("spree.chimpy.success") }
     render json: response, layout: false
   end
@@ -66,7 +53,7 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
     else
       response = { response: :failure, message: I18n.t("spree.chimpy.failure") }
     end
-    
+
     render json: response, layout: false
   end
 

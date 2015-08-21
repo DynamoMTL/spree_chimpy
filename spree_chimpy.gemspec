@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_chimpy'
-  s.version     = '1.3.4'
+  s.version     = '1.3.6'
   s.summary     = 'mailchimp/spree integration using the hominid gem'
   s.description = ''
   s.required_ruby_version = '>= 1.9.3'
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', '~> 2.2'
   s.add_dependency 'mailchimp-api'
-  
+
   s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'factory_girl'
   s.add_development_dependency 'ffaker'
