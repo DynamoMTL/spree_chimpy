@@ -18,6 +18,7 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
 
+Delayed::Worker.delay_jobs = false
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
