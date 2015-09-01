@@ -1,6 +1,7 @@
 module Spree::Chimpy
   class Engine < Rails::Engine
     require 'spree/core'
+    require 'delayed_job_active_record'
     isolate_namespace Spree
     engine_name 'spree_chimpy'
 

@@ -23,19 +23,23 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
   end
 
   def subscribe_to_list
-    Delayed::Job.enqueue(Spree::Chimpy::ListSubscriber.new(params[:list_name],
-                                                           double_opt_in,
-                                                           params[:signupEmail],
-                                                           params[:source]))
-
-    response ||= { response: :success, message: I18n.t("spree.chimpy.success") }
+    email = params[:signupEmail]
+    if email.present? and email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+      ::Delayed::Job.enqueue(Spree::Chimpy::ListSubscriber.new(params[:list_name],
+      double_opt_in,
+      params[:signupEmail],
+      params[:source]))
+      response = { response: :success, message: I18n.t("spree.chimpy.success") }
+    else
+      response = { response: :failure, message: I18n.t("spree.chimpy.failure") }
+    end
     render json: response, layout: false
   end
 
 
   def refer_a_friend
     mailchimp_action = Spree::Chimpy::Action.new(email: params[:referrerEmail], request_params: params.to_json, source: params[:source], action: :referrer)
-    if mailchimp_action.save
+    if mailchimp_action.save && valid_referees(params[:refereeEmails])
       referee_batch = params[:refereeEmails].map do |email|
         if email.present? and email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
           { email: {email: email},
@@ -58,6 +62,10 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
   end
 
   private
+
+  def valid_referees(emails)
+    emails.all?{ |email| email.present? && email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
+  end
 
   def find_or_create_user
     Spree.user_class.find_or_create_unenrolled(params[:signupEmail], tracking_cookie)
