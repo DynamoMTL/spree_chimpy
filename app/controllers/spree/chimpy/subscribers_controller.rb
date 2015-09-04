@@ -64,7 +64,8 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
   private
 
   def valid_referees(emails)
-    emails.all?{ |email| email.present? && email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
+    safe_emails = emails.compact.reject { |e| e.blank? }
+    safe_emails.all?{ |email| email.present? && email =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
   end
 
   def find_or_create_user
