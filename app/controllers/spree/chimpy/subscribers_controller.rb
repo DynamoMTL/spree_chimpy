@@ -47,11 +47,14 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
         end
       end.compact
 
-      list = Spree::Chimpy::Interface::List.new(params[:referee_list_name], 'customers', double_opt_in)
-      res = list.batch_subscribe(referee_batch)
+      ::Delayed::Job.enqueue(Spree::Chimpy::BatchSubscriber.new(params[:referee_list_name],
+                                                                double_opt_in,
+                                                                referee_batch))
 
-      list = Spree::Chimpy::Interface::List.new(params[:referrer_list_name], 'customers', double_opt_in)
-      res = list.batch_subscribe([{email: {email: params[:referrerEmail]}, merge_vars: { "SOURCE" => params[:source] } }])
+      ::Delayed::Job.enqueue(Spree::Chimpy::ListSubscriber.new(params[:referrer_list_name],
+                                                               double_opt_in,
+                                                               params[:referrerEmail],
+                                                               params[:source]))
 
       response = { response: :success, message: I18n.t("spree.chimpy.success") }
     else

@@ -1,4 +1,3 @@
-
 class Spree::Chimpy::ListSubscriber
   def initialize(list_name, double_opt_in, email, source)
     @list_name = list_name
