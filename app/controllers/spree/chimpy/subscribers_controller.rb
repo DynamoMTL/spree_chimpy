@@ -55,6 +55,7 @@ class Spree::Chimpy::SubscribersController < Spree::BaseController
 
       response = { response: :success, message: I18n.t("spree.chimpy.success") }
     else
+      Rails.logger.warning "Failed to add #{params[:refereeEmails]} to list because of #{mailchimp_action.errors.messages}"
       response = { response: :failure, message: I18n.t("spree.chimpy.failure") }
     end
 
