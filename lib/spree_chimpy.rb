@@ -70,9 +70,13 @@ module Spree::Chimpy
     attributes = Config.merge_vars.except('EMAIL')
 
     array = attributes.map do |tag, method|
-      value = model.send(method) if model.methods.include?(method)
+      if method.is_a? Symbol
+        value = model.send(method) if model.methods.include?(method)
 
-      [tag, value.to_s]
+        [tag, value.to_s]
+      else
+        [tag, method]
+      end
     end
 
     Hash[array]
