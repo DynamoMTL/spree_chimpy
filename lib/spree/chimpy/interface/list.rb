@@ -86,7 +86,7 @@ module Spree::Chimpy
       end
 
       def find_segment_id
-        segments = api_call.static_segments(list_id)
+        segments = api_call.static_segments(list_id, false) #get counts boolean set to false
         segment  = segments.detect {|segment| segment['name'].downcase == @segment_name.downcase }
 
         segment['id'] if segment
