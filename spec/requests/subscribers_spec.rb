@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe 'Subscribers' do
+  before :each do
+    Excon.defaults[:ssl_verify_peer] = false
+  end
 
   context 'with valid subscription' do
     it 'redirects to referer' do
