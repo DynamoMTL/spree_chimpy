@@ -5,8 +5,10 @@ Spree::Chimpy.config do |config|
   # extra api options for the Mailchimp gem
   # config.api_options = { throws_exceptions: false, timeout: 3600 }
 
-  # name of your list, defaults to "Members"
-  # config.list_name = 'peeps'
+  # list_id of the list you want to use.
+  # These ID's can be found by visiting your list in the Mailchimp admin,
+  # clicking on the settings tab, then the list names and defaults option.
+  # config.list_id = 'some_list_id'
 
   # Allow users to be subscribed by default. Defaults to false
   # If you enable this option, it's strongly advised that your enable
