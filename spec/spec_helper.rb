@@ -21,6 +21,7 @@ require 'ffaker'
 require 'capybara/poltergeist'
 
 Capybara.javascript_driver = :poltergeist
+Excon.defaults[:ssl_verify_peer] = false
 
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
