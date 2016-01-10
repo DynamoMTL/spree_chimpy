@@ -82,7 +82,9 @@ module Spree::Chimpy
       def create_segment
         log "Creating segment #{@segment_name}"
 
-        @segment_id = api_call.static_segment_add(list_id, @segment_name)
+        segment = api_call.static_segment_add(list_id, @segment_name)
+        
+        @segment_id = segment['id']
       end
 
       def find_segment_id
