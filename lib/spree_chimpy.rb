@@ -7,6 +7,7 @@ require 'coffee_script'
 
 module Spree::Chimpy
   extend self
+  class EmailError < StandardError; end
 
   def config(&block)
     yield(Spree::Chimpy::Config)

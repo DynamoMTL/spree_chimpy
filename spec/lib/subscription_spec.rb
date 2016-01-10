@@ -28,7 +28,7 @@ describe Spree::Chimpy::Subscription do
       end
 
       it "subscribes users" do
-        interface.should_receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
+        expect(interface).to receive(:subscribe).with(user.email, {'SIZE' => '10', 'HEIGHT' => '20'}, customer: true)
         user.save
       end
     end
@@ -38,8 +38,8 @@ describe Spree::Chimpy::Subscription do
       let(:subscription) { described_class.new(subscriber) }
 
       it "subscribes subscribers" do
-        interface.should_receive(:subscribe).with(subscriber.email, {}, customer: false)
-        interface.should_not_receive(:segment)
+        expect(interface).to receive(:subscribe).with(subscriber.email, {}, customer: false)
+        expect(interface).to_not receive(:segment)
         subscriber.save
       end
     end
@@ -49,21 +49,21 @@ describe Spree::Chimpy::Subscription do
       let(:subscription) { double(:subscription) }
 
       before do
-        interface.should_receive(:subscribe).once.with(user.email)
+        allow(interface).to receive(:subscribe)
         user.stub(subscription: subscription)
       end
 
       context "when update needed" do
         it "calls resubscribe" do
-          subscription.should_receive(:resubscribe)
+          expect(subscription).to receive(:resubscribe)
           user.save
         end
       end
 
       context "when update not needed" do
         it "still calls resubscribe, and does nothing" do
-          subscription.should_receive(:resubscribe)
-          subscription.should_not_receive(:unsubscribe)
+          expect(subscription).to receive(:resubscribe)
+          expect(subscription).to_not receive(:unsubscribe)
           user.save
         end
       end
@@ -77,7 +77,7 @@ describe Spree::Chimpy::Subscription do
       context "subscribed user" do
         let(:user) { create(:user, subscribed: true) }
         it "unsubscribes" do
-          interface.should_receive(:unsubscribe).with(user.email)
+          expect(interface).to receive(:unsubscribe).with(user.email)
           user.subscribed = false
           subscription.unsubscribe
         end
@@ -86,7 +86,7 @@ describe Spree::Chimpy::Subscription do
       context "non-subscribed user" do
         let(:user) { build(:user, subscribed: false) }
         it "does nothing" do
-          interface.should_not_receive(:unsubscribe)
+          expect(interface).to_not receive(:unsubscribe)
           subscription.unsubscribe
         end
       end
@@ -98,7 +98,7 @@ describe Spree::Chimpy::Subscription do
 
       context "#resubscribe" do
         it "subscribes the user" do
-          interface.should_receive(:subscribe).with(user.email, {}, {customer: true})
+          expect(interface).to receive(:subscribe).with(user.email, {}, {customer: true})
           user.subscribed = true
           subscription.resubscribe
         end
@@ -113,7 +113,7 @@ describe Spree::Chimpy::Subscription do
 
       context "#resubscribe" do
         it "unsubscribes the user" do
-          interface.should_receive(:unsubscribe).with(user.email)
+          expect(interface).to receive(:unsubscribe).with(user.email)
           user.subscribed = false
           subscription.resubscribe
         end
@@ -132,10 +132,19 @@ describe Spree::Chimpy::Subscription do
           it "subscribes the user once again" do
             user.size += 5
             user.height += 10
-            interface.should_receive(:subscribe).with(user.email, {"SIZE"=> user.size.to_s, "HEIGHT"=> user.height.to_s}, {:customer=>true})
+            expect(interface).to receive(:subscribe).with(user.email, {"SIZE"=> user.size.to_s, "HEIGHT"=> user.height.to_s}, {:customer=>true})
             subscription.resubscribe
           end
         end
+      end
+    end
+
+    context 'when adding a user that is not allowed' do
+      let(:user) { create(:user, subscribed: true) }
+
+      it 'rejects and unsubscribes the model' do
+        interface.stub(:subscribe).and_raise(Spree::Chimpy::EmailError)
+        expect(user.subscribed).to be false
       end
     end
 
@@ -144,7 +153,7 @@ describe Spree::Chimpy::Subscription do
         interface.stub(:subscribe)
         user = create(:user, subscribed: true)
 
-        interface.should_not_receive(:subscribe)
+        expect(interface).to_not receive(:subscribe)
         user.spree_api_key = 'something'
         user.save!
       end

@@ -9,6 +9,8 @@ module Spree::Chimpy
     def subscribe
       return unless configured?
       defer(:subscribe) if subscribing?
+    rescue Spree::Chimpy::EmailError
+      unsubscribe_user
     end
 
     def unsubscribe
@@ -39,6 +41,10 @@ module Spree::Chimpy
 
     def unsubscribing?
       !@model.new_record? && !@model.subscribed && @model.subscribed_changed?
+    end
+
+    def unsubscribe_user
+      @model.update_column(:subscribed, false)
     end
 
     def merge_vars_changed?

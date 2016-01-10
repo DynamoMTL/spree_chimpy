@@ -25,7 +25,7 @@ describe Spree::Chimpy::Interface::List do
       expect(lists).to receive(:subscribe).
         with('a3d3', {email: 'user@example.com'},
               {}, 'html', true, true, true, true).and_raise Mailchimp::ListInvalidImportError
-      expect(lambda { interface.subscribe("user@example.com") }).not_to raise_error
+      expect(lambda { interface.subscribe("user@example.com") }).to raise_error(Spree::Chimpy::EmailError)
     end
   end
 

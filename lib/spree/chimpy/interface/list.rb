@@ -25,7 +25,7 @@ module Spree::Chimpy
           segment([email]) if options[:customer]
         rescue Mailchimp::ListInvalidImportError, Mailchimp::ValidationError => ex
           log "Subscriber #{email} rejected for reason: [#{ex.message}]"
-          true
+          fail Spree::Chimpy::EmailError, 'email unallowed subscription', caller
         end
       end
 
