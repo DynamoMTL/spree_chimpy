@@ -24,7 +24,7 @@ module Spree::Chimpy
         # create the user if it does not exist yet
         if Spree::Chimpy::Config.subscribe_to_list
           log "Subscribing #{expected_email} to list"
-          Spree::Chimpy.list.subscribe(expected_email)
+          Spree::Chimpy.list.subscribe(expected_email, Spree::Chimpy.merge_vars(order))
         end
 
         data = hash(order, expected_email)

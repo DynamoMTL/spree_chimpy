@@ -32,7 +32,7 @@ describe Spree::Chimpy::Interface::Orders do
     it "sync when member info matches" do
       order = create_order(email_id: 'id-abcd', campaign_id: '1234', email: 'user@example.com')
       allow(list).to receive(:info).with('id-abcd').and_return(email: 'User@Example.com')
-      expect(list).to receive(:subscribe).with('User@Example.com').and_return(nil)
+      expect(list).to receive(:subscribe).with('User@Example.com', {"FNAME"=>"", "LNAME"=>""}).and_return(nil)
       expect(api).to receive(:order_add) do |h|
         expect(h[:id]).to eq order.number
         expect(h[:email_id]).to eq 'id-abcd'
@@ -46,7 +46,7 @@ describe Spree::Chimpy::Interface::Orders do
       order = create_order(email_id: 'id-abcd', email: 'user@example.com')
 
       list.should_receive(:info).with('id-abcd').and_return({email: 'other@home.com'})
-      expect(list).to receive(:subscribe).with('other@home.com').and_return(nil)
+      expect(list).to receive(:subscribe).with('other@home.com', {"FNAME"=>"", "LNAME"=>""}).and_return(nil)
       api.should_receive(:order_add) do |h|
         expect(h[:id]).to eq order.number
         expect(h[:email_id]).to be_nil
