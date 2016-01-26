@@ -9,6 +9,10 @@ feature 'Chimpy Admin', :js do
     visit spree.admin_path
   end
 
+  before :each do
+    Excon.defaults[:ssl_verify_peer] = false
+  end
+
   scenario 'new user subscription with subscription checked' do
     click_link 'Users'
     click_link 'New User'
