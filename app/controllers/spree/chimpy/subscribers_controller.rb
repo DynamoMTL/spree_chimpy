@@ -3,9 +3,8 @@ class Spree::Chimpy::SubscribersController < ApplicationController
 
   def create
     @subscriber = Spree::Chimpy::Subscriber.where(email: subscriber_params[:email]).first_or_initialize
-    @subscriber.email = subscriber_params[:email]
-    @subscriber.subscribed = subscriber_params[:subscribed]
-    if @subscriber.save
+
+    if @subscriber.update(subscriber_params)
       flash[:notice] = Spree.t(:success, scope: [:chimpy, :subscriber])
     else
       flash[:error] = Spree.t(:failure, scope: [:chimpy, :subscriber])
