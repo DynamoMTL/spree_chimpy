@@ -4,7 +4,7 @@ describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, true, nil) }
   let(:api)       { double(:api) }
   let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
-  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
+  let(:key)       { '857e2096b21e5eb385b9dce2add84434-us14' }
 
   before do
     Spree::Chimpy::Config.key = key

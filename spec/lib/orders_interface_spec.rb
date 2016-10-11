@@ -4,7 +4,7 @@ describe Spree::Chimpy::Interface::Orders do
   let(:interface) { described_class.new }
   let(:api)       { double(:api) }
   let(:list)      { double() }
-  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
+  let(:key)       { '857e2096b21e5eb385b9dce2add84434-us14' }
 
   def create_order(options={})
     user  = create(:user, email: options[:email])
