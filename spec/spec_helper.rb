@@ -22,6 +22,7 @@ require 'capybara/poltergeist'
 
 Capybara.javascript_driver = :poltergeist
 
+
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
@@ -46,4 +47,3 @@ RSpec.configure do |config|
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 end
-

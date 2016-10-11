@@ -2,7 +2,7 @@ require 'spree_core'
 require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
 require 'spree/chimpy/workers/delayed_job'
-require 'mailchimp'
+require 'gibbon'
 require 'coffee_script'
 
 module Spree::Chimpy
@@ -26,11 +26,11 @@ module Spree::Chimpy
   end
 
   def reset
-    @list = @api = @orders = nil
+    @list = @orders = nil
   end
 
   def api
-    @api = Mailchimp::API.new(Config.key, Config.api_options) if configured?
+    Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
   end
 
   def list

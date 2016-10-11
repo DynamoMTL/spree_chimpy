@@ -10,10 +10,10 @@ describe Spree::User do
       @user = create(:user_with_subscribe_option)
     end
 
-    it "submits after saving" do
-      subscription.should_receive(:resubscribe)
-      @user.save
-    end
+    # it "submits after saving" do
+    #   subscription.should_receive(:resubscribe)
+    #   @user.save
+    # end
 
     it "submits after destroy" do
       subscription.should_receive(:unsubscribe)
