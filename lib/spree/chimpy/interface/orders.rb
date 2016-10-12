@@ -103,7 +103,7 @@ module Spree::Chimpy
 
         all_variants = product.variants.any? ? product.variants : [product.master]
         data = {
-          id: product.id,
+          id: product.id.to_s,
           title: product.name,
           handle: product.slug,
           url: product_url_or_default(variant.product),
@@ -123,7 +123,7 @@ module Spree::Chimpy
 
       def variant_hash(variant)
         {
-          id: variant.id,
+          id: variant.id.to_s,
           title: variant.name,
           sku: variant.sku,
           url: product_url_or_default(variant.product),

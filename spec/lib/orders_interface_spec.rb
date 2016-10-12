@@ -126,13 +126,13 @@ describe Spree::Chimpy::Interface::Orders do
         expect(first_product_api).to receive(:create) do |h|
           product = order.line_items.first.variant.product
           expect(h[:body]).to include({
-            id: product.id,
+            id: product.id.to_s,
             title: product.name,
             handle: product.slug,
           })
           expect(h[:body][:url]).to include("/products/#{product.slug}")
           v = h[:body][:variants].first
-          expect(v[:id]).to eq product.master.id
+          expect(v[:id]).to eq product.master.id.to_s
           expect(v[:title]).to eq product.master.name
           expect(v[:sku]).to eq product.master.sku
           expect(v[:price]).to eq product.master.price
