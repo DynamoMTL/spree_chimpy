@@ -126,7 +126,8 @@ module Spree::Chimpy
       def create_segment
         log "Creating segment #{@segment_name}"
 
-        @segment_id = api_list_call.segments.create(body: { name: @segment_name})
+        result = api_list_call.segments.create(body: { name: @segment_name, static_segment: []})
+        @segment_id = result["id"]
       end
 
       def find_segment_id

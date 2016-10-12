@@ -146,6 +146,16 @@ describe Spree::Chimpy::Interface::List do
     interface.segment(emails)
   end
 
+  it "creates the segment" do
+    expect(segments_api).to receive(:create).with(
+      body: {
+        name: "customers",
+        static_segment: []
+      }
+    ).and_return({ "id" => 3959 })
+    expect(interface.create_segment).to eq 3959
+  end
+
   it "find list id" do
     expect(interface.list_id).to eq list_id
   end
