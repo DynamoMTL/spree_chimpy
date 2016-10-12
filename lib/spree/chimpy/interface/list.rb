@@ -56,11 +56,11 @@ module Spree::Chimpy
       end
 
       def email_for_id(mc_eid)
-        log "Checking email for #{mc_eid} from #{@list_name}"
+        log "Checking customer id for #{mc_eid} from #{@list_name}"
         begin
           response = api_list_call
             .members
-            .retrieve(params: { "unique_email_id" => mc_eid })
+            .retrieve(params: { "unique_email_id" => mc_eid, "fields" => "members.id,members.email_address" })
 
           member_data = response["members"].first
           member_data["email_address"] if member_data

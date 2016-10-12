@@ -13,7 +13,7 @@ describe Spree::Chimpy::Interface::List do
   let(:segments_response) { {"segments"=>[{"id"=>segment_id, "name"=>"Customers"}]} }
   let(:info_response)     { {"email_address"=>email, "merge_fields"=>{"FNAME"=>"Jane", "LNAME"=>"Doe","SIZE" => '10'}} }
   let(:merge_response)    { {"merge_fields"=>[{"tag"=>"FNAME", "name"=>"First Name"}, {"tag"=>"LNAME", "name"=>"Last Name"}]} }
-  let(:members_response)  { {"members"=> [{"email_address"=>email, "unique_email_id"=>mc_eid, "email_type"=>"html", "status"=>"subscribed", "merge_fields"=>{"FNAME"=>"", "LNAME"=>"", "SIZE"=>"10"}}] } }
+  let(:members_response)  { {"members"=> [{"id" => "customer_123", "email_address"=>email, "unique_email_id"=>mc_eid, "email_type"=>"html", "status"=>"subscribed", "merge_fields"=>{"FNAME"=>"", "LNAME"=>"", "SIZE"=>"10"}}] } }
 
   let(:email)             { 'user@example.com' }
 
@@ -96,13 +96,13 @@ describe Spree::Chimpy::Interface::List do
     describe "email_for_id" do
       it "can find the email address for a unique_email_id (mc_eid)" do
         expect(members_api).to receive(:retrieve).with(
-          params: { "unique_email_id" => mc_eid }
+          params: { "unique_email_id" => mc_eid, "fields" => "members.id,members.email_address" }
         ).and_return(members_response)
         expect(interface.email_for_id(mc_eid)).to eq email
       end
       it "returns nil when empty array returned" do
         expect(members_api).to receive(:retrieve).with(
-          params: { "unique_email_id" => mc_eid }
+          params: { "unique_email_id" => mc_eid, "fields" => "members.id,members.email_address" }
         ).and_return({ "members" => [] })
         expect(interface.email_for_id(mc_eid)).to be_nil
       end

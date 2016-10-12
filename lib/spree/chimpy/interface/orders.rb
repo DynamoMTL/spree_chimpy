@@ -12,26 +12,9 @@ module Spree::Chimpy
       end
 
       def add(order)
-        if source = order.source
-          # use the one from mail chimp or fall back to the order's email
-          # happens when this is a new user
-          expected_email = (Spree::Chimpy.list.email_for_id(source.email_id) || order.email).to_s
-        else
-          expected_email = order.email
-        end
-
         ensure_products(order)
-        data = hash(order, expected_email)
-        log "Adding order #{order.number} for #{expected_email} with campaign #{data[:campaign_id]}"
-        begin
-          api_call.orders(order.number).upsert(body: data)
-        rescue Gibbon::MailChimpError => e
-          if source
-            log "invalid eid (#{source.email_id}) for email #{expected_email} [#{e.raw_body}]"
-          else
-            log "invalid email #{expected_email} [#{e.raw_body}]"
-          end
-        end
+        customer_id = ensure_customer(order)
+        upsert_order(order, customer_id)
       end
 
       def remove(order)
@@ -78,6 +61,52 @@ module Spree::Chimpy
         end
       end
 
+      # CUSTOMER will be pulled first from the MC_EID if present on the order.source
+      # IF that is not found, customer will be found by our Customer ID
+      # IF that is not found, customer is created with the order email and our Customer ID
+      def ensure_customer(order)
+        # use the one from mail chimp or fall back to the order's email
+        # happens when this is a new user
+        customer_id = customer_id_from_eid(order.source.email_id) if order.source
+
+        customer_id || upsert_customer(order)
+      end
+
+      def upsert_customer(order)
+        customer_id = mailchimp_customer_id(order)
+        begin
+          response = api_call
+            .customers(customer_id)
+            .retrieve(params: { "fields" => "id,email_address"})
+        rescue Gibbon::MailChimpError => e
+          # Customer Not Found, so create them
+          response = api_call
+            .customers
+            .create(body: {
+              id: customer_id,
+              email_address: order.email.downcase,
+              opt_in_status: Spree::Chimpy::Config.subscribe_to_list || false
+            })
+        end
+        customer_id
+      end
+
+      def customer_id_from_eid(mc_eid)
+        email = Spree::Chimpy.list.email_for_id(mc_eid)
+        if email
+          begin
+            response = api_call
+              .customers
+              .retrieve(params: { "fields" => "customers.id", "email_address" => email })
+
+            data = response["customers"].first
+            data["id"] if data
+          rescue Gibbon::MailChimpError => e
+            nil
+          end
+        end
+      end
+
       def upsert_variants(product)
         all_variants = product.variants.any? ? product.variants : [product.master]
         all_variants.each do |v|
@@ -103,7 +132,7 @@ module Spree::Chimpy
 
         all_variants = product.variants.any? ? product.variants : [product.master]
         data = {
-          id: product.id.to_s,
+          id: mailchimp_product_id(variant),
           title: product.name,
           handle: product.slug,
           url: product_url_or_default(variant.product),
@@ -123,7 +152,7 @@ module Spree::Chimpy
 
       def variant_hash(variant)
         {
-          id: variant.id.to_s,
+          id: mailchimp_variant_id(variant),
           title: variant.name,
           sku: variant.sku,
           url: product_url_or_default(variant.product),
@@ -152,17 +181,37 @@ module Spree::Chimpy
         end
       end
 
-      def hash(order, expected_email)
+      def upsert_order(order, customer_id)
+        data = hash(order, customer_id)
+        log "Adding order #{order.number} for #{customer_id} with campaign #{data[:campaign_id]}"
+        begin
+          response = api_call.orders(order.number).retrieve(params: { "fields" => "id" })
+          log "Order #{order.number} exists, updating data"
+          api_call.orders(order.number).update(body: data)
+        rescue Gibbon::MailChimpError => e
+          log "Order #{order.number} Not Found, creating order"
+          create_order(data)
+        end
+      end
+
+      def create_order(data)
+        api_call
+          .orders
+          .create(body: data)
+      rescue Gibbon::MailChimpError => e
+        log "Unable to create order #{order.number}. [#{e.raw_body}]"
+      end
+
+      def hash(order, customer_id)
         source = order.source
 
         lines = order.line_items.map do |line|
           # MC can only associate the order with a single category: associate the order with the category right below the root level taxon
           variant = line.variant
-
           {
             id: "line_item_#{line.id}",
-            product_id:    variant.product_id,
-            product_variant_id: variant.id,
+            product_id:    mailchimp_product_id(variant),
+            product_variant_id: mailchimp_variant_id(variant),
             price:          variant.price.to_f,
             quantity:           line.quantity
           }
@@ -179,20 +228,28 @@ module Spree::Chimpy
           updated_at_foreign: order.updated_at.to_formatted_s(:db),
           shipping_total:    order.ship_total.to_f,
           tax_total:         order.try(:included_tax_total).to_f + order.try(:additional_tax_total).to_f,
+          customer: {
+            id: customer_id
+          }
         }
 
-        if source && expected_email.upcase == order.email.upcase
-          data[:email_id]    = source.email_id
+        if source
           data[:campaign_id] = source.campaign_id
         end
 
-        data[:customer] = {
-          id: "customer_#{order.user_id}",
-          email_address: order.email.downcase,
-          opt_in_status: Spree::Chimpy::Config.subscribe_to_list || false
-        }
-
         data
+      end
+
+      def mailchimp_customer_id(order)
+        "customer_#{order.user_id}"
+      end
+
+      def mailchimp_variant_id(variant)
+        variant.id.to_s
+      end
+
+      def mailchimp_product_id(variant)
+        variant.product_id.to_s
       end
 
     end
