@@ -61,7 +61,7 @@ module Spree::Chimpy
       def product_exists_in_mailchimp?(product)
         response = api_call
           .products(product.id)
-          .retrieve(fields: "id")
+          .retrieve(params: { "fields" => "id" })
         !response["id"].nil?
       end
 
