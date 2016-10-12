@@ -55,12 +55,26 @@ module Spree::Chimpy
         end
       end
 
-      def info(email_or_id)
-        log "Checking member info for #{email_or_id} from #{@list_name}"
+      def email_for_id(mc_eid)
+        log "Checking email for #{mc_eid} from #{@list_name}"
+        begin
+          response = api_list_call
+            .members
+            .retrieve(params: { "unique_email_id" => mc_eid })
+
+          member_data = response["members"].first
+          member_data["email_address"] if member_data
+        rescue Gibbon::MailChimpError => ex
+          nil
+        end
+      end
+
+      def info(email)
+        log "Checking member info for #{email} from #{@list_name}"
 
         #maximum of 50 emails allowed to be passed in
         begin
-          response = api_member_call(email_or_id)
+          response = api_member_call(email)
             .retrieve(params: { "fields" => "email_address,merge_fields"})
 
           response = response.symbolize_keys
@@ -132,11 +146,8 @@ module Spree::Chimpy
         api_call(list_id)
       end
 
-      def api_member_call(email_or_id)
-        if email_or_id !~ /^[a-f0-9]{32}$/i
-          email_or_id = email_to_lower_md5(email_or_id)
-        end
-        api_list_call.members(email_or_id)
+      def api_member_call(email)
+        api_list_call.members(email_to_lower_md5(email))
       end
 
       private
