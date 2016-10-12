@@ -63,6 +63,8 @@ module Spree::Chimpy
           .products(product.id)
           .retrieve(params: { "fields" => "id" })
         !response["id"].nil?
+      rescue Gibbon::MailChimpError => e
+        false
       end
 
       def ensure_product(variant)
@@ -71,7 +73,7 @@ module Spree::Chimpy
           upsert_variants(product)
         else
           api_call
-            .products(variant.product_id)
+            .products
             .create(body: product_hash(variant))
         end
       end

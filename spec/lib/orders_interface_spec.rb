@@ -115,16 +115,10 @@ describe Spree::Chimpy::Interface::Orders do
       before(:each) do
         create(:taxon)
 
-        #stub 2-N
         allow(store_api).to receive(:products)
-          .and_return(product_api)
+          .and_return(first_product_api, product_api, product_api, product_api, product_api)
 
         allow(product_api).to receive(:create)
-
-        #stub first
-        allow(store_api).to receive(:products)
-          .with(order.line_items.first.variant.product_id)
-          .and_return(first_product_api)
         allow(interface).to receive(:product_exists_in_mailchimp?).and_return(false)
       end
 
@@ -142,7 +136,6 @@ describe Spree::Chimpy::Interface::Orders do
           expect(v[:title]).to eq product.master.name
           expect(v[:sku]).to eq product.master.sku
           expect(v[:price]).to eq product.master.price
-
         end
 
         interface.send(:ensure_products, order)
