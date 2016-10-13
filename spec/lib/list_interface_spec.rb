@@ -74,7 +74,7 @@ describe Spree::Chimpy::Interface::List do
   context "member info" do
     it "find when no errors" do
       expect(member_api).to receive(:retrieve).with(
-        { params: { "fields" => "email_address,merge_fields" } }
+        { params: { "fields" => "email_address,merge_fields,status" } }
       ).and_return(info_response)
       expect(interface.info(email)).to include(
         email_address: email,
@@ -83,7 +83,7 @@ describe Spree::Chimpy::Interface::List do
     end
     it "adds legacy field email for backwards compatibility" do
       expect(member_api).to receive(:retrieve).with(
-        { params: { "fields" => "email_address,merge_fields" } }
+        { params: { "fields" => "email_address,merge_fields,status" } }
       ).and_return(info_response)
       expect(interface.info(email)).to include(email: email)
     end

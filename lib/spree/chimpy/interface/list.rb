@@ -75,7 +75,7 @@ module Spree::Chimpy
         #maximum of 50 emails allowed to be passed in
         begin
           response = api_member_call(email)
-            .retrieve(params: { "fields" => "email_address,merge_fields"})
+            .retrieve(params: { "fields" => "email_address,merge_fields,status"})
 
           response = response.symbolize_keys
           response.merge(:email => response[:email_address])
