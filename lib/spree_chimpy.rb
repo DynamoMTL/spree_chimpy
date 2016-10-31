@@ -33,6 +33,10 @@ module Spree::Chimpy
     Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
   end
 
+  def store_api_call
+    Spree::Chimpy.api.ecommerce.stores(Spree::Chimpy::Config.store_id)
+  end
+
   def list
     @list ||= Interface::List.new(Config.list_name,
                         Config.customer_segment_name,

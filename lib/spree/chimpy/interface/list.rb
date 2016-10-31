@@ -78,7 +78,7 @@ module Spree::Chimpy
             .retrieve(params: { "fields" => "email_address,merge_fields,status"})
 
           response = response.symbolize_keys
-          response.merge(:email => response[:email_address])
+          response.merge(email: response[:email_address])
         rescue Gibbon::MailChimpError
           {}
         end
