@@ -49,6 +49,10 @@ module Spree::Chimpy
     list.list_id
   end
 
+  def segment_enabled?
+    !Config.customer_segment_name.blank?
+  end
+
   def segment_exists?
     list.segment_id
   end
@@ -88,7 +92,7 @@ module Spree::Chimpy
   end
 
   def ensure_segment
-    if list_exists? && !segment_exists?
+    if list_exists? && segment_enabled? && !segment_exists?
       create_segment
       Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{Config.customer_segment_name}` was not found. Creating it now")
     end

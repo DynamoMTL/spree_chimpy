@@ -4,7 +4,7 @@ describe Spree::Chimpy::Interface::List do
   let(:interface) { described_class.new('Members', 'customers', true, true, nil) }
   let(:api)       { double(:api) }
   let(:lists)     { double(:lists, :[] => [{"name" => "Members", "id" => "a3d3" }] ) }
-  let(:key)       { 'e025fd58df5b66ebd5a709d3fcf6e600-us8' }
+  let(:key)       { '857e2096b21e5eb385b9dce2add84434-us14' }
 
   before do
     Spree::Chimpy::Config.key = key
@@ -59,6 +59,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "segments users" do
+    Spree::Chimpy::Config.customer_segment_name = "customers"
     expect(lists).to receive(:subscribe).
       with('a3d3', {email: 'user@example.com'}, {'SIZE' => '10'},
             'html', true, true, true, true)
@@ -68,6 +69,7 @@ describe Spree::Chimpy::Interface::List do
   end
 
   it "segments" do
+    Spree::Chimpy::Config.customer_segment_name = "customers"
     expect(lists).to receive(:static_segments).with('a3d3').and_return([{"id" => '123', "name" => "customers"}])
     expect(lists).to receive(:static_segment_members_add).with('a3d3', 123, [{email: "test@test.nl"}, {email: "test@test.com"}])
     interface.segment(["test@test.nl", "test@test.com"])
@@ -88,5 +90,14 @@ describe Spree::Chimpy::Interface::List do
   it "adds a merge var" do
     expect(lists).to receive(:merge_var_add).with("a3d3", "SIZE", "Your Size")
     interface.add_merge_var('SIZE', 'Your Size')
+  end
+
+  it "does not segment users when no segment provided" do
+    Spree::Chimpy::Config.customer_segment_name = ""
+    allow(lists).to receive(:subscribe)
+
+    expect(lists).to_not receive(:static_segment_members_add)
+
+    interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
   end
 end

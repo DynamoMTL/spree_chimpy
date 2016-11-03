@@ -1,7 +1,7 @@
 module Spree::Chimpy
   module Interface
     class List
-      delegate :log, to: Spree::Chimpy
+      delegate :log, :segment_enabled?, to: Spree::Chimpy
 
       def initialize(list_name, segment_name, double_opt_in, send_welcome_email, list_id)
         @api           = Spree::Chimpy.api
@@ -73,6 +73,8 @@ module Spree::Chimpy
       end
 
       def segment(emails = [])
+        return unless segment_enabled?
+
         log "Adding #{emails} to segment #{@segment_name} [#{segment_id}] in list [#{list_id}]"
 
         params = emails.map { |email| { email: email } }
