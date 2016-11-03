@@ -73,6 +73,15 @@ describe Spree::Chimpy::Interface::OrderUpserter do
       interface.upsert
     end
 
+    it "does not perform the order upsert if no customer_id exists" do
+      expect(customer_upserter).to receive(:ensure_customer)
+        .and_return(nil)
+
+      expect(interface).to_not receive(:perform_upsert)
+
+      interface.upsert
+    end
+
     context "when order already exists" do
       before(:each) do
         allow(order_api).to receive(:retrieve)

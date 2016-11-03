@@ -40,14 +40,23 @@ describe Spree::Chimpy::Interface::CustomerUpserter do
       expect(interface.ensure_customer).to eq "customer_999"
     end
 
-    it "upserts the customer when not found by order source" do
-      allow(interface).to receive(:customer_id_from_eid)
-        .with('id-abcd')
-        .and_return(nil)
+    context "when no customer from order source" do
+      before(:each) do
+        allow(interface).to receive(:customer_id_from_eid)
+          .with('id-abcd')
+          .and_return(nil)
+      end
 
-      allow(interface).to receive(:upsert_customer) { "customer_998" }
+      it "upserts the customer" do
+        allow(interface).to receive(:upsert_customer) { "customer_998" }
 
-      expect(interface.ensure_customer).to eq "customer_998"
+        expect(interface.ensure_customer).to eq "customer_998"
+      end
+
+      it "returns nil if guest checkout" do
+        order.user_id = nil
+        expect(interface.ensure_customer).to be_nil
+      end
     end
   end
 
