@@ -2,7 +2,7 @@ require 'spree_core'
 require 'spree/chimpy/engine'
 require 'spree/chimpy/subscription'
 require 'spree/chimpy/workers/delayed_job'
-require 'mailchimp'
+require 'gibbon'
 require 'coffee_script'
 
 module Spree::Chimpy
@@ -26,11 +26,15 @@ module Spree::Chimpy
   end
 
   def reset
-    @list = @api = @orders = nil
+    @list = @orders = nil
   end
 
   def api
-    @api = Mailchimp::API.new(Config.key, Config.api_options) if configured?
+    Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
+  end
+
+  def store_api_call
+    Spree::Chimpy.api.ecommerce.stores(Spree::Chimpy::Config.store_id)
   end
 
   def list
@@ -103,6 +107,8 @@ module Spree::Chimpy
                              run_at: Proc.new { 4.minutes.from_now })
     when defined?(::Sidekiq)
       Spree::Chimpy::Workers::Sidekiq.perform_in(4.minutes, payload.except(:object))
+    when defined?(::Resque)
+      ::Resque.enqueue(Spree::Chimpy::Workers::Resque, payload.except(:object))
     else
       perform(payload)
     end
