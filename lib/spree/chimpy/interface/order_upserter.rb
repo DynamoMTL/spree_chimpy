@@ -7,8 +7,15 @@ module Spree::Chimpy
         @order = order
       end
 
+      def customer_id
+        @customer_id ||= CustomerUpserter.new(@order).ensure_customer
+      end
+
       def upsert
+        return unless customer_id
+
         Products.ensure_products(@order)
+
         perform_upsert
       end
 
@@ -52,7 +59,6 @@ module Spree::Chimpy
       end
 
       def order_hash
-        customer_id = CustomerUpserter.new(@order).ensure_customer
         source = @order.source
 
         lines = @order.line_items.map do |line|
