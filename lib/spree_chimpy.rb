@@ -30,7 +30,7 @@ module Spree::Chimpy
   end
 
   def api
-    Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
+    Gibbon::Request.new(api_key: Config.key, timeout: Config.api_options[:timeout]) if configured?
   end
 
   def store_api_call
