@@ -30,12 +30,12 @@ module Spree::Chimpy
   end
 
   def api
-    debugger
+    # debugger
     Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
   end
 
   def store_api_call
-    debugger
+    # debugger
     Spree::Chimpy.api.ecommerce.stores(Spree::Chimpy::Config.store_id)
   end
 
@@ -125,7 +125,7 @@ module Spree::Chimpy
   end
 
   def perform(payload)
-    debugger
+    # debugger
     return unless configured?
 
     event  = payload[:event].to_sym
