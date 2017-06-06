@@ -30,10 +30,12 @@ module Spree::Chimpy
   end
 
   def api
+    debugger
     Gibbon::Request.new({ api_key: Config.key }.merge(Config.api_options)) if configured?
   end
 
   def store_api_call
+    debugger
     Spree::Chimpy.api.ecommerce.stores(Spree::Chimpy::Config.store_id)
   end
 
@@ -47,6 +49,10 @@ module Spree::Chimpy
 
   def orders
     @orders ||= Interface::Orders.new if configured?
+  end
+
+  def carts
+    @carts ||= Interface::Carts.new if configured?
   end
 
   def list_exists?
@@ -119,12 +125,15 @@ module Spree::Chimpy
   end
 
   def perform(payload)
+    debugger
     return unless configured?
 
     event  = payload[:event].to_sym
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
     case event
+    when :cart
+      carts.sync(object)
     when :order
       orders.sync(object)
     when :subscribe
