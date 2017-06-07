@@ -136,6 +136,7 @@ module Spree::Chimpy
       carts.sync(object)
     when :order
       orders.sync(object)
+      store_api_call.carts(object.number).delete
     when :subscribe
       list.subscribe(object.email, merge_vars(object), customer: object.is_a?(Spree.user_class))
     when :unsubscribe
