@@ -40,7 +40,6 @@ module Spree::Chimpy
       end
 
       def create_cart(data)
-        # debugger
         store_api_call
           .carts
           .create(body: data)
