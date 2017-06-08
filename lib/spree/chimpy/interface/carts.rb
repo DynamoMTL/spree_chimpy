@@ -7,7 +7,7 @@ module Spree::Chimpy
       end
 
       def add(cart)
-        # debugger
+        debugger
         CartUpserter.new(cart).upsert
       end
 
@@ -22,7 +22,7 @@ module Spree::Chimpy
       end
 
       def sync(cart)
-        # debugger
+        debugger
         add(cart)
       rescue Gibbon::MailChimpError => e
         log "invalid ecomm cart error [#{e.raw_body}]"

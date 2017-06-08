@@ -125,7 +125,7 @@ module Spree::Chimpy
   end
 
   def perform(payload)
-    # debugger
+    debugger
     return unless configured?
 
     event  = payload[:event].to_sym
