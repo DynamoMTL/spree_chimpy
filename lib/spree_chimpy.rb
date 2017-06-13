@@ -132,8 +132,15 @@ module Spree::Chimpy
     when :cart
       carts.sync(object)
     when :order
+      debugger
       orders.sync(object)
-      store_api_call.carts(object.number).delete
+      begin
+        if store_api_call.carts(object.number).retrieve(params: { "fields" => "id" })
+          store_api_call.carts(object.number).delete
+        end
+      rescue Gibbon::MailChimpError => e
+        log "No cart found, skip delete"
+      end
     when :subscribe
       list.subscribe(object.email, merge_vars(object), customer: object.is_a?(Spree.user_class))
     when :unsubscribe
