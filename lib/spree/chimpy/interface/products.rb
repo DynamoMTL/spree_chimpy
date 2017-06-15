@@ -91,7 +91,7 @@ module Spree::Chimpy
           sku: variant.sku,
           url: product_url_or_default(variant.product),
           price: variant.price.to_f,
-          image_url: variant_image_url(variant).to_s,
+          image_url: variant_image_url(variant),
           inventory_quantity: variant.total_on_hand == Float::INFINITY ? 999 : variant.total_on_hand
         }
       end
@@ -101,6 +101,8 @@ module Spree::Chimpy
           variant.images.first.attachment.url(:product)
         elsif variant.product.images.any?
           variant.product.images.first.attachment.url(:product)
+        else
+          ""  
         end
       end
 
