@@ -132,7 +132,6 @@ module Spree::Chimpy
     when :cart
       carts.sync(object)
     when :order
-      debugger
       orders.sync(object)
       begin
         if store_api_call.carts(object.number).retrieve(params: { "fields" => "id" })
