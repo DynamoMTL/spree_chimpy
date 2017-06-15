@@ -97,7 +97,6 @@ module Spree::Chimpy
       end
 
       def self.variant_image_url(variant)
-        debugger
         if variant.images.any?
           variant.images.first.attachment.url(:product)
         elsif variant.product.images.any?
