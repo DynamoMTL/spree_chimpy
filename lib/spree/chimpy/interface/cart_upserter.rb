@@ -68,7 +68,7 @@ module Spree::Chimpy
 
         data = {
           id:                @cart.number,
-          checkout_url:      "http://localhost:3000/checkout",
+          checkout_url:      "https://www.sweetist.com/checkout",
           lines:             lines,
           order_total:       @cart.total.to_f,
           financial_status:  @cart.payment_state || "",
