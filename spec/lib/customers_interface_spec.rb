@@ -23,124 +23,144 @@ describe Spree::Chimpy::Interface::CustomerUpserter do
     Spree::Chimpy::Config.subscribe_to_list = true
   end
 
-  describe ".ensure_customers" do
-
-    #TODO: Changed from skips sync when mismatch -
-    # Updated logic takes the customer attached to the mc_eid regardless of email matching order
-    # When no customer exists for that mc_eid, it will create the customer for the order email
-    # Should this remain due to v3.0 updates?
-    it "retrieves the customer id from the order source if it exists" do
-      order.source = Spree::Chimpy::OrderSource.new(email_id: 'id-abcd')
-      order.save
-
-      allow(interface).to receive(:customer_id_from_eid)
-        .with('id-abcd')
-        .and_return("customer_999")
-
-      expect(interface.ensure_customer).to eq "customer_999"
+  describe ".ensure_customer" do
+    # Cascading lookup of eid, own customer_id, email address, upsert
+    it "first tries the eid lookup" do
+      expect(interface).
+        to receive(:lookup_customer_id_from_eid).and_return(:foobar)
+      expect(interface.ensure_customer).to eq :foobar
     end
 
-    context "when no customer from order source" do
-      before(:each) do
-        allow(interface).to receive(:customer_id_from_eid)
-          .with('id-abcd')
-          .and_return(nil)
+    describe "eid fails" do
+      before :each do
+        expect(interface).
+          to receive(:lookup_customer_id_from_eid).and_return(nil)
       end
 
-      it "upserts the customer" do
-        allow(interface).to receive(:upsert_customer) { "customer_998" }
-
-        expect(interface.ensure_customer).to eq "customer_998"
+      it "then tries the customer_id lookup" do
+        expect(interface).
+          to receive(:lookup_customer_id_from_user_id).and_return(:foobar)
+        expect(interface.ensure_customer).to eq :foobar
       end
 
-      it "returns nil if guest checkout" do
-        order.user_id = nil
-        expect(interface.ensure_customer).to be_nil
+      describe "customer_id lookup fails" do
+        before :each do
+          expect(interface).
+            to receive(:lookup_customer_id_from_user_id).and_return(nil)
+        end
+
+        it "then tries the email address lookup" do
+          expect(interface).to \
+            receive(:lookup_customer_id_from_email_address).and_return(:foobar)
+          expect(interface.ensure_customer).to eq :foobar
+        end
+
+        describe "email address lookup fails" do
+          before :each do
+            expect(interface).to \
+              receive(:lookup_customer_id_from_email_address).and_return(nil)
+          end
+
+          it "then upserts the customer" do
+            expect(interface).
+              to receive(:upsert_customer).and_return(:foobar)
+            expect(interface.ensure_customer).to eq :foobar
+          end
+        end
       end
     end
   end
 
+  describe "#mailchimp_customer_id" do
+    it "picks customer_* for orders with customers" do
+      expect(interface.send(:mailchimp_customer_id)).
+        to eq "customer_#{order.user_id}"
+    end
+
+    it "picks guest_* for guest orders" do
+      order.user = nil
+      expect(interface.send(:mailchimp_customer_id)).
+        to start_with("guest_")
+    end
+  end
+
   describe "#upsert_customer" do
+    let(:customer_id) { "customer_#{order.user_id}" }
 
-    before(:each) do
-      allow(store_api).to receive(:customers)
-        .and_return(customers_api)
-      allow(store_api).to receive(:customers)
-        .with("customer_#{order.user_id}")
-        .and_return(customer_api)
+    before :each do
+      allow(store_api).to receive(:customers).with(anything).
+        and_return customers_api
+      allow(customers_api).to receive(:upsert).and_return(nil)
     end
 
-    it "retrieves based on the customer_id" do
-      expect(customer_api).to receive(:retrieve)
-        .with(params: { "fields" => "id,email_address"})
-        .and_return({ "id" => "customer_#{order.user_id}", "email_address" => order.email})
-
-      customer_id = interface.send(:upsert_customer)
-      expect(customer_id).to eq "customer_#{order.user_id}"
+    it "upserts the customer" do
+      expect(interface.send(:upsert_customer)).to eq "customer_#{order.user_id}"
     end
 
-    it "creates the customer when lookup fails" do
-      allow(customer_api).to receive(:retrieve)
-        .and_raise(Gibbon::MailChimpError)
+    it "sets first_name and last_name" do
+      expect(customers_api).to receive(:upsert) do |h|
+        body = h[:body]
+        expect(body[:first_name]).to be_present
+        expect(body[:last_name]).to be_present
+      end
 
-      expect(customers_api).to receive(:create)
-        .with(:body => {
-          id: "customer_#{order.user_id}",
-          email_address: order.email.downcase,
-          opt_in_status: true
-          })
+      interface.send :upsert_customer
+    end
 
-      customer_id = interface.send(:upsert_customer)
-      expect(customer_id).to eq "customer_#{order.user_id}"
+    it "picks the id from #mailchimp_customer_id" do
+      expect(interface).to receive(:mailchimp_customer_id).and_return "foobar"
+
+      expect(interface.send(:upsert_customer)).to eq "foobar"
     end
 
     it "honors subscribe_to_list settings" do
       Spree::Chimpy::Config.subscribe_to_list = false
 
-      allow(customer_api).to receive(:retrieve)
-        .and_raise(Gibbon::MailChimpError)
-
-      expect(customers_api).to receive(:create) do |h|
+      expect(customers_api).to receive(:upsert) do |h|
         expect(h[:body][:opt_in_status]).to eq false
       end
+
       interface.send(:upsert_customer)
     end
   end
 
-  describe "#customer_id_from_eid" do
+  describe "#lookup_customer_id_from_eid" do
     let(:email) { "user@example.com" }
     before(:each) do
       allow(store_api).to receive(:customers) { customers_api }
     end
 
-    it "returns based on the mailchimp email address when found" do
-      allow(list).to receive(:email_for_id).with("id-abcd")
-        .and_return(email)
-
-      expect(customers_api).to receive(:retrieve)
-        .with(params: { "fields" => "customers.id", "email_address" => email})
-        .and_return({ "customers" => [{"id" => "customer_xyz"}] })
-
-      id = interface.customer_id_from_eid("id-abcd")
-      expect(id).to eq "customer_xyz"
+    it "does not lookup and returns nil if there is no source" do
+      expect(store_api).to_not receive(:customers)
+      interface.order.source = nil
+      expect(interface.lookup_customer_id_from_eid).to be_nil
     end
 
-    it "is nil if email for id not found" do
-      allow(list).to receive(:email_for_id).with("id-abcd")
-        .and_return(nil)
+    describe "with an email source" do
+      it "is nil if email for id not found" do
+        allow(list).to receive(:email_for_id).with(email_id).and_return(nil)
 
-      expect(interface.customer_id_from_eid("id-abcd")).to be_nil
-    end
+        expect(interface.lookup_customer_id_from_eid).to be_nil
+      end
 
-    it "is nil if email not found among customers" do
-      allow(list).to receive(:email_for_id)
-        .with("id-abcd")
-        .and_return(email)
+      describe "with a found email_id" do
+        before :each do
+          allow(list).to receive(:email_for_id).with(email_id).and_return(email)
+        end
 
-      expect(customers_api).to receive(:retrieve)
-        .and_raise(Gibbon::MailChimpError)
+        it "is nil if email not found among customers" do
+          expect(customers_api).to receive(:retrieve).
+            and_raise(Gibbon::MailChimpError)
 
-      expect(interface.customer_id_from_eid("id-abcd")).to be_nil
+          expect(interface.lookup_customer_id_from_eid).to be_nil
+        end
+
+        it "returns the customer_id if found" do
+          expect(customers_api).to receive(:retrieve).and_return \
+            "customers" => [{ "id" => "customer_123" }]
+          expect(interface.lookup_customer_id_from_eid).to eq "customer_123"
+        end
+      end
     end
   end
 end
