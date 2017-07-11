@@ -132,7 +132,11 @@ module Spree::Chimpy
     when :cart
       carts.sync(object)
     when :order
-      orders.sync(object)
+      if object.canceled?
+        orders.remove(object)
+      else
+        orders.sync(object)
+      end
       begin
         if store_api_call.carts(object.number).retrieve(params: { "fields" => "id" })
           store_api_call.carts(object.number).delete
