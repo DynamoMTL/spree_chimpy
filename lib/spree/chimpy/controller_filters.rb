@@ -18,8 +18,8 @@ module Spree::Chimpy
     end
 
     def mailchimp_params?
-      (!mc_eid.nil? || !mc_cid.nil?) &&
-        (!session[:order_id].nil? || !params[:record_mc_details].nil?)
+      (!mc_eid.nil? || !mc_cid.nil?)
+        #&& (!session[:order_id].nil? || !params[:record_mc_details].nil?)
     end
 
     def find_mail_chimp_params
