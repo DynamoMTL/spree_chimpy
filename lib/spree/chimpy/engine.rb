@@ -13,7 +13,8 @@ module Spree::Chimpy
     initializer 'spree_chimpy.ensure' do
       if !Rails.env.test? && Spree::Chimpy.configured?
         Spree::Chimpy.ensure_list
-        Spree::Chimpy.ensure_segment
+        # Commented as it was giving Gibbon::MailChimpError: the server responded with status 503
+        # Spree::Chimpy.ensure_segment
       end
     end
 
