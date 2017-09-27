@@ -6,15 +6,21 @@ Spree::Order.class_eval do
   end
 
   around_save :handle_cancelation
+  after_save :handle_mailchimp_cart
 
   def notify_mail_chimp
-    Spree::Chimpy.enqueue(:order, self) if completed? && Spree::Chimpy.configured?
+    Spree::Chimpy.enqueue(:order, self) if email.present? && Spree::Chimpy.configured?
   end
 
-private
+  private
   def handle_cancelation
     canceled = state_changed? && canceled?
     yield
     notify_mail_chimp if canceled
+  end
+
+  # Email is not available when transit from registration page to address page.
+  def handle_mailchimp_cart
+    notify_mail_chimp if email.present? && state == 'address'
   end
 end
