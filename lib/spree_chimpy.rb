@@ -122,7 +122,11 @@ module Spree::Chimpy
 
     case event
     when :order
-      orders.sync(object)
+      if object.canceled?
+        orders.remove(object)
+      else
+        orders.sync(object)
+      end
     when :subscribe
       list.subscribe(object.email, merge_vars(object), customer: object.is_a?(Spree.user_class))
     when :unsubscribe

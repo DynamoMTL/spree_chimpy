@@ -29,7 +29,11 @@ module Spree::Chimpy
               .retrieve(params: { "fields" => "customers.id", "email_address" => email })
 
             data = response["customers"].first
-            data["id"] if data
+            #data["id"] if data
+            if data
+              update_cutomer_orders(data["id"])
+              data["id"]
+            end
           rescue Gibbon::MailChimpError => e
             nil
           end
@@ -39,24 +43,44 @@ module Spree::Chimpy
       private
 
       def upsert_customer
-        return unless @order.user_id
+        customer_id = @order.user_id || "#{@order.email.downcase}"
 
-        customer_id = self.class.mailchimp_customer_id(@order.user_id)
+        customer_id = self.class.mailchimp_customer_id(customer_id)
         begin
           response = store_api_call
             .customers(customer_id)
             .retrieve(params: { "fields" => "id,email_address"})
+          update_cutomer_orders(response) if response.present? && response['id'].present?
         rescue Gibbon::MailChimpError => e
           # Customer Not Found, so create them
           response = store_api_call
             .customers
-            .create(body: {
-              id: customer_id,
-              email_address: @order.email.downcase,
-              opt_in_status: Spree::Chimpy::Config.subscribe_to_list || false
-            })
+            .create(body: data.merge(id: customer_id))
         end
         customer_id
+      end
+
+      def update_cutomer_orders(customer)
+        store_api_call
+          .customers(customer['id'])
+          .update(body: data.merge(id: customer['id']))
+      end
+
+      def data
+        {
+          email_address: @order.email.downcase,
+          opt_in_status: true,
+          orders_count: customer_orders.count,
+          total_spent: total_spent
+        }
+      end
+
+      def total_spent
+        customer_orders.pluck(:total).sum.round(2)
+      end
+
+      def customer_orders
+        Spree::Order.complete.where('email=?', @order.email)
       end
 
     end
