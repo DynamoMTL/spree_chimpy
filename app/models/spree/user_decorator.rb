@@ -1,11 +1,10 @@
 if Spree.user_class
   Spree.user_class.class_eval do
 
-    after_create  :subscribe
     after_destroy :unsubscribe
     after_initialize :assign_subscription_default
 
-    delegate :subscribe, :resubscribe, :unsubscribe, to: :subscription
+    delegate :resubscribe, :unsubscribe, to: :subscription
 
   private
     def subscription
