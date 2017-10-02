@@ -53,7 +53,7 @@ module Spree::Chimpy
             .create(body: {
               id: customer_id,
               email_address: @order.email.downcase,
-              opt_in_status: true
+              opt_in_status: Spree::Chimpy::Config.subscribe_to_list || false
             })
         end
         customer_id
