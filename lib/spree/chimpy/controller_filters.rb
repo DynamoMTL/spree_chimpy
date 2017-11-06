@@ -3,8 +3,8 @@ module Spree::Chimpy
     extend ActiveSupport::Concern
 
     included do
-      before_filter :set_mailchimp_params
-      before_filter :find_mail_chimp_params, if: :mailchimp_params?
+      before_action :set_mailchimp_params
+      before_action :find_mail_chimp_params, if: :mailchimp_params?
       include ::Spree::Core::ControllerHelpers::Order
     end
 
