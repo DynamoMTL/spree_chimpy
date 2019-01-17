@@ -29,6 +29,9 @@ Makes it easy to integrate your [Spree][1] app with [MailChimp][2].
 > to sync up all your existing order data with mail chimp. Run this after
 > installing spree_chimpy to an existing store.
 
+> Also provides `rake spree_chimpy:users:sync_from_mailchimp` which annotates
+> your spree users as being subscribed or not, according to Mailchimp.
+
 **Deferred Processing**
 > Communication between Spree and MailChimp is synchronous by default. If you
 > have `delayed_job` in your bundle, the communication is queued up and
