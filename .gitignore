@@ -13,5 +13,5 @@ pkg
 *.swp
 spec/dummy
 .bundle
-.node-version
 .ruby-version
+.node-version

@@ -6,14 +6,13 @@ feature 'Chimpy', :js do
   end
 
   scenario 'guest subscription deface data-hook confirmation' do
-    page.find('#footer-right')
+    page.find('#spree-header')
   end
 
   scenario 'user subscription with opt_in' do
     subscribe!
-
     expect(current_path).to eq spree.root_path
-    expect(page).to have_selector '.notice', text: 'Welcome! You have signed up successfully.'
+    expect(page).to have_selector '.alert-notice', text: 'Welcome! You have signed up successfully.'
     expect(Spree::User.count).to be(1)
     expect(Spree::User.first.subscribed).to be_truthy
   end
@@ -31,7 +30,7 @@ feature 'Chimpy', :js do
   def subscribe!
     expect(page).to have_text 'Sign me up to the newsletter'
 
-    fill_in 'Email', with: Faker::Internet.email
+    fill_in 'Email', with: FFaker::Internet.email
     fill_in 'Password', with: 'secret123'
     fill_in 'Password Confirmation', with: 'secret123'
 

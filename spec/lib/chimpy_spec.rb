@@ -63,6 +63,41 @@ describe Spree::Chimpy do
     end
   end
 
+  describe "segment_enabled?" do
+    it "is true when a segment name is configured" do
+      Spree::Chimpy::Config.customer_segment_name = "example"
+      expect(Spree::Chimpy.segment_enabled?).to eq true
+    end
+
+    it "is false when segment name is blank or nil" do
+      [nil, ""].each do |val|
+        Spree::Chimpy::Config.customer_segment_name = val
+        expect(Spree::Chimpy.segment_enabled?).to eq false
+      end
+    end
+  end
+
+  describe "ensure_segment" do
+    before(:each) do
+      allow(Spree::Chimpy).to receive(:list_exists?) { true }
+    end
+
+    it "does not create the segment when not enabled" do
+      allow(Spree::Chimpy).to receive(:segment_enabled?) { false }
+      expect(Spree::Chimpy).to_not receive(:create_segment)
+
+      Spree::Chimpy.ensure_segment
+    end
+
+    it "creates a segment when enabled" do
+      allow(Spree::Chimpy).to receive(:segment_enabled?) { true }
+      allow(Spree::Chimpy).to receive(:segment_exists?) { false }
+      expect(Spree::Chimpy).to receive(:create_segment)
+
+      Spree::Chimpy.ensure_segment
+    end
+  end
+
   def config(options = {})
     config = Spree::Chimpy::Configuration.new
     config.key        = options[:key]

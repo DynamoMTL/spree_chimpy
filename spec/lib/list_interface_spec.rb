@@ -172,4 +172,13 @@ describe Spree::Chimpy::Interface::List do
     })
     interface.add_merge_var('SIZE', 'Your Size')
   end
+
+  it "does not segment users when no segment provided" do
+    Spree::Chimpy::Config.customer_segment_name = ""
+    allow(lists).to receive(:subscribe)
+
+    expect(lists).to_not receive(:static_segment_members_add)
+
+    interface.subscribe("user@example.com", {'SIZE' => '10'}, {customer: true})
+  end
 end

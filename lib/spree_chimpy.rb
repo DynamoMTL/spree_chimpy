@@ -49,8 +49,16 @@ module Spree::Chimpy
     @orders ||= Interface::Orders.new if configured?
   end
 
+  def carts
+    @carts ||= Interface::Carts.new if configured?
+  end
+
   def list_exists?
     list.list_id
+  end
+
+  def segment_enabled?
+    !Config.customer_segment_name.blank?
   end
 
   def segment_exists?
@@ -92,7 +100,7 @@ module Spree::Chimpy
   end
 
   def ensure_segment
-    if list_exists? && !segment_exists?
+    if list_exists? && segment_enabled? && !segment_exists?
       create_segment
       Rails.logger.error("spree_chimpy: hmm.. a static segment named `#{Config.customer_segment_name}` was not found. Creating it now")
     end
@@ -121,8 +129,21 @@ module Spree::Chimpy
     object = payload[:object] || payload[:class].constantize.find(payload[:id])
 
     case event
+    when :cart
+      carts.sync(object)
     when :order
-      orders.sync(object)
+      if object.canceled?
+        orders.remove(object)
+      else
+        orders.sync(object)
+      end
+      begin
+        if store_api_call.carts(object.number).retrieve(params: { "fields" => "id" })
+          store_api_call.carts(object.number).delete
+        end
+      rescue Gibbon::MailChimpError => e
+        log "No cart found, skip delete"
+      end
     when :subscribe
       list.subscribe(object.email, merge_vars(object), customer: object.is_a?(Spree.user_class))
     when :unsubscribe

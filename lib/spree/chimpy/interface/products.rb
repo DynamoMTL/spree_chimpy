@@ -75,7 +75,7 @@ module Spree::Chimpy
         }
 
         if @product.images.any?
-          data[:image_url] = @product.images.first.attachment.url(:product)
+          data[:image_url] = @product.images.first.attachment.url(:product).to_s
         end
 
         if @product.respond_to?(:available_on) && @product.available_on
@@ -91,7 +91,7 @@ module Spree::Chimpy
           sku: variant.sku,
           url: product_url_or_default(variant.product),
           price: variant.price.to_f,
-          image_url: variant_image_url(variant),
+          image_url: variant_image_url(variant).to_s,
           inventory_quantity: variant.total_on_hand == Float::INFINITY ? 999 : variant.total_on_hand
         }
       end

@@ -44,31 +44,6 @@ describe Spree::Chimpy::Subscription do
       end
     end
 
-    # context "resubscribe" do
-    #   let(:user)         { create(:user, subscribed: true) }
-    #   let(:subscription) { double(:subscription) }
-
-    #   before do
-    #     interface.should_receive(:subscribe).once.with(user.email)
-    #     user.stub(subscription: subscription)
-    #   end
-
-    #   context "when update needed" do
-    #     it "calls resubscribe" do
-    #       subscription.should_receive(:resubscribe)
-    #       user.save
-    #     end
-    #   end
-
-    #   context "when update not needed" do
-    #     it "still calls resubscribe, and does nothing" do
-    #       subscription.should_receive(:resubscribe)
-    #       subscription.should_not_receive(:unsubscribe)
-    #       user.save
-    #     end
-    #   end
-    # end
-
     context "unsubscribing" do
       let(:subscription) { described_class.new(user) }
 

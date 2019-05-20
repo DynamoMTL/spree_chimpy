@@ -3,7 +3,7 @@ require 'digest'
 module Spree::Chimpy
   module Interface
     class List
-      delegate :log, to: Spree::Chimpy
+      delegate :log, :segment_enabled?, to: Spree::Chimpy
 
       def initialize(list_name, segment_name, double_opt_in, send_welcome_email, list_id)
         @list_id       = list_id
@@ -118,6 +118,8 @@ module Spree::Chimpy
       end
 
       def segment(emails = [])
+        return unless segment_enabled?
+
         log "Adding #{emails} to segment #{@segment_name} [#{segment_id}] in list [#{list_id}]"
 
         api_list_call.segments(segment_id.to_i).create(body: { members_to_add: Array(emails) })

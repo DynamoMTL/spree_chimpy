@@ -131,6 +131,15 @@ end
 By default spree_chimpy will try to segment customers. The segment name can be configured using the `segment_name` setting.
 Spree_chimpy will use an existing segment if it exists. If no segment can be found it will be created for you automatically.
 
+If you would like to not use the segmentation functionality, simply configure spree_chimpy to have a blank or nil customer_segment_name.
+
+```ruby
+Spree::Chimpy.config do |config|
+  config.customer_segment_name = ""
+end
+
+```
+
 #### Note about double-opt-in & segmenting
 
 Mailchimp does not allow you to segment emails that have not confirmed their subscription. This means that if you use the

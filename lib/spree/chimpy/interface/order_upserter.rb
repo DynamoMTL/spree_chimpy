@@ -75,6 +75,7 @@ module Spree::Chimpy
           currency_code:     @order.currency,
           processed_at_foreign:  @order.completed_at ? @order.completed_at.to_formatted_s(:db) : "",
           updated_at_foreign: @order.updated_at.to_formatted_s(:db),
+          cancelled_at_foreign: @order.canceled_at ? @order.canceled_at.to_formatted_s(:db) : "",
           shipping_total:    @order.ship_total.to_f,
           tax_total:         @order.try(:included_tax_total).to_f + @order.try(:additional_tax_total).to_f,
           customer: {
