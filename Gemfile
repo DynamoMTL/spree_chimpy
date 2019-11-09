@@ -6,5 +6,7 @@ gem 'libnotify'
 gem 'fuubar'
 gem 'byebug'
 gem 'pry-byebug'
+# needed to address this issue: https://stackoverflow.com/a/35893625
+gem 'rake', '< 11.0'
 
 gemspec
